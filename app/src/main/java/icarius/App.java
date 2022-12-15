@@ -3,38 +3,31 @@
  */
 package icarius;
 
-import java.io.IOException;
+import java.util.HashMap;
 
-import okhttp3.Call;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import icarius.services.HttpService;
+import okhttp3.ResponseBody;
 
 public class App {
     private static final String BASE_URL = "http://localhost:8080";
 
-    OkHttpClient client = new OkHttpClient();
 
-    public String sendPost() throws IOException {
-        RequestBody formBody = new FormBody.Builder()
-                                .add("name", "sentPost")
-                                .add("apiKey", "adminKey")
-                                .build();
+    public App() {
+        // TEST POST
+        // create args list
+        HashMap<String, String> args = new HashMap<String, String>();
+        args.put("name", "test1");
+        args.put("apiKey", "adminKey");
+        // send post
+        HttpService.post(BASE_URL + "/api/campus/new", args);
 
-        Request request = new Request.Builder()
-                            .url(BASE_URL + "/api/campus/new")
-                            .post(formBody)
-                            .build();
 
-        Call call = client.newCall(request);
-        try (Response response = call.execute()) {
-            return response.body().string();
-        }
+        // TEST GET
+        ResponseBody response = HttpService.get(BASE_URL + "/api/birds/campus?campusId=10");
+        System.out.println(response.toString());
     }
 
-    public static void main(String[] args) throws IOException {
-        System.out.println(new App().sendPost());
+    public static void main(String[] args) {
+       new App();
     }
 }
