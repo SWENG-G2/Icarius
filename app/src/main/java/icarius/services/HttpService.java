@@ -20,72 +20,54 @@ public class HttpService {
 
     public static void post(String url, HashMap<String,String> args) {
         // Build Form Body
-        FormBody.Builder test = new FormBody.Builder();
-        for (String arg : args.keySet()) {
-            test.add(arg, args.get(arg));
-        }
-        RequestBody body = test.build();
+        FormBody.Builder body = new FormBody.Builder();
+        args.forEach((key, value) -> body.add(key, value));
 
-        // Build Request
-        Request request = new Request.Builder()
-                            .url(url)
-                            .post(body)
-                            .build();
-
-        // Send Request
-        send(request, "POST");
+        send(url, body.build());
     }
 
     public static ResponseBody get(String url) {
-        // Build Request
-        Request request = new Request.Builder()
-                            .url(url)
-                            .build();
-        
-        // Send Request
-        return send(request, "GET");
+        return send(url, null);
     }
 
     public static ResponseBody get(String url, HashMap<String,String> args) {
-        // Rebuild url
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
-        for (String arg : args.keySet()) {
-            urlBuilder.addQueryParameter(arg, args.get(arg));
-        }
-        url = urlBuilder.build().toString();
+        // Reconfigure url
+        HttpUrl.Builder urlB = HttpUrl.parse(url).newBuilder();
+        args.forEach((key, value) -> urlB.addQueryParameter(key, value));
+        url = urlB.build().toString();
 
-        // Call basic get method
         return get(url);
     }
 
-    // upload a text file
-    public static void uploadFile(String url) {
-        // Build Form Body
-        RequestBody body = new MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("file", "file.txt",
-            RequestBody.create(
-                new File("src/main/resources/test.txt"),
-                MediaType.parse("application/octet-stream")))
-            .build();
+    // upload a file
+    public static void uploadFile(String url, HashMap<String,String> args, String filePath) {
+        File file = new File(filePath);
+        MediaType MEDIA_TYPE = MediaType.parse("application/octet-stream");
 
-        // Build Request
-        Request request = new Request.Builder()
-                            .url(url)
-                            .post(body)
-                            .build();
-        
-        // Send Request
-        send(request, "FILE UPLOAD");
+        // Build Form Body
+        MultipartBody.Builder body = new MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", file.getName(), RequestBody.create(file, MEDIA_TYPE));
+            args.forEach((key, value) -> body.addFormDataPart(key, value));
+
+        send(url, body.build());
     }
 
-    private static ResponseBody send(Request request, String requestType) {
-        Call call = client.newCall(request);
+    private static ResponseBody send(String url, RequestBody requestBody) {
+        // Build Request
+        Request.Builder request = new Request.Builder().url(url);
+        if (requestBody != null) {
+            // if POST request
+            request.post(requestBody);
+        }
+
+        // Execute Call
+        Call call = client.newCall(request.build());
         try (Response response = call.execute()) {
             System.out.println(response.body().string());
             return response.body();
         } catch (IOException ioe) {
-            System.out.println("ERROR: IOException caught during " + requestType + " Request \n");
+            ioe.printStackTrace();
             return null;
         }
     }
