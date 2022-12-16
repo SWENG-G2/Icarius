@@ -25,20 +25,7 @@ public class HttpService {
 
         send(url, body.build());
     }
-
-    public static ResponseBody get(String url) {
-        return send(url, null);
-    }
-
-    public static ResponseBody get(String url, HashMap<String,String> args) {
-        // Reconfigure url
-        HttpUrl.Builder urlB = HttpUrl.parse(url).newBuilder();
-        args.forEach((key, value) -> urlB.addQueryParameter(key, value));
-        url = urlB.build().toString();
-
-        return get(url);
-    }
-
+    
     // upload a file
     public static void uploadFile(String url, HashMap<String,String> args, String filePath) {
         File file = new File(filePath);
@@ -51,6 +38,19 @@ public class HttpService {
             args.forEach((key, value) -> body.addFormDataPart(key, value));
 
         send(url, body.build());
+    }
+
+    public static ResponseBody get(String url) {
+        return send(url, null);
+    }
+
+    public static ResponseBody get(String url, HashMap<String,String> args) {
+        // Reconfigure url
+        HttpUrl.Builder urlB = HttpUrl.parse(url).newBuilder();
+        args.forEach((key, value) -> urlB.addQueryParameter(key, value));
+        url = urlB.build().toString();
+
+        return get(url);
     }
 
     private static ResponseBody send(String url, RequestBody requestBody) {
