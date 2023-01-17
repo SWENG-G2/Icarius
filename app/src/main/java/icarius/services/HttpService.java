@@ -13,21 +13,21 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class HttpService {
     private static OkHttpClient client = new OkHttpClient();
 
-    public static void post(String url, HashMap<String,String> args) {
+    // Send a POST request with parameters
+    public static String post(String url, HashMap<String,String> parameters) {
         // Build Form Body
         FormBody.Builder body = new FormBody.Builder();
-        args.forEach((key, value) -> body.add(key, value));
+        parameters.forEach((key, value) -> body.add(key, value));
 
-        send(url, body.build());
+        return send(url, body.build(), "POST" );
     }
     
-    // upload a file
-    public static void uploadFile(String url, HashMap<String,String> args, String filePath) {
+    // Send a POST request with file
+    public static String postFile(String url, HashMap<String,String> parameters, String filePath) {
         File file = new File(filePath);
         MediaType MEDIA_TYPE = MediaType.parse("application/octet-stream");
 
@@ -35,40 +35,68 @@ public class HttpService {
         MultipartBody.Builder body = new MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("file", file.getName(), RequestBody.create(file, MEDIA_TYPE));
-            args.forEach((key, value) -> body.addFormDataPart(key, value));
+            parameters.forEach((key, value) -> body.addFormDataPart(key, value));
 
-        send(url, body.build());
+        // Send file and print server response
+        return send(url, body.build(), "POST");
     }
 
-    public static ResponseBody get(String url) {
-        return send(url, null);
+    // Send GET request
+    public static String get(String url) {
+        return send(url, null, null);
     }
 
-    public static ResponseBody get(String url, HashMap<String,String> args) {
+    // Send GET request with parameters
+    public static String get(String url, HashMap<String,String> parameters) {
         // Reconfigure url
         HttpUrl.Builder urlB = HttpUrl.parse(url).newBuilder();
-        args.forEach((key, value) -> urlB.addQueryParameter(key, value));
+        parameters.forEach((key, value) -> urlB.addQueryParameter(key, value));
         url = urlB.build().toString();
 
-        return get(url);
+        return send(url, null, null);
     }
 
-    private static ResponseBody send(String url, RequestBody requestBody) {
-        // Build Request
-        Request.Builder request = new Request.Builder().url(url);
-        if (requestBody != null) {
-            // if POST request
-            request.post(requestBody);
+    // Send DELETE request with parameters
+    public static String delete(String url, HashMap<String,String> parameters) {
+        // Reconfigure url
+        HttpUrl.Builder urlB = HttpUrl.parse(url).newBuilder();
+        parameters.forEach((key, value) -> urlB.addQueryParameter(key, value));
+        url = urlB.build().toString();
+
+        return send(url, null, "DELETE");
+    }
+
+    // Returns response from GET requests as string else null
+    private static String send(String url, RequestBody requestBody, String requestType) {
+        // Build basic request with url and authentication
+        Request.Builder request = new Request.Builder().url(url)
+        .addHeader("IDENTITY", AuthenticationService.identity)
+        .addHeader("KEY", AuthenticationService.getAuth());
+
+        switch (requestType) {
+            case "POST":
+                request.post(requestBody);
+                break;
+            case "DELETE":
+                request.delete();
+                break;
+            case "PATCH":
+                request.patch(requestBody);
+                break;
+            default:
+                break;
         }
 
         // Execute Call
         Call call = client.newCall(request.build());
         try (Response response = call.execute()) {
-            System.out.println(response.body().string());
-            return response.body();
+            // read response (socket automatically closes after first read)
+            return response.body().string();
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;
         }
+
+        // NOTE: After first read, response source automatically closes
     }
 }
