@@ -20,18 +20,12 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 
-public class AuthenticationService {
-    // string in form a:b where
-    // a = user identity
-    // b = encrypted public key with RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING RSA parameters
-    
-    public static String campus = "admin";
-    public static String identity = "a";
-    
+public class AuthenticationService {    
+        
     private static final String ALGORITHM = "RSA";
     private static final String CYPHER = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
 
-    public static String getAuth() {
+    public static String getAuth(String identity, String campusID) {
         try {
             // Get time
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/London"));
@@ -41,7 +35,7 @@ public class AuthenticationService {
             PublicKey publicKey = generatePublicKey(Base64publicKey);
 
             // format auth
-            String auth = identity + "_" + campus + "=" + now;
+            String auth = identity + "_" + campusID + "=" + now;
 
             // Encrypt and return auth encoded to base64
             byte[] key = encrypt(publicKey, auth);

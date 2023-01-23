@@ -1,24 +1,24 @@
 package icarius.controllers;
 
-import java.util.HashMap;
-
+import http.ServerRequest;
+import http.HttpService;
 import icarius.App;
-import icarius.services.HttpService;
 import icarius.services.KeyStorageService;
+import icarius.services.UtilService;
 
 public class KeyController {
     public static String generateKey(boolean admin, String ownerName) {
-        // Request and store new key from server
-        HashMap<String, String> parameters = new HashMap<String, String>();
-        parameters.put("admin", String.valueOf(admin));
-        parameters.put("ownerName", ownerName);
-
-        String response = HttpService.post(App.BASE_URL + "api/apikeys/new", parameters);
+        // Request and store new key from server        
+        ServerRequest request = new ServerRequest("/api/apikeys/new");
+        request.addSysAdminAuth(App.currentIdentity);
+        request.addParameter("admin", String.valueOf(admin));
+        request.addParameter("ownerName", ownerName);
+        String response = HttpService.post( request );
 
         // Process response
         String[] temp = response.split(":");
         String identity = temp[0];
-        String publicKey = removeLastCharacter(temp[1]);
+        String publicKey = UtilService.removeLastCharacter(temp[1]);
         
         KeyStorageService.storeKey(identity, publicKey);
 
@@ -39,18 +39,11 @@ public class KeyController {
         }
 
         // Request to remove key from server
-        HashMap<String, String> parameters = new HashMap<String, String>();
-        parameters.put("identity", identity);
-        String response = HttpService.delete(App.BASE_URL + "api/apikeys/remove", parameters);
+        ServerRequest request = new ServerRequest("/api/apikeys/remove");
+        request.addSysAdminAuth(App.currentIdentity);
+        request.addParameter("identity", identity);
+        String response = HttpService.delete(request);
 
         System.out.println("SERVER: " + response);
-    }
-
-    private static String removeLastCharacter(String s) {
-        if (s == null || s.length() == 0) {
-            return null;
-        } else {
-            return s.substring(0, s.length() - 1);
-        }
     }
 }

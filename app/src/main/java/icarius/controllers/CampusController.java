@@ -1,7 +1,6 @@
 package icarius.controllers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.dom4j.Document;
@@ -9,33 +8,31 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
+import http.ServerRequest;
+import http.HttpService;
 import icarius.App;
 import icarius.entities.Campus;
-import icarius.services.HttpService;
 
 public class CampusController {
 
     public static void createCampus(String name) {
-        // create args list
-        HashMap<String, String> args = new HashMap<String, String>();
-        args.put("name", name);
-
-        // send post
-        HttpService.post(App.BASE_URL + "api/campus/new", args);
+        ServerRequest request = new ServerRequest("/api/campus/new");
+        request.addSysAdminAuth(App.currentIdentity);
+        request.addParameter("name", name);
+        System.out.println( HttpService.post(request) );
     }
 
-    public static void removeCampus(int id) {
-        // create args list
-        HashMap<String, String> args = new HashMap<String, String>();
-        args.put("id", Integer.toString(id));
-
-        // send post
-        HttpService.post(App.BASE_URL + "api/campus/new", args);
+    public static void removeCampus(int id) {        
+        ServerRequest request = new ServerRequest("/api/campus/new");
+        request.addSysAdminAuth(App.currentIdentity);
+        request.addParameter("id", Integer.toString(id));
+        System.out.println( HttpService.post(request) );
     }
 
     public static Campus getCampusById(int id) {
         // send and store GET request response
-        String response = HttpService.get(App.BASE_URL + "campus/" + id);
+        ServerRequest request = new ServerRequest("/campus/" + id);
+        String response = HttpService.get(request);
 
         if (response == null) {
             return null;
@@ -56,7 +53,8 @@ public class CampusController {
         List<Campus> campusList = new ArrayList<Campus>();
 
         // send and store GET request response
-        String response = HttpService.get(App.BASE_URL + "campus/list");
+        ServerRequest request = new ServerRequest("/campus/list");
+        String response = HttpService.get(request);
 
         // Parse XML response into campus object list
         try {
