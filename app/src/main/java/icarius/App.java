@@ -2,6 +2,10 @@ package icarius;
 
 import icarius.http.GetRequest;
 import icarius.http.PostRequest;
+
+import java.util.HashMap;
+
+import icarius.controllers.BirdController;
 import icarius.controllers.KeyController;
 
 public class App {
@@ -17,6 +21,38 @@ public class App {
        //testGET();
        //testFileUpload();
        //testKeyGen();
+    }
+
+    // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
+
+    private static void testPOSTBirds() {
+        int campusId = 5;
+        HashMap<String, String> birdProperties = new HashMap<String, String>();
+        birdProperties.put("name", "Davey");
+        birdProperties.put("listImageURL", "anImageOfADuck.jpg");
+        birdProperties.put("heroImageURL", "aHeroImageOfADuck.jpg");
+        birdProperties.put("soundURL", "quack.mp3");
+        birdProperties.put("aboutMe", "Davey the Duck");
+        birdProperties.put("aboutMeVideoURL", "DaveysVideoCV.mp4");
+        birdProperties.put("location", "over there");
+        birdProperties.put("locationImageURL", "overThere.jpg");
+        birdProperties.put("diet", "Werms and Grapes");
+        birdProperties.put("dietImageURL", "Image of werms and grapes");
+        BirdController.newBird(birdProperties, campusId);
+    }
+
+    private static void testDELETEBirds() {
+        int birdId = 2;
+        int campusId = 5;
+        BirdController.removeBird(birdId, campusId);
+    }
+
+    private static void testPATCHBirds() {
+        int campusId = 5;
+        int birdId = 2;
+        HashMap<String, String> newBirdInformation = new HashMap<String, String>();
+        newBirdInformation.put("aboutMe", "Donald the Duck");
+        BirdController.editBird(newBirdInformation, birdId, campusId);
     }
 
     private static void testGET() {
