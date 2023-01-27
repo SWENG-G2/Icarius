@@ -2,6 +2,7 @@ package icarius;
 
 import icarius.http.GetRequest;
 import icarius.http.PostRequest;
+import icarius.user.User;
 
 import java.util.HashMap;
 
@@ -10,23 +11,21 @@ import icarius.controllers.KeyController;
 
 public class App {
     public static final String BASE_URL = "http://localhost:8080";
-    public static final String currentIdentity = "a";
+    public User user;
 
     public App() {
+        user = new User("a");
     }
 
     public static void main(String[] args) {
        App app = new App();
-       //testPOST();
-       //testGET();
-       //testFileUpload();
-       //testKeyGen();
+       app.testPOST();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
 
-    private static void testPOSTBirds() {
-        int campusId = 5;
+    private void testPOSTBirds() {
+        user.setCampusId(5);
         HashMap<String, String> birdProperties = new HashMap<String, String>();
         birdProperties.put("name", "Davey");
         birdProperties.put("listImageURL", "anImageOfADuck.jpg");
@@ -38,42 +37,42 @@ public class App {
         birdProperties.put("locationImageURL", "overThere.jpg");
         birdProperties.put("diet", "Werms and Grapes");
         birdProperties.put("dietImageURL", "Image of werms and grapes");
-        BirdController.newBird(birdProperties, campusId);
+        BirdController.newBird(birdProperties, user);
     }
 
-    private static void testDELETEBirds() {
+    private void testDELETEBirds() {
         int birdId = 2;
-        int campusId = 5;
-        BirdController.removeBird(birdId, campusId);
+        user.setCampusId(5);
+        BirdController.removeBird(birdId, user);
     }
 
-    private static void testPATCHBirds() {
-        int campusId = 5;
+    private void testPATCHBirds() {
+        user.setCampusId(5);
         int birdId = 2;
         HashMap<String, String> newBirdInformation = new HashMap<String, String>();
         newBirdInformation.put("aboutMe", "Donald the Duck");
-        BirdController.editBird(newBirdInformation, birdId, campusId);
+        BirdController.editBird(newBirdInformation, birdId, user);
     }
 
-    private static void testGET() {
+    private void testGET() {
         GetRequest test = new GetRequest("/api/campus/all");
         System.out.println( test.send() );
     }
 
-    private static void testPOST() {
-        PostRequest test = new PostRequest("/api/campus/new", currentIdentity, 0);
-        test.addParameter("name", "testnumber1mil");
+    private void testPOST() {
+        PostRequest test = new PostRequest("/api/campus/new", user);
+        test.addParameter("name", "user test");
         System.out.println( test.send() );
     }
 
-    private static void testFileUpload() {
-        PostRequest test = new PostRequest("/api/file/1/new", currentIdentity, 1);
+    private void testFileUpload() {
+        PostRequest test = new PostRequest("/api/file/1/new", user);
         test.addFile("app/src/main/resources/test.jpg", "image");
         System.out.println( test.send() );
     }
 
-    private static void testKeyGen() {
-        KeyController.generateKey(true, "OWNER_NAME");
-        KeyController.removeKey("identity of generated key here");
+    private void testKeyGen() {
+        KeyController.generateKey(true, "OWNER_NAME", user);
+        KeyController.removeKey("identity of generated key here", user);
     }
 }

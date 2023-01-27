@@ -2,6 +2,9 @@ package icarius.http;
 
 import java.io.File;
 import java.util.List;
+
+import icarius.user.User;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -23,8 +26,8 @@ public class PostRequest extends ServerRequest{
         }}
     );
 
-    public PostRequest(String urlPath, String identity, int campusId) {
-        super(urlPath, identity, campusId);
+    public PostRequest(String urlPath, User user) {
+        super(urlPath, user);
     }
 
     @Override
@@ -38,8 +41,8 @@ public class PostRequest extends ServerRequest{
         
         Request request = new Request.Builder()
         .url(getUrl())
-        .addHeader("IDENTITY", identity)
-        .addHeader("KEY", getKey())
+        .addHeader("IDENTITY", user.getIdentity())
+        .addHeader("KEY", user.getAuth())
         .post(requestBody)
         .build();
 

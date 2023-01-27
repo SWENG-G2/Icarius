@@ -6,8 +6,6 @@ package icarius;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
-
 class AppTest {
     @Test void appHasAGreeting() {
         App classUnderTest = new App();

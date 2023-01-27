@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import icarius.App;
-import icarius.services.AuthenticationService;
+import icarius.user.User;
 import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -14,7 +14,7 @@ import okhttp3.Response;
 public abstract class ServerRequest {
     // Request properties
     private final String url;
-    protected final String identity, campusId;
+    protected final User user;
     private HashMap<String, String> params = new HashMap<String, String>();
     
     // Client
@@ -22,18 +22,12 @@ public abstract class ServerRequest {
 
     public ServerRequest(String urlPath) {
         this.url = App.BASE_URL + urlPath;
-        identity = null;
-        campusId = null;
+        user = null;
     }
 
-    public ServerRequest(String urlPath, String identity, int campusId) {
+    public ServerRequest(String urlPath, User user) {
         this.url = App.BASE_URL + urlPath;
-        this.identity = identity;
-        this.campusId = setCampusId(campusId);
-    }
-
-    private String setCampusId(int campusId) {
-        return campusId == 0 ? "admin" : String.valueOf(campusId);
+        this.user = user;
     }
 
     public void addParameter(String key, String value) {
@@ -48,10 +42,6 @@ public abstract class ServerRequest {
         HttpUrl.Builder urlB = HttpUrl.parse(url).newBuilder();
         params.forEach((key, value) -> urlB.addQueryParameter(key, value));
         return urlB.build().toString();
-    }
-
-    public String getKey() {
-        return AuthenticationService.getAuth(identity, campusId);
     }
 
     protected String execute(Request request) {

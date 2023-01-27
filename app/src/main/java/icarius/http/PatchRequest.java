@@ -1,13 +1,14 @@
 package icarius.http;
 
+import icarius.user.User;
 import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class PatchRequest extends ServerRequest {
     
-    public PatchRequest(String urlPath, String identity, int campusId) {
-        super(urlPath, identity, campusId);
+    public PatchRequest(String urlPath, User user) {
+        super(urlPath, user);
     }
 
     @Override
@@ -16,8 +17,8 @@ public class PatchRequest extends ServerRequest {
     
         Request request = new Request.Builder()
         .url(getUrl())
-        .addHeader("IDENTITY", identity)
-        .addHeader("KEY", getKey())
+        .addHeader("IDENTITY", user.getIdentity())
+        .addHeader("KEY", user.getAuth())
         .patch(requestBody)
         .build();
 

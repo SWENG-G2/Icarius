@@ -10,19 +10,19 @@ import org.dom4j.Node;
 
 import icarius.http.GetRequest;
 import icarius.http.PostRequest;
-import icarius.App;
+import icarius.user.User;
 import icarius.entities.Campus;
 
 public class CampusController {
 
-    public static void createCampus(String name) {
-        PostRequest request = new PostRequest("/api/campus/new", App.currentIdentity, 0);
+    public static void createCampus(String name, User user) {
+        PostRequest request = new PostRequest("/api/campus/new", user);
         request.addParameter("name", name);
         System.out.println( request.send() );
     }
 
-    public static void removeCampus(int id) {        
-        PostRequest request = new PostRequest("/api/campus/new", App.currentIdentity, 0);
+    public static void removeCampus(int id, User user) {        
+        PostRequest request = new PostRequest("/api/campus/new", user);
         request.addParameter("id", Integer.toString(id));
         System.out.println( request.send() );
     }
