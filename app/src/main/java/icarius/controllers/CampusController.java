@@ -8,31 +8,29 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
-import http.ServerRequest;
-import http.HttpService;
+import icarius.http.GetRequest;
+import icarius.http.PostRequest;
 import icarius.App;
 import icarius.entities.Campus;
 
 public class CampusController {
 
     public static void createCampus(String name) {
-        ServerRequest request = new ServerRequest("/api/campus/new");
-        request.addSysAdminAuth(App.currentIdentity);
+        PostRequest request = new PostRequest("/api/campus/new", App.currentIdentity, 0);
         request.addParameter("name", name);
-        System.out.println( HttpService.post(request) );
+        System.out.println( request.send() );
     }
 
     public static void removeCampus(int id) {        
-        ServerRequest request = new ServerRequest("/api/campus/new");
-        request.addSysAdminAuth(App.currentIdentity);
+        PostRequest request = new PostRequest("/api/campus/new", App.currentIdentity, 0);
         request.addParameter("id", Integer.toString(id));
-        System.out.println( HttpService.post(request) );
+        System.out.println( request.send() );
     }
 
     public static Campus getCampusById(int id) {
         // send and store GET request response
-        ServerRequest request = new ServerRequest("/campus/" + id);
-        String response = HttpService.get(request);
+        GetRequest request = new GetRequest("/campus/" + id);
+        String response = request.send();
 
         if (response == null) {
             return null;
@@ -53,8 +51,8 @@ public class CampusController {
         List<Campus> campusList = new ArrayList<Campus>();
 
         // send and store GET request response
-        ServerRequest request = new ServerRequest("/campus/list");
-        String response = HttpService.get(request);
+        GetRequest request = new GetRequest("/campus/list");
+        String response = request.send();
 
         // Parse XML response into campus object list
         try {

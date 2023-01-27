@@ -1,7 +1,7 @@
 package icarius;
 
-import http.ServerRequest;
-import http.HttpService;
+import icarius.http.GetRequest;
+import icarius.http.PostRequest;
 import icarius.controllers.KeyController;
 
 public class App {
@@ -20,23 +20,20 @@ public class App {
     }
 
     private static void testGET() {
-        ServerRequest test = new ServerRequest("/api/campus/all");
-        test.addSysAdminAuth(currentIdentity);
-        System.out.println( HttpService.get(test) );
+        GetRequest test = new GetRequest("/api/campus/all");
+        System.out.println( test.send() );
     }
 
     private static void testPOST() {
-        ServerRequest test = new ServerRequest("/api/campus/new");
-        test.addSysAdminAuth(currentIdentity);
+        PostRequest test = new PostRequest("/api/campus/new", currentIdentity, 0);
         test.addParameter("name", "testnumber1mil");
-        System.out.println( HttpService.post(test) );
+        System.out.println( test.send() );
     }
 
     private static void testFileUpload() {
-        ServerRequest test = new ServerRequest("/api/file/1/new");
-        test.addAuth(currentIdentity, "1");
+        PostRequest test = new PostRequest("/api/file/1/new", currentIdentity, 1);
         test.addFile("app/src/main/resources/test.jpg", "image");
-        System.out.println( HttpService.post(test) );
+        System.out.println( test.send() );
     }
 
     private static void testKeyGen() {
