@@ -20,4 +20,27 @@ public class Bird {
 
     public String author;
     public Date date;
+
+    public Bird(Long id) {
+        this.id = id;
+        // get existing bird info using id
+    }
+
+    public Bird(String name) {
+        // if no id passed, create new bird with name 
+    }
+
+    private void getBirdById(Long id) {
+        // sends get request to server
+        // populates bird entity with details
+    }
+
+    private void newBird(String name) {
+        // sends request to server to make bird with name name
+    }
+
+    private void editBird() {
+        // whenever a change is made to the bird object,
+        // send a request to also update the bird on the server
+    }
 }
