@@ -1,12 +1,9 @@
 package icarius.entities;
 
-import java.util.Date;
+import icarius.user.User;
 
-public class Bird {
-    public Long id;
-
+public class Bird extends ServerEntity {
     // Bird information
-    public String name;
     public String heroImageURL;
     public String soundURL;
     public String aboutMe;
@@ -18,29 +15,47 @@ public class Bird {
     
     public Campus campus;
 
-    public String author;
-    public Date date;
-
-    public Bird(Long id) {
-        this.id = id;
-        // get existing bird info using id
+    public Bird(Long Id) {
+        super(Id);
     }
 
-    public Bird(String name) {
-        // if no id passed, create new bird with name 
+    public Bird(String name, User user) {
+        super(name, user);
     }
 
-    private void getBirdById(Long id) {
-        // sends get request to server
-        // populates bird entity with details
+    @Override
+    protected Long create(User user) {
+        return create("/api/birds/" + user.getCampusIdString() + "/new", user);
     }
 
-    private void newBird(String name) {
-        // sends request to server to make bird with name name
+    @Override
+    protected String read() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    private void editBird() {
-        // whenever a change is made to the bird object,
-        // send a request to also update the bird on the server
+    @Override
+    protected void update(User user) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    protected Boolean delete(User user) {
+        return delete("/api/birds/" + campus.Id + "/remove", user);
+    }
+
+    @Override
+    public String toString() {
+        return "\nId: " + Id + "\t\tBird: " + name
+                    + "\n\t Campus: " + campus.name
+                    + "\n\t heroImageURL: " + heroImageURL
+                    + "\n\t soundUrl: " + soundURL
+                    + "\n\t aboutMe: " + aboutMe
+                    + "\n\t aboutMeVideoURL: " + aboutMeVideoURL
+                    + "\n\t location: " + location
+                    + "\n\t locationImageURL: " + locationImageURL
+                    + "\n\t diet: " + diet
+                    + "\n\t dietImageURL: " + dietImageURL;
     }
 }

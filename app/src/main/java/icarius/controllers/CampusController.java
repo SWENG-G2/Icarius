@@ -27,7 +27,7 @@ public class CampusController {
         System.out.println( request.send() );
     }
 
-    public static Campus getCampusById(int id) {
+    public static Campus getCampusById(Long id) {
         // send and store GET request response
         GetRequest request = new GetRequest("/campus/" + id);
         String response = request.send();
@@ -43,7 +43,7 @@ public class CampusController {
                 e.printStackTrace();
             }
     
-            return new Campus(id, response);
+            return new Campus(id);
         }
     }
 
@@ -60,9 +60,9 @@ public class CampusController {
 
             List<Node> nodes = document.selectNodes("//*[name()='slide']");
             for (Node node : nodes) {
-                int id = Integer.parseInt(node.valueOf("@title"));
+                Long id = Long.parseLong(node.valueOf("@title"));
                 String name = node.selectSingleNode("*[name()='text']").getText();
-                campusList.add(new Campus(id, name));
+                campusList.add(new Campus(id));
             }
         } catch (DocumentException e) {
             e.printStackTrace();

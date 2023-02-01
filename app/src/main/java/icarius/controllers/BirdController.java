@@ -45,7 +45,7 @@ public class BirdController {
     public static void removeBird(int birdId, User user) {
         DeleteRequest request = new DeleteRequest("/api/birds/" + user.getCampusIdString() + "/remove", user);
         request.addParameter("id", Integer.toString(birdId));
-        request.addParameter("campusid", user.getCampusIdString());
+        request.addParameter("campusId", user.getCampusIdString());
         System.out.println( request.send() );
     }
 }

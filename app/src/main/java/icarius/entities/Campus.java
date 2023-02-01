@@ -5,65 +5,59 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 
 import icarius.http.GetRequest;
-import icarius.http.PostRequest;
 import icarius.user.User;
 
-public class Campus {
-    public long id;
-    public String name;
+public class Campus extends ServerEntity {
 
-    public Campus(int id, String name) {
-        this.id = id;
-        this.name = name;
+    // Create campus object from existing database entry
+    public Campus(Long Id) {
+        super(Id);
     }
 
-    public Campus(long id) {
-        this.id = id;
-        getCampusNameById();
-    }
-
+    // Create campus object and create new database entry
     public Campus(String name, User user) {
-        this.name = name;
-        createCampus(user);
+        super(name, user);
     }
 
-    public void removeCampus(User user) {
-        PostRequest request = new PostRequest("/api/campus/new", user);
-        request.addParameter("id", Long.toString(id));
-        System.out.println( request.send() );
-
-        // TODO: Warning before removal, should require pressing ok to a confirmation message
-        // TODO: if delete successful, set object properties to null
+    @Override
+    protected Long create(User user) {
+        return create("/api/campus/new", user);
     }
 
-    private void getCampusNameById() {
+    @Override
+    protected String read() {
         // send and store GET request response
-        GetRequest request = new GetRequest("/campus/" + id);
+        GetRequest request = new GetRequest("/campus/" + Id);
         String response = request.send();
 
         if (response == null) {
-            throw new RuntimeException("Campus with id '" + id + "' not found.");
+            return null;
         } else {
-            // Parse XML response and find campus name
+            // Fetch name from XML response
             try {
                 Document document = DocumentHelper.parseText( response );
-                this.name = document.selectSingleNode("//*[name()='title']").getText();
+                response = document.selectSingleNode("//*[name()='title']").getText();
             } catch (DocumentException e) {
                 e.printStackTrace();
             }
+    
+            return response;
         }
     }
 
-    private void createCampus(User user) {
-        PostRequest request = new PostRequest("/api/campus/new", user);
-        request.addParameter("name", this.name);
-        System.out.println( request.send() );
+    @Override
+    protected void update(User user) {
+        // TODO Auto-generated method stub
+        
+    }
 
-        // TODO: get returned id and save to object
+    @Override
+    protected Boolean delete(User user) {
+        return delete("/api/campus/remove", user);
     }
 
     @Override
     public String toString() {
-        return "\nId: " + id + "\t\tCampus: " + name;
+        return "\nId: " + Id + "\t\tCampus: " + name;
     }
 }
