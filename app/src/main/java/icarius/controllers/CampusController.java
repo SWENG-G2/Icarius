@@ -8,31 +8,29 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
-import http.ServerRequest;
-import http.HttpService;
-import icarius.App;
+import icarius.http.GetRequest;
+import icarius.http.PostRequest;
+import icarius.user.User;
 import icarius.entities.Campus;
 
 public class CampusController {
 
-    public static void createCampus(String name) {
-        ServerRequest request = new ServerRequest("/api/campus/new");
-        request.addSysAdminAuth(App.currentIdentity);
+    public static void createCampus(String name, User user) {
+        PostRequest request = new PostRequest("/api/campus/new", user);
         request.addParameter("name", name);
-        System.out.println( HttpService.post(request) );
+        System.out.println( request.send() );
     }
 
-    public static void removeCampus(int id) {        
-        ServerRequest request = new ServerRequest("/api/campus/new");
-        request.addSysAdminAuth(App.currentIdentity);
+    public static void removeCampus(int id, User user) {        
+        PostRequest request = new PostRequest("/api/campus/new", user);
         request.addParameter("id", Integer.toString(id));
-        System.out.println( HttpService.post(request) );
+        System.out.println( request.send() );
     }
 
-    public static Campus getCampusById(int id) {
+    public static Campus getCampusById(Long id) {
         // send and store GET request response
-        ServerRequest request = new ServerRequest("/campus/" + id);
-        String response = HttpService.get(request);
+        GetRequest request = new GetRequest("/campus/" + id);
+        String response = request.send();
 
         if (response == null) {
             return null;
@@ -45,7 +43,7 @@ public class CampusController {
                 e.printStackTrace();
             }
     
-            return new Campus(id, response);
+            return new Campus(id);
         }
     }
 
@@ -53,8 +51,8 @@ public class CampusController {
         List<Campus> campusList = new ArrayList<Campus>();
 
         // send and store GET request response
-        ServerRequest request = new ServerRequest("/campus/list");
-        String response = HttpService.get(request);
+        GetRequest request = new GetRequest("/campus/list");
+        String response = request.send();
 
         // Parse XML response into campus object list
         try {
@@ -62,9 +60,9 @@ public class CampusController {
 
             List<Node> nodes = document.selectNodes("//*[name()='slide']");
             for (Node node : nodes) {
-                int id = Integer.parseInt(node.valueOf("@title"));
+                Long id = Long.parseLong(node.valueOf("@title"));
                 String name = node.selectSingleNode("*[name()='text']").getText();
-                campusList.add(new Campus(id, name));
+                campusList.add(new Campus(id));
             }
         } catch (DocumentException e) {
             e.printStackTrace();

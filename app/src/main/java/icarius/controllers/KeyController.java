@@ -1,19 +1,18 @@
 package icarius.controllers;
 
-import http.ServerRequest;
-import http.HttpService;
-import icarius.App;
+import icarius.http.DeleteRequest;
+import icarius.http.PostRequest;
 import icarius.services.KeyStorageService;
 import icarius.services.UtilService;
+import icarius.user.User;
 
 public class KeyController {
-    public static String generateKey(boolean admin, String ownerName) {
+    public static String generateKey(boolean admin, String ownerName, User user) {
         // Request and store new key from server        
-        ServerRequest request = new ServerRequest("/api/apikeys/new");
-        request.addSysAdminAuth(App.currentIdentity);
+        PostRequest request = new PostRequest("/api/apikeys/new", user);
         request.addParameter("admin", String.valueOf(admin));
         request.addParameter("ownerName", ownerName);
-        String response = HttpService.post( request );
+        String response = request.send();
 
         // Process response
         String[] temp = response.split(":");
@@ -30,7 +29,7 @@ public class KeyController {
         return identity;
     }
 
-    public static void removeKey(String identity) {
+    public static void removeKey(String identity, User user) {
         // Remove key from local memory
         if(KeyStorageService.removeKey(identity)) {
             System.out.println("Icarius: Key " + identity + " deleted.");
@@ -39,10 +38,9 @@ public class KeyController {
         }
 
         // Request to remove key from server
-        ServerRequest request = new ServerRequest("/api/apikeys/remove");
-        request.addSysAdminAuth(App.currentIdentity);
+        DeleteRequest request = new DeleteRequest("/api/apikeys/remove", user);
         request.addParameter("identity", identity);
-        String response = HttpService.delete(request);
+        String response = request.send();
 
         System.out.println("SERVER: " + response);
     }

@@ -1,46 +1,78 @@
 package icarius;
 
-import http.ServerRequest;
-import http.HttpService;
+import icarius.http.GetRequest;
+import icarius.http.PostRequest;
+import icarius.user.User;
+
+import java.util.HashMap;
+
+import icarius.controllers.BirdController;
 import icarius.controllers.KeyController;
 
 public class App {
     public static final String BASE_URL = "http://localhost:8080";
-    public static final String currentIdentity = "a";
+    public User user;
 
     public App() {
+        user = new User("a");
     }
 
     public static void main(String[] args) {
        App app = new App();
-       //testPOST();
-       //testGET();
-       //testFileUpload();
-       //testKeyGen();
+       app.testPOST();
     }
 
-    private static void testGET() {
-        ServerRequest test = new ServerRequest("/api/campus/all");
-        test.addSysAdminAuth(currentIdentity);
-        System.out.println( HttpService.get(test) );
+    // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
+
+    private void testPOSTBirds() {
+        user.setCampusId(5);
+        HashMap<String, String> birdProperties = new HashMap<String, String>();
+        birdProperties.put("name", "Davey");
+        birdProperties.put("listImageURL", "anImageOfADuck.jpg");
+        birdProperties.put("heroImageURL", "aHeroImageOfADuck.jpg");
+        birdProperties.put("soundURL", "quack.mp3");
+        birdProperties.put("aboutMe", "Davey the Duck");
+        birdProperties.put("aboutMeVideoURL", "DaveysVideoCV.mp4");
+        birdProperties.put("location", "over there");
+        birdProperties.put("locationImageURL", "overThere.jpg");
+        birdProperties.put("diet", "Werms and Grapes");
+        birdProperties.put("dietImageURL", "Image of werms and grapes");
+        BirdController.newBird(birdProperties, user);
     }
 
-    private static void testPOST() {
-        ServerRequest test = new ServerRequest("/api/campus/new");
-        test.addSysAdminAuth(currentIdentity);
-        test.addParameter("name", "testnumber1mil");
-        System.out.println( HttpService.post(test) );
+    private void testDELETEBirds() {
+        int birdId = 2;
+        user.setCampusId(5);
+        BirdController.removeBird(birdId, user);
     }
 
-    private static void testFileUpload() {
-        ServerRequest test = new ServerRequest("/api/file/1/new");
-        test.addAuth(currentIdentity, "1");
+    private void testPATCHBirds() {
+        user.setCampusId(5);
+        int birdId = 2;
+        HashMap<String, String> newBirdInformation = new HashMap<String, String>();
+        newBirdInformation.put("aboutMe", "Donald the Duck");
+        BirdController.editBird(newBirdInformation, birdId, user);
+    }
+
+    private void testGET() {
+        GetRequest test = new GetRequest("/api/campus/all");
+        System.out.println( test.send() );
+    }
+
+    private void testPOST() {
+        PostRequest test = new PostRequest("/api/campus/new", user);
+        test.addParameter("name", "user test");
+        System.out.println( test.send() );
+    }
+
+    private void testFileUpload() {
+        PostRequest test = new PostRequest("/api/file/1/new", user);
         test.addFile("app/src/main/resources/test.jpg", "image");
-        System.out.println( HttpService.post(test) );
+        System.out.println( test.send() );
     }
 
-    private static void testKeyGen() {
-        KeyController.generateKey(true, "OWNER_NAME");
-        KeyController.removeKey("identity of generated key here");
+    private void testKeyGen() {
+        KeyController.generateKey(true, "OWNER_NAME", user);
+        KeyController.removeKey("identity of generated key here", user);
     }
 }
