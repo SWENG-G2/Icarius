@@ -8,18 +8,20 @@ import java.util.HashMap;
 
 import icarius.controllers.BirdController;
 import icarius.controllers.KeyController;
+import icarius.gui.Gui;
 
 public class App {
     public static final String BASE_URL = "http://localhost:8080";
     public User user;
 
     public App() {
-        user = new User("a");
+        user = new User("sysadmin");
     }
 
     public static void main(String[] args) {
        App app = new App();
        app.testPOST();
+       Gui gui = new Gui();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
