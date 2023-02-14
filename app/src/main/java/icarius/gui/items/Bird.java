@@ -2,7 +2,7 @@ package icarius.gui.items;
 
 public class Bird {
     private  String name;
-    //The image variables store links to the image stored in the server
+    //The image, sound and video variables store links to the image/sound/video stored in the server
     private String heroImage;
     private String listImage;
     private String sound;
@@ -13,13 +13,52 @@ public class Bird {
     private String diet;
     private String dietImage;
 
+    //Temporary, this is being used to test adding birds to the campus tree in the bird tab
     public Bird(String Name){
         super();
         name = Name;
         //TODO add in other variables once they're set up
     }
 
-    protected String getName(){
+
+
+    public String getName(){
         return name;
+    }
+
+    public String getHeroImage() {
+        return heroImage;
+    }
+
+    public String getListImage() {
+        return listImage;
+    }
+
+    public String getSound(){
+        return sound;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getLocationImage() {
+        return locationImage;
+    }
+
+    public String getDiet() {
+        return diet;
+    }
+
+    public String getDietImage() {
+        return dietImage;
     }
 }

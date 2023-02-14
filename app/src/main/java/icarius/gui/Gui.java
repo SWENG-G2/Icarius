@@ -3,7 +3,6 @@ package icarius.gui;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 
-import icarius.gui.frames.MainFrame;
 import icarius.gui.items.campus;
 import icarius.gui.tabs.BirdTab;
 import icarius.gui.tabs.CampusTab;
@@ -68,6 +67,7 @@ public class Gui {
     public Gui(){
         super();
         this.setupFlatLaf();
+        this.updateCampuses(); //TODO - Alan - see the function itself for info on what to do
         this.setupMainFrame();
         this.setupLoginFrame();
     }
@@ -104,7 +104,7 @@ public class Gui {
         logOutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 LoginTab.reset();
-                //TODO remove key tab
+                //TODO - Harry - remove key tab when you set it up
                 loginFrame.setVisible(true);
                 mainFrame.setVisible(false);
             }
@@ -116,6 +116,7 @@ public class Gui {
         campusTab.updateTable(campuses);
 
         this.configureCampusButtons();
+        this.updateCampuses();
         this.configureBirdButtons();
 
         tabbedPane.addTab(campusTab.returnName(), null, campusTab.returnPanel());
@@ -174,7 +175,7 @@ public class Gui {
 
                 // TODO - Alan - add to the server database itself
 
-                // TODO - add this into the new version of the program
+                // TODO - Harry - add this into the new version of the program
                 // addCampusTree(nextID);
 
                 campus newCampus = new campus(campusFieldValue, nextID);
@@ -184,7 +185,7 @@ public class Gui {
 
                 nextID = nextID + 1;
                 // TODO - Alan - add the added campus to the server, make sure you sort of the
-                // nextID variable first (see elsewhere)
+                // updateCampuses function
 
             }
         });
@@ -202,7 +203,7 @@ public class Gui {
                     int index = Arrays.binarySearch(storedIDs, ID);
                     if (index >= 0) {
                         campus[] copyCampuses = {};
-                        // removeCampusTrees(); //TODO - update when you update this
+                        // removeCampusTrees(); //TODO - Harry  -update when you add trees to new version
                         // This copys all of the values of the storedIDs array except for the one
                         // remove
                         for (campus i : campuses) {
@@ -213,7 +214,7 @@ public class Gui {
                             }
                         };
 
-                        // TODO when you update trees
+                        // TODO - Harry - when you get the tree in the new version update this to fit
                         /*
                          * JTree[] copyTrees = {};
                          * for (JTree i: campusTrees){
@@ -242,7 +243,20 @@ public class Gui {
     }
 
     private void configureBirdButtons(){
+        //TODO - Harry - set this up
+    }
 
+    private void updateCampuses(){
+        //TODO - Alan - this should pull the campuses stored in the server and put them in the campuses
+        //array. You probabaly want to do this by creating a new instance of the gui campus type
+        //for each and then adding it to the array in a for loop or something. You'll also want to import
+        //ducks, these are stored in the campus class, but aren't fully finished yet - see below.
+        
+        //You also need to make sure the nextID variable is up to date with what it should be
+
+        //IMPORTANT - the birds class isn't fully set up yet, meaning the initializer only sets up
+        //the birds name, however I'm going to be working on changing this soonish. Or you could make one
+        //quickly if you need to, all the variables are already made anyway
     }
 
 }
