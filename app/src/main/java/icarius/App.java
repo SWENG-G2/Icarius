@@ -8,21 +8,29 @@ import java.util.HashMap;
 
 import icarius.controllers.BirdController;
 import icarius.controllers.KeyController;
+import icarius.entities.Bird;
+import icarius.entities.ServerEntity;
 
 public class App {
     public static final String BASE_URL = "http://localhost:8080";
     public User user;
 
     public App() {
-        user = new User("a");
+        user = new User("sysadmin");
     }
 
     public static void main(String[] args) {
-       App app = new App();
-       app.testPOST();
+        App app = new App();
+        app.testGetBird();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
+
+    private void testGetBird() {
+        Long Id = 2L;
+        Bird bird = new Bird(Id, "Daphne", user);
+        System.out.println(bird.toString());
+    }
 
     private void testPOSTBirds() {
         user.setCampusId(5);
@@ -55,20 +63,20 @@ public class App {
     }
 
     private void testGET() {
-        GetRequest test = new GetRequest("/api/campus/all");
-        System.out.println( test.send() );
+        GetRequest test = new GetRequest("/bird/2");
+        System.out.println(test.send());
     }
 
     private void testPOST() {
         PostRequest test = new PostRequest("/api/campus/new", user);
         test.addParameter("name", "user test");
-        System.out.println( test.send() );
+        System.out.println(test.send());
     }
 
     private void testFileUpload() {
         PostRequest test = new PostRequest("/api/file/1/new", user);
         test.addFile("app/src/main/resources/test.jpg", "image");
-        System.out.println( test.send() );
+        System.out.println(test.send());
     }
 
     private void testKeyGen() {

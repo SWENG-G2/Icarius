@@ -16,7 +16,7 @@ public abstract class ServerRequest {
     private final String url;
     protected final User user;
     private HashMap<String, String> params = new HashMap<String, String>();
-    
+
     // Client
     private static OkHttpClient client = new OkHttpClient();
 
