@@ -12,7 +12,6 @@ public class GetRequest extends ServerRequest {
         Request request = new Request.Builder()
                 .url(getUrl())
                 .build();
-
         return execute(request);
     }
 }

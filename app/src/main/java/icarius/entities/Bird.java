@@ -49,8 +49,11 @@ public class Bird extends ServerEntity {
         return create("/api/birds/" + user.getCampusIdString() + "/new", user);
     }
 
-    @Override
+    @Override 
     public String read() {
+        String slideTitle;
+        String nodeTitle;
+        String urlType;
         GetRequest request = new GetRequest("/bird/" + Id);
         String response = request.send();
         List birdInformationValues = new ArrayList(); // stores values read from XML
@@ -65,19 +68,58 @@ public class Bird extends ServerEntity {
                 // iterate through child elements of presentation with element name "slide"
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
+                    slideTitle = slide.attributeValue("title");
                     // iterate through child elements of each slide
                     for (Iterator<Element> it2 = slide.elementIterator(); it2.hasNext();) {
                         Element node = it2.next();
                         // picks out the text from 'text' nodes
                         if (node.getName().equals("text")) {
-                            birdInformationValues.add(node.getData());
+                            switch(slideTitle){
+                                case "heroSlide":  
+                                    this.name = node.getData().toString();
+                                    break;
+                                case "About me":  
+                                    this.aboutMe = node.getData().toString();
+                                    break;
+                                case "Diet":  
+                                    this.diet = node.getData().toString();
+                                    break;
+                                case "Location": 
+                                    this.location = node.getData().toString();
+                                    break;
+                                default:
+                                    System.out.println("xml problem");
+                                    break;
+                            }
                         }
                         // iterate through attributes of each node
                         for (Iterator<Attribute> it3 = node.attributeIterator(); it3.hasNext();) {
                             Attribute attribute = it3.next();
                             // picks out the url's from relevant nodes
+                            nodeTitle = node.getName();                            
                             if (attribute.getName().equals("url")) {
-                                birdInformationValues.add(attribute.getData());
+                                switch(slideTitle){
+                                    case "heroSlide":  
+                                        if (nodeTitle.equals("audio")){
+                                            this.soundURL = attribute.getData().toString();
+                                        }
+                                        else if(nodeTitle.equals("image")) {
+                                            this.heroImageURL = attribute.getData().toString();
+                                        }
+                                        break;
+                                    case "About me":  
+                                        this.aboutMeVideoURL = attribute.getData().toString();
+                                        break;
+                                    case "Diet":  
+                                        this.dietImageURL = attribute.getData().toString();
+                                        break;
+                                    case "Location": 
+                                        this.locationImageURL = attribute.getData().toString();
+                                        break;
+                                    default:
+                                        System.out.println("xml problem");
+                                        break;
+                                }
                             }
                         }
                     }
@@ -85,17 +127,6 @@ public class Bird extends ServerEntity {
             } catch (DocumentException e) {
                 e.printStackTrace();
             }
-
-            // adds all elements to the object
-            this.name = birdInformationValues.get(0).toString();
-            this.soundURL = birdInformationValues.get(1).toString();
-            this.heroImageURL = birdInformationValues.get(2).toString();
-            this.aboutMeVideoURL = birdInformationValues.get(3).toString();
-            this.aboutMe = birdInformationValues.get(4).toString();
-            this.dietImageURL = birdInformationValues.get(5).toString();
-            this.diet = birdInformationValues.get(6).toString();
-            this.locationImageURL = birdInformationValues.get(7).toString();
-            this.location = birdInformationValues.get(8).toString();
             
             return this.name;
         }
