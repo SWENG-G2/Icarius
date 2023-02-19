@@ -1,6 +1,8 @@
 package icarius.gui.items;
+import javax.swing.tree.DefaultMutableTreeNode;
 
-public class Bird {
+
+public class TempBird {
     private  String name;
     //The image, sound and video variables store links to the image/sound/video stored in the server
     private String heroImage;
@@ -12,12 +14,24 @@ public class Bird {
     private String locationImage;
     private String diet;
     private String dietImage;
+    private TempCampus campus;
+
+    private DefaultMutableTreeNode node;
 
     //Temporary, this is being used to test adding birds to the campus tree in the bird tab
-    public Bird(String Name){
+    public TempBird(String Name){
         super();
         name = Name;
+
+        node = new DefaultMutableTreeNode(name);
+    
         //TODO add in other variables once they're set up
+    }
+
+    public void addCampus(TempCampus newCampus){
+        DefaultMutableTreeNode root = newCampus.getRoot();
+        root.add(node);
+        campus = newCampus;
     }
 
 

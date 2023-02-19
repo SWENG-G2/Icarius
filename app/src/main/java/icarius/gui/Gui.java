@@ -2,8 +2,9 @@ package icarius.gui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
-
-import icarius.gui.items.campus;
+import icarius.gui.items.TempCampus;
+import icarius.gui.items.TempBird;
+import icarius.entities.*;
 import icarius.gui.tabs.BirdTab;
 import icarius.gui.tabs.CampusTab;
 import icarius.gui.tabs.loginTab;
@@ -47,7 +48,8 @@ import java.awt.Color;
 import java.awt.Component;
 
 public class Gui {
-    private campus[] campuses={};
+    private TempCampus[] campuses={};
+    private TempBird[] birds={};
     private JFrame mainFrame;
     private int nextID=0;
 
@@ -67,7 +69,6 @@ public class Gui {
     public Gui(){
         super();
         this.setupFlatLaf();
-        this.updateCampuses(); //TODO - Alan - see the function itself for info on what to do
         this.setupMainFrame();
         this.setupLoginFrame();
     }
@@ -116,7 +117,6 @@ public class Gui {
         campusTab.updateTable(campuses);
 
         this.configureCampusButtons();
-        this.updateCampuses();
         this.configureBirdButtons();
 
         tabbedPane.addTab(campusTab.returnName(), null, campusTab.returnPanel());
@@ -147,13 +147,18 @@ public class Gui {
 
                 String usernameEntered = LoginTab.usernameField.getText();
                 String keyEntered = LoginTab.getKey();
+
                 // TODO - Alan - connect this to the stored usernames and IDs in the server
                 // IMPORTANT - sysadmin logins and regular admin logins need to be seperated
-                // as the key panel of icarus is only added to the main frame
-                // if a sysadmin logs in
+                // as the key panel of icarus is only added to the main frame if sysadmin logs in
+                
+                // I'll add the key tab at some point in week 7 but for now just make it so that the login
+                // works with the actual login stuff saved
+
                 if (usernameEntered.equals("sysadmin") && keyEntered.equals("pass")) {
                     loginFrame.setVisible(false);
                     //tabbedPane.addTab("Key", null, keyPanel);
+                    //TODO - Harry - sort out the key tab
                     mainFrame.validate();
                     mainFrame.setVisible(true);
                 } else if (usernameEntered.equals("admin") && keyEntered.equals("pass")) {
@@ -171,21 +176,16 @@ public class Gui {
         campusTab.createCampusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String campusFieldValue = campusTab.campusText();
-                campusTab.setResponse(campusFieldValue + " added to campus list with ID: " + Integer.toString(nextID));
 
-                // TODO - Alan - add to the server database itself
+                //TODO - Harry - When actual campus class is being used figure out what to change here
+                TempCampus newCampus = new TempCampus(campusFieldValue, nextID);
 
-                // TODO - Harry - add this into the new version of the program
-                // addCampusTree(nextID);
-
-                campus newCampus = new campus(campusFieldValue, nextID);
                 campuses=Arrays.copyOf(campuses, campuses.length+1);
                 campuses[campuses.length-1]=newCampus;
                 campusTab.updateTable(campuses);
-
+                birdTab.updateBirdTrees(campuses);
                 nextID = nextID + 1;
-                // TODO - Alan - add the added campus to the server, make sure you sort of the
-                // updateCampuses function
+                campusTab.setResponse(campusFieldValue + " added to campus list with ID: " + Integer.toString(nextID));
 
             }
         });
@@ -196,40 +196,24 @@ public class Gui {
                 try {
                     int ID = Integer.parseInt(campusFieldValue);
                     int[] storedIDs = {};
-                    for (campus i : campuses){
+                    for (TempCampus i : campuses){
                         storedIDs=Arrays.copyOf(storedIDs, storedIDs.length+1);
                         storedIDs[storedIDs.length-1]=i.getID();
                     }
                     int index = Arrays.binarySearch(storedIDs, ID);
                     if (index >= 0) {
-                        campus[] copyCampuses = {};
-                        // removeCampusTrees(); //TODO - Harry  -update when you add trees to new version
-                        // This copys all of the values of the storedIDs array except for the one
-                        // remove
-                        for (campus i : campuses) {
+                        TempCampus[] copyCampuses = {};
+            
+                        for (TempCampus i : campuses) {
                             if (i.getID() != ID) {
                                 copyCampuses=Arrays.copyOf(copyCampuses, copyCampuses.length +1);
                                 copyCampuses[copyCampuses.length-1]=i;
-                                // addCampusTree(i); //TODO - update when you update this
                             }
                         };
 
-                        // TODO - Harry - when you get the tree in the new version update this to fit
-                        /*
-                         * JTree[] copyTrees = {};
-                         * for (JTree i: campusTrees){
-                         * if (Arrays.asList(campusTrees).indexOf(i) != index){
-                         * copyTrees= Arrays.copyOf(copyTrees, copyTrees.length + 1);
-                         * copyTrees[copyTrees.length-1]=i;
-                         * }
-                         * };
-                         */
                         campuses=copyCampuses;
                         campusTab.updateTable(campuses);
-                        // campusTrees = copyTrees; //TODO
-
-                        // TODO - Alan - remove the campus from the database from the server
-                        // nothing else in here needs to be changed I think
+                        birdTab.updateBirdTrees(campuses);
 
                         campusTab.setResponse("Campus ID: " + campusFieldValue + " has been successfully removed.");
                     } else {
@@ -243,20 +227,37 @@ public class Gui {
     }
 
     private void configureBirdButtons(){
-        //TODO - Harry - set this up
-    }
+        birdTab.addBirdButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent ae){
+                String campusFieldValue = birdTab.campusFieldText();
+                try{
+                    int ID = Integer.parseInt(campusFieldValue);
+                    TempCampus campus = null;
+                    for (TempCampus c : campuses){
+                        if (c.getID() == ID){
+                            campus = c;
+                        }
+                    }
+                    if(campus != null){
+                        //create bird
+                        birdTab.setResponse("the test is campus " + campus.getName() +" at id "+ campus.getID());
+                        birds = Arrays.copyOf(birds, birds.length + 1);
+                        TempBird bird = new TempBird(birdTab.nameFieldText());
+                        bird.addCampus(campus);
+                        birds[birds.length-1]= bird;
 
-    private void updateCampuses(){
-        //TODO - Alan - this should pull the campuses stored in the server and put them in the campuses
-        //array. You probabaly want to do this by creating a new instance of the gui campus type
-        //for each and then adding it to the array in a for loop or something. You'll also want to import
-        //ducks, these are stored in the campus class, but aren't fully finished yet - see below.
-        
-        //You also need to make sure the nextID variable is up to date with what it should be
+                        birdTab.updateBirdTrees(campuses);
 
-        //IMPORTANT - the birds class isn't fully set up yet, meaning the initializer only sets up
-        //the birds name, however I'm going to be working on changing this soonish. Or you could make one
-        //quickly if you need to, all the variables are already made anyway
+                        birdTab.setResponse("Bird: "+birdTab.nameFieldText()+" added to campus: "+campusFieldValue);
+
+                    } else{
+                        birdTab.setResponse("Campus with ID "+campusFieldValue+" does not exist");
+                    }
+                } catch (NumberFormatException e){
+                    birdTab.setResponse("Campus must be an integer value");
+                } 
+            }
+         });
     }
 
 }

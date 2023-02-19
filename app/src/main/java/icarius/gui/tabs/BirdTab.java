@@ -2,6 +2,8 @@ package icarius.gui.tabs;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
+import icarius.gui.items.TempCampus;
+
 //import ch.qos.logback.classic.db.names.ColumnName;
 
 import java.awt.event.ActionEvent;
@@ -40,11 +42,10 @@ import java.awt.Color;
 import java.awt.Component;
 
 public class BirdTab extends Tab{
-    private JTextField birdNameField;
-    private JTextField birdCampusField;
+    private JTextField nameField;
+    private JTextField campusField;
     public JButton addBirdButton;
-    private JLabel birdResponse;
-    private JTree[] campusTrees = {};
+    private JLabel response;
     private JScrollPane scrollPane;
     private JPanel treeView;
     private GridBagConstraints cT;
@@ -71,19 +72,19 @@ public class BirdTab extends Tab{
                 panel.add(new JLabel("Response:"), c);
         
                 //adding any buttons, labels, or text fields which need variables for later
-                birdNameField = new JTextField("");
+                nameField = new JTextField("");
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.weightx = 0.5;
                 c.gridx = 1;
                 c.gridy = 0;
-                panel.add(birdNameField, c);
+                panel.add(nameField, c);
         
-                birdCampusField = new JTextField("");
+                campusField = new JTextField("");
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.weightx = 0.6;
                 c.gridx = 1;
                 c.gridy = 1;
-                panel.add(birdCampusField, c);
+                panel.add(campusField, c);
         
                 addBirdButton = new JButton("Add Bird");
                 c.fill = GridBagConstraints.HORIZONTAL;
@@ -92,12 +93,12 @@ public class BirdTab extends Tab{
                 c.gridy = 2;
                 panel.add(addBirdButton, c);
         
-                birdResponse = new JLabel("");
+                response = new JLabel("");
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.weightx = 0.5;
                 c.gridx = 1;
                 c.gridy = 3;
-                panel.add(birdResponse, c);
+                panel.add(response, c);
         
                 //TODO - Harry - add the rest of the buttons from the odysseus version of this and get them working
                 
@@ -117,48 +118,44 @@ public class BirdTab extends Tab{
                 cT.fill = GridBagConstraints.HORIZONTAL;
                 cT.weightx = 0.5;
                 cT.gridx = 0;
-                //cT.gridy = 0;
                 cT.gridwidth = 1;
                 cT.gridheight = 1;
                 for(int i=0;i<15;i++){
                     cT.gridy = i;
                     treeView.add(new JLabel(" "), cT);
-                }
+                }                 
+    }
 
-                /* 
-                addBirdButton.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent ae){
-                        String campusFieldValue = birdCampusField.getText();
-                        try{
-                            int ID = Integer.parseInt(campusFieldValue);
-                            
-                            int index = Arrays.binarySearch(storedIDs, ID);
-                            if(index >= 0){
-                                JTree tree = campusTrees[index];
-                                DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
-                                DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
-                                DefaultMutableTreeNode bird = new DefaultMutableTreeNode(birdNameField.getText());
-                                root.add(bird);
-        
-                                model.reload(root);
-                                birdResponse.setText("Bird: "+birdNameField.getText()+" added to campus: "+campusFieldValue);
-        
-                                
-                                //TODO - Alan - You probably want to sort out the todo's that come after this first
-                                //              as I haven't finished this yet. Uploading the picture and sound and 
-                                //              whatever else will likely also be in this function, but I haven't
-                                //              done any work on that yet.
-                                //Connect this to the actual server
-                            } else{
-                                birdResponse.setText("Campus with ID "+campusFieldValue+" does not exist");
-                            }
-                        } catch (NumberFormatException e){
-                            birdResponse.setText("Campus must be an integer value");
-                        } 
-                    }
-                 });
-                */
-                 
+    public void updateBirdTrees(TempCampus[] campuses){
+        //TODO - Harry - figure out a way to set the size of the scroll pane for this tab
+        Component[] components = treeView.getComponents();
+        for (Component c : components){
+            treeView.remove(c);
+        }
+        int i = 0;
+        for (TempCampus c : campuses){
+            cT.weightx = 0.5;
+            cT.gridx = 0;
+            cT.gridy = i;
+            cT.gridwidth = 3;
+            treeView.add(c.getTree(), cT);
+            i=i+1;
+        }
+        treeView.repaint();
+        panel.repaint();
+        panel.revalidate();
+    }
+
+    public void setResponse(String text){
+        response.setText(text);
+    }
+
+    public String nameFieldText(){
+        return nameField.getText();
+    }
+
+    public String campusFieldText(){
+        return campusField.getText();
     }
 
 }

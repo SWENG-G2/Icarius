@@ -1,12 +1,14 @@
 package icarius.gui.tabs;
 
-import icarius.gui.items.campus;
+//import icarius.entities.Campus;
+import icarius.gui.items.TempCampus;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+
 
 import java.awt.GridBagConstraints;
 
@@ -129,10 +131,10 @@ public class CampusTab extends Tab{
     }
 
 
-    public void updateTable(campus[] campuses){
+    public void updateTable(TempCampus[] campuses){
 
         tableModel.setRowCount(0);
-        for (campus i : campuses){
+        for (TempCampus i : campuses){
             String[] row = {i.getName(), Integer.toString(i.getID())};
             tableModel.addRow(row);
         }
