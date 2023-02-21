@@ -1,5 +1,10 @@
 package icarius.gui.items;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.JTree;
+
+
+
 
 
 public class TempBird {
@@ -22,15 +27,17 @@ public class TempBird {
     public TempBird(String Name){
         super();
         name = Name;
-
         node = new DefaultMutableTreeNode(name);
     
         //TODO add in other variables once they're set up
     }
 
     public void addCampus(TempCampus newCampus){
-        DefaultMutableTreeNode root = newCampus.getRoot();
-        root.add(node);
+        JTree tree = newCampus.getTree();
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+        model.insertNodeInto(node, root, 0);
+
         campus = newCampus;
     }
 

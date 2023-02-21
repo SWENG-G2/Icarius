@@ -126,6 +126,10 @@ public class CampusTab extends Tab{
         return campusNameField.getText();
     }
 
+    public void setCampusText(String text){
+        campusNameField.setText(text);
+    }
+
     public String campusID(){
         return campusIDField.getText();
     }

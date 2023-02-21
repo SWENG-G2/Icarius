@@ -85,6 +85,10 @@ public class Gui {
         UIManager.put("Component.innerFocusWidth", 0);
         UIManager.put("Button.innerFocusWidth", 0);
         UIManager.put("Component.arrowType", "chevron");
+        UIManager.put("Tree.showsRootHandles", true);
+        UIManager.put("Tree.wideSelection",false);
+        UIManager.put("Tree.paintLines", true);
+        //TODO - Harry - get rid of the grey background of the trees
     }
 
     private void setupMainFrame(){
@@ -151,7 +155,7 @@ public class Gui {
                 // TODO - Alan - connect this to the stored usernames and IDs in the server
                 // IMPORTANT - sysadmin logins and regular admin logins need to be seperated
                 // as the key panel of icarus is only added to the main frame if sysadmin logs in
-                
+
                 // I'll add the key tab at some point in week 7 but for now just make it so that the login
                 // works with the actual login stuff saved
 
@@ -177,16 +181,20 @@ public class Gui {
             public void actionPerformed(ActionEvent ae) {
                 String campusFieldValue = campusTab.campusText();
 
-                //TODO - Harry - When actual campus class is being used figure out what to change here
-                TempCampus newCampus = new TempCampus(campusFieldValue, nextID);
+                if (campusFieldValue.isBlank() == false){
+                    //TODO - Harry - When actual campus class is being used figure out what to change here
+                    TempCampus newCampus = new TempCampus(campusFieldValue, nextID);
 
-                campuses=Arrays.copyOf(campuses, campuses.length+1);
-                campuses[campuses.length-1]=newCampus;
-                campusTab.updateTable(campuses);
-                birdTab.updateBirdTrees(campuses);
-                nextID = nextID + 1;
-                campusTab.setResponse(campusFieldValue + " added to campus list with ID: " + Integer.toString(nextID));
-
+                    campuses=Arrays.copyOf(campuses, campuses.length+1);
+                    campuses[campuses.length-1]=newCampus;
+                    campusTab.updateTable(campuses);
+                    birdTab.updateBirdTrees(campuses);
+                    nextID = nextID + 1;
+                    campusTab.setResponse(campusFieldValue + " added to campus list with ID: " + Integer.toString(nextID));
+                } else{
+                    campusTab.setResponse("Campus Name field cannot be left blank");
+                    campusTab.setCampusText("");
+                }
             }
         });
         
@@ -230,32 +238,36 @@ public class Gui {
         birdTab.addBirdButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae){
                 String campusFieldValue = birdTab.campusFieldText();
-                try{
-                    int ID = Integer.parseInt(campusFieldValue);
-                    TempCampus campus = null;
-                    for (TempCampus c : campuses){
-                        if (c.getID() == ID){
-                            campus = c;
+                if (campusFieldValue.isBlank()==false && birdTab.nameFieldText().isBlank() ==false){
+                    try{
+                        int ID = Integer.parseInt(campusFieldValue);
+                        TempCampus campus = null;
+                        for (TempCampus c : campuses){
+                            if (c.getID() == ID){
+                                campus = c;
+                            }
                         }
-                    }
-                    if(campus != null){
-                        //create bird
-                        birdTab.setResponse("the test is campus " + campus.getName() +" at id "+ campus.getID());
-                        birds = Arrays.copyOf(birds, birds.length + 1);
-                        TempBird bird = new TempBird(birdTab.nameFieldText());
-                        bird.addCampus(campus);
-                        birds[birds.length-1]= bird;
+                        if(campus != null){
+                            //create bird
+                            birdTab.setResponse("the test is campus " + campus.getName() +" at id "+ campus.getID());
+                            birds = Arrays.copyOf(birds, birds.length + 1);
+                            TempBird bird = new TempBird(birdTab.nameFieldText());
+                            bird.addCampus(campus);
+                            birds[birds.length-1]= bird;
 
-                        birdTab.updateBirdTrees(campuses);
+                            birdTab.updateBirdTrees(campuses);
 
-                        birdTab.setResponse("Bird: "+birdTab.nameFieldText()+" added to campus: "+campusFieldValue);
+                            birdTab.setResponse("Bird: "+birdTab.nameFieldText()+" added to campus: "+campusFieldValue);
 
-                    } else{
-                        birdTab.setResponse("Campus with ID "+campusFieldValue+" does not exist");
-                    }
-                } catch (NumberFormatException e){
-                    birdTab.setResponse("Campus must be an integer value");
-                } 
+                        } else{
+                            birdTab.setResponse("Campus with ID "+campusFieldValue+" does not exist");
+                        }
+                    } catch (NumberFormatException e){
+                        birdTab.setResponse("Campus must be an integer value");
+                    } 
+                }else{
+                    birdTab.setResponse("Please fill in the required fields");
+                }
             }
          });
     }
