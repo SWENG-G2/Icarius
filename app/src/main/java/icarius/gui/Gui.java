@@ -59,8 +59,8 @@ public class Gui {
     private loginTab LoginTab;
 
     private JTabbedPane tabbedPane;
-    private static final int MAIN_WINDOW_X_SIZE=400;
-    private static final int MAIN_WINDOW_Y_SIZE=400;
+    private static final int MAIN_WINDOW_X_SIZE=600;
+    private static final int MAIN_WINDOW_Y_SIZE=500;
 
     private CampusTab campusTab;
     private BirdTab birdTab;

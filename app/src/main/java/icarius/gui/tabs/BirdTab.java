@@ -51,11 +51,27 @@ public class BirdTab extends Tab{
     public JButton addBirdButton;
     private JLabel response;
     private JScrollPane scrollPane;
+
+    private JButton heroImageUp;
+    private JButton listImageUp;
+    private JButton soundUp;
+    private JTextField aboutField;
+    private JButton videoUp;
+    private JTextField locationField;
+    private JButton locationImageUp;
+    private JTextField dietField;
+    private JButton dietImageUp;
+    
     private JPanel treeView;
     private GridBagConstraints cT;
-    private JFrame popUp;
+    
+    private JFrame popUpFrame;
+    private JPanel popUpPanel;
     private DefaultTableModel tableModel;
     private JTable table;
+
+    private String[] rowNames={"Hero Image", "List Image", "Sound", "About", 
+                                "Video", "Location", "Location Image", "Diet", "Diet Image"};
 
     public BirdTab(){
         super();
@@ -63,19 +79,64 @@ public class BirdTab extends Tab{
 
         //adding labels which won't need to change later
         c.weightx = 0.2;
-        c.gridx = 2;
+        c.gridx = 3;
         c.gridy = 1;
         panel.add(new JLabel("Bird to Create:"), c);
         
                  
         c.weightx = 0.2;
-        c.gridx = 2;
+        c.gridx = 3;
         c.gridy = 2;
         panel.add(new JLabel("Campus ID:"), c);
+
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 3;
+        panel.add(new JLabel("Hero Image:"), c);
+
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 4;
+        panel.add(new JLabel("List Image:"), c);
+
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 5;
+        panel.add(new JLabel("Sound:"), c);
+
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 6;
+        panel.add(new JLabel("About:"), c);
         
         c.weightx = 0.2;
-        c.gridx = 0;
-        c.gridy = 5;
+        c.gridx = 3;
+        c.gridy = 7;
+        panel.add(new JLabel("Video:"), c);
+
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 8;
+        panel.add(new JLabel("Location:"), c);
+
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 9;
+        panel.add(new JLabel("Location Image:"), c);
+
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 10;
+        panel.add(new JLabel("Diet:"), c);
+
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 11;
+        panel.add(new JLabel("Diet Image:"), c);
+        
+        c.weightx = 0.2;
+        c.gridx = 3;
+        c.gridy = 13;
         panel.add(new JLabel("Response:"), c);
 
                
@@ -83,35 +144,96 @@ public class BirdTab extends Tab{
         //adding any buttons, labels, or text fields which need variables for later
 
         response = new JLabel("");
-        //c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.8;
-        c.gridx = 0;
-        c.gridy = 6;
+        c.gridx = 4;
+        c.gridy = 13;
         c.gridwidth = 3;
         panel.add(response, c);
 
         nameField = new JTextField("");
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 3;
+        c.weightx = 0.3;
+        c.gridx = 4;
         c.gridy = 1;
         panel.add(nameField, c);
         
         campusField = new JTextField("");
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.6;
-        c.gridx = 3;
+        c.weightx = 0.3;
+        c.gridx = 4;
         c.gridy = 2;
         panel.add(campusField, c);
         
+        heroImageUp = new JButton("Upload Hero Image");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 3;
+        panel.add(heroImageUp, c);
+
+        listImageUp = new JButton("Upload List Image");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 4;
+        panel.add(listImageUp, c);
+
+        soundUp = new JButton("Upload Sound");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 5;
+        panel.add(soundUp, c);
+
+        aboutField = new JTextField("");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 6;
+        panel.add(aboutField, c);
+
+        videoUp = new JButton("Upload Video");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 7;
+        panel.add(videoUp, c);
+
+        locationField = new JTextField("");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 8;
+        panel.add(locationField, c);
+
+        locationImageUp = new JButton("Upload Location Image");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 9;
+        panel.add(locationImageUp, c);
+
+        dietField = new JTextField("");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 10;
+        panel.add(dietField, c);
+
+        dietImageUp = new JButton("Upload Diet Image");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 11;
+        panel.add(dietImageUp, c);
+
         addBirdButton = new JButton("Add Bird");
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
+        c.weightx = 0.3;
         c.gridx = 3;
-        c.gridy = 3;
+        c.gridy = 12;
         panel.add(addBirdButton, c);
-        
-                
         
         //TODO - Harry - add the rest of the buttons from the odysseus version of this and get them working
                 
@@ -121,11 +243,11 @@ public class BirdTab extends Tab{
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.9;
+        c.weightx = 1;
         c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 2;
-        c.gridheight = 4;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        c.gridheight = 13;
         panel.add(scrollPane, c);
 
         cT.fill = GridBagConstraints.HORIZONTAL;
@@ -136,7 +258,10 @@ public class BirdTab extends Tab{
 
         scrollPane.setPreferredSize(new DimensionUIResource(75, 200));
                 
-        popUp=new JFrame();
+        popUpFrame = new JFrame();
+        popUpPanel = new JPanel();
+        //popUpPanel.setLayout(new GridBagLayout());
+        popUpFrame.add(popUpPanel);
 
         tableModel = new DefaultTableModel(){
             @Override
@@ -147,16 +272,27 @@ public class BirdTab extends Tab{
             }
         };
         table = new JTable(tableModel);
-        tableModel.addColumn("Item");
-        tableModel.addColumn("Value");
+        
         table.setShowGrid(true);
+        tableModel.addColumn("Item");
+        tableModel.addColumn("Description");
+    
+        String[] firstRow = {"Item", "Description"};
+        tableModel.addRow(firstRow);
 
-        for(int i=0; i<4; i++){
-            String[] blankRow = {"",""};
+        for(String s : rowNames){
+            String[] blankRow = {s,""};
             tableModel.addRow(blankRow);
         }
-        popUp.add(table);
-                               
+
+        c.weightx=0.5;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        
+        popUpPanel.add(table);
+        popUpPanel.repaint();                       
     }
 
     public void updateBirdTrees(TempCampus[] campuses){
@@ -181,12 +317,13 @@ public class BirdTab extends Tab{
                     tree.setSelectionPath(selPath);
                     if (selRow > -1){    
                         if (selRow == 1){
-                            popUp.setVisible(false);
+                            popUpFrame.setVisible(false);
                             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selPath.getLastPathComponent();
                             String nodeName = selectedNode.toString();
-                            popUp.setTitle(nodeName);
-                            popUp.pack();
-                            popUp.setVisible(true);
+                            popUpFrame.setTitle(nodeName);
+                            popUpFrame.pack();
+                            popUpPanel.repaint();
+                            popUpFrame.setVisible(true);
                             //TODO - Harry - close popup if the campus the bird is stored in gets removed
                         }
                     }
