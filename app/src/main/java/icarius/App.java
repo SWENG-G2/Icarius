@@ -9,6 +9,7 @@ import java.util.HashMap;
 import icarius.controllers.BirdController;
 import icarius.controllers.KeyController;
 import icarius.entities.Bird;
+import icarius.entities.Campus;
 import icarius.entities.ServerEntity;
 
 public class App {
@@ -21,15 +22,22 @@ public class App {
 
     public static void main(String[] args) {
         App app = new App();
-        app.testGetBird();
+        // app.testGetBird();
+        app.testGetCampus();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
 
     private void testGetBird() {
-        Long Id = 2L;
-        Bird bird = new Bird(Id, "Daphne", user);
+        long bird_Id = 2;
+        Bird bird = new Bird(bird_Id);
         System.out.println(bird.toString());
+    }
+
+    private void testGetCampus() {
+        long campus_Id = 5;
+        Campus campus = new Campus(campus_Id);
+        System.out.println(campus.getBirds());
     }
 
     private void testPOSTBirds() {

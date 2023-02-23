@@ -1,12 +1,18 @@
 package icarius.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.Iterator;
+
+import org.dom4j.Node;
+
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.dom4j.Node;
+import org.dom4j.Element;
 
 import icarius.http.GetRequest;
 import icarius.http.DeleteRequest;
@@ -17,13 +23,15 @@ import java.util.HashMap;
 
 public class Campus extends ServerEntity {
 
+    public List<Bird> birds;
+
     // Create campus object from existing database entry
     public Campus(Long Id, String name) {
         super(Id);
     }
 
     // Create campus object and create new database entry
-    public Campus(String name, icarius.user.User user) {
+    public Campus(String name, User user) {
         super(name, user);
     }
 
@@ -38,23 +46,38 @@ public class Campus extends ServerEntity {
 
     @Override
     protected String read() {
+        this.birds = new ArrayList<>();
+        String birdId;
         // send and store GET request response
         GetRequest request = new GetRequest("/campus/" + Id);
         String response = request.send();
+        
+        // System.out.println(response);
 
         if (response == null) {
             return null;
         } else {
             // Fetch name from XML response
             try {
-                Document document = DocumentHelper.parseText( response );
-                response = document.selectSingleNode("//*[name()='title']").getText();
+                Document document = DocumentHelper.parseText(response);
+                Element root = document.getRootElement();
+                // iterate through child elements of presentation with element name "slide"
+                for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
+                    Element slide = it.next();
+                    birdId = slide.attributeValue("title");
+                    Bird newBird = new Bird(Long.parseLong(birdId));
+                    this.birds.add(newBird);
+                }
             } catch (DocumentException e) {
                 e.printStackTrace();
             }
-    
+            
             return response;
         }
+    }
+
+    public List<Bird> getBirds(){
+        return this.birds;
     }
 
     @Override
