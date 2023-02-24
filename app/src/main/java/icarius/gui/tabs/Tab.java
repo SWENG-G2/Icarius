@@ -39,7 +39,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 
-public class Tab {
+//TODO - Harry - when key tab is finished put any code that repeats across the tab items here
+public abstract class Tab {
     
     protected JPanel panel;
     protected GridBagConstraints c; // c = constraints

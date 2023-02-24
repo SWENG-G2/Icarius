@@ -9,6 +9,7 @@ import java.awt.event.*;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -20,7 +21,6 @@ public class TempCampus {
     private int ID;
     private JTree tree;
     private DefaultMutableTreeNode root;
-    private MouseListener mL;
 
     public TempCampus(String Name, int id){
         super();
@@ -28,6 +28,9 @@ public class TempCampus {
         ID=id;
         root = new DefaultMutableTreeNode(name);
         tree = new JTree(root);
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+        model.insertNodeInto(new DefaultMutableTreeNode("+[Add Bird]"), root, 0);
     }
     
     public String getName(){

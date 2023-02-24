@@ -23,6 +23,9 @@ public class CampusTab extends Tab{
     private JTable table;
     private JScrollPane scrollPane;
 
+    //TODO - Harry - Rather than setting everything up as you are create an array of the objects
+    //(maybe see if JButton and JLabel etc can all be added into the same array?)
+
     public CampusTab(){
         this.tabName="Campus";
 
@@ -40,7 +43,7 @@ public class CampusTab extends Tab{
         c.weightx = 0.2;
         c.gridx = 0;
         c.gridy = 1;
-        panel.add(new JLabel("Campus ID:"), c);
+        panel.add(new JLabel("Campus ID:"), c); //TODO - change to a drop down menu, and to names instead of IDs
 
         //adding any buttons, labels, or text fields which need variables for later
 

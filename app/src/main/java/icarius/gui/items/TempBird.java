@@ -24,11 +24,11 @@ public class TempBird {
     private DefaultMutableTreeNode node;
 
     //Temporary, this is being used to test adding birds to the campus tree in the bird tab
-    public TempBird(String Name){
+    public TempBird(String Name, TempCampus Campus){
         super();
         name = Name;
         node = new DefaultMutableTreeNode(name);
-    
+        campus = Campus;
         //TODO add in other variables once they're set up
     }
 
@@ -41,7 +41,13 @@ public class TempBird {
         campus = newCampus;
     }
 
+    public TempCampus getCampus(){
+        return campus;
+    }
 
+    public int getCampusID(){
+        return campus.getID();
+    }
 
     public String getName(){
         return name;

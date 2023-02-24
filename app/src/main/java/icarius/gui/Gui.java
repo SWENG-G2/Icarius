@@ -7,6 +7,7 @@ import icarius.gui.items.TempBird;
 import icarius.entities.*;
 import icarius.gui.tabs.BirdTab;
 import icarius.gui.tabs.CampusTab;
+import icarius.gui.tabs.KeyTab;
 import icarius.gui.tabs.loginTab;
 import icarius.user.User;
 
@@ -64,6 +65,7 @@ public class Gui {
 
     private CampusTab campusTab;
     private BirdTab birdTab;
+    private KeyTab keyTab;
 
 
     public Gui(){
@@ -117,6 +119,7 @@ public class Gui {
 
         campusTab = new CampusTab();
         birdTab = new BirdTab();
+        keyTab = new KeyTab();
     
         campusTab.updateTable(campuses);
 
@@ -125,7 +128,10 @@ public class Gui {
 
         tabbedPane.addTab(campusTab.returnName(), null, campusTab.returnPanel());
         tabbedPane.addTab(birdTab.returnName(), null, birdTab.returnPanel());
-        mainFrame.setVisible(false);
+        tabbedPane.addTab(keyTab.returnName(), null, keyTab.returnPanel());
+        
+        //done for testing purposes, it wouldn't be visable until the user logs in
+        mainFrame.setVisible(true);
 
     }
 
@@ -142,7 +148,9 @@ public class Gui {
         loginFrame.add(LoginTab.returnPanel());
 
         loginFrame.validate();
-        loginFrame.setVisible(true);
+
+        //false for testing purposes, normally this would be true
+        loginFrame.setVisible(false);
     }
     
     private void configureLoginButton(){
@@ -161,7 +169,6 @@ public class Gui {
 
                 if (usernameEntered.equals("sysadmin") && keyEntered.equals("pass")) {
                     loginFrame.setVisible(false);
-                    //tabbedPane.addTab("Key", null, keyPanel);
                     //TODO - Harry - sort out the key tab
                     mainFrame.validate();
                     mainFrame.setVisible(true);
@@ -237,34 +244,40 @@ public class Gui {
     private void configureBirdButtons(){
         birdTab.addBirdButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae){
-                String campusFieldValue = birdTab.campusFieldText();
-                if (campusFieldValue.isBlank()==false && birdTab.nameFieldText().isBlank() ==false){
-                    try{
-                        int ID = Integer.parseInt(campusFieldValue);
+                String campusPressed = birdTab.getCampus();
+                if (birdTab.nameFieldText().isBlank() ==false){
+                        /* 
                         TempCampus campus = null;
                         for (TempCampus c : campuses){
                             if (c.getID() == ID){
                                 campus = c;
                             }
                         }
+                        */
+
+                        TempCampus campus = null;
+                        for (TempCampus c : campuses){
+                            if (c.getName()==campusPressed){
+                                campus = c;
+                            }
+                        }
+
                         if(campus != null){
                             //create bird
                             birdTab.setResponse("the test is campus " + campus.getName() +" at id "+ campus.getID());
                             birds = Arrays.copyOf(birds, birds.length + 1);
-                            TempBird bird = new TempBird(birdTab.nameFieldText());
+                            TempBird bird = new TempBird(birdTab.nameFieldText(),campus);
                             bird.addCampus(campus);
                             birds[birds.length-1]= bird;
 
                             birdTab.updateBirdTrees(campuses);
 
-                            birdTab.setResponse("Bird: "+birdTab.nameFieldText()+" added to campus: "+campusFieldValue);
+                            birdTab.setResponse("Bird: "+birdTab.nameFieldText()+" added to campus: "+campusPressed);
 
                         } else{
-                            birdTab.setResponse("Campus with ID "+campusFieldValue+" does not exist");
+                            birdTab.setResponse("Campus with ID "+campusPressed+" does not exist");
                         }
-                    } catch (NumberFormatException e){
-                        birdTab.setResponse("Campus must be an integer value");
-                    } 
+                    
                 }else{
                     birdTab.setResponse("Please fill in the required fields");
                 }

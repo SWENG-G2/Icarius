@@ -14,6 +14,7 @@ import java.awt.Dimension;
 
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,12 +47,14 @@ import java.awt.Color;
 import java.awt.Component;
 
 public class BirdTab extends Tab{
-    private JTextField nameField;
-    private JTextField campusField;
+    private JPanel subPanel1;
+    private JPanel subPanel2;
+
     public JButton addBirdButton;
     private JLabel response;
     private JScrollPane scrollPane;
 
+    private JTextField nameField;
     private JButton heroImageUp;
     private JButton listImageUp;
     private JButton soundUp;
@@ -61,7 +64,22 @@ public class BirdTab extends Tab{
     private JButton locationImageUp;
     private JTextField dietField;
     private JButton dietImageUp;
-    
+    private JComponent[] components = {};
+
+
+    private JLabel nameText;
+    private JLabel campusText;
+    private JLabel heroImageLink;
+    private JLabel listImageLink;
+    private JLabel soundLink;
+    private JLabel aboutText;
+    private JLabel videoLink;
+    private JLabel locationText;
+    private JLabel locationImageLink;
+    private JLabel dietText;
+    private JLabel dietImageLink;
+    private JLabel[] birdLabels = {};
+
     private JPanel treeView;
     private GridBagConstraints cT;
     
@@ -70,170 +88,114 @@ public class BirdTab extends Tab{
     private DefaultTableModel tableModel;
     private JTable table;
 
+    private String campus = "";
+
+    
     private String[] rowNames={"Hero Image", "List Image", "Sound", "About", 
                                 "Video", "Location", "Location Image", "Diet", "Diet Image"};
 
+    private String[] labelNames = {"Bird Name:", "Hero Image:", "List Image:",
+    "Sound:", "About:", "Video:", "Location:", "Location Image:", "Diet:", "Diet Image:"};
+  
     public BirdTab(){
         super();
         this.tabName="Bird";
 
+        subPanel1 = new JPanel();
+        subPanel2 = new JPanel();
+        subPanel1.setLayout(new GridBagLayout());
+        subPanel2.setLayout(new GridBagLayout());
+
+
+
         //adding labels which won't need to change later
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 1;
-        panel.add(new JLabel("Bird to Create:"), c);
         
-                 
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 2;
-        panel.add(new JLabel("Campus ID:"), c);
+
+        int i = 0;
+        for (String s: labelNames){
+            c.weightx = 0.2;
+            c.gridx = 3;
+            c.gridy = i;
+            panel.add(new JLabel(s), c);
+            i++;
+        }
 
         c.weightx = 0.2;
         c.gridx = 3;
-        c.gridy = 3;
-        panel.add(new JLabel("Hero Image:"), c);
-
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 4;
-        panel.add(new JLabel("List Image:"), c);
-
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 5;
-        panel.add(new JLabel("Sound:"), c);
-
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 6;
-        panel.add(new JLabel("About:"), c);
-        
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 7;
-        panel.add(new JLabel("Video:"), c);
-
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 8;
-        panel.add(new JLabel("Location:"), c);
-
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 9;
-        panel.add(new JLabel("Location Image:"), c);
-
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 10;
-        panel.add(new JLabel("Diet:"), c);
-
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 11;
-        panel.add(new JLabel("Diet Image:"), c);
-        
-        c.weightx = 0.2;
-        c.gridx = 3;
-        c.gridy = 13;
+        c.gridy = 14;
         panel.add(new JLabel("Response:"), c);
 
-               
+        //Initialises all of the JComponents
+        nameField = new JTextField("");
+        heroImageUp = new JButton("Upload Hero Image");  //TODO - nio not io for thing to search for files
+        listImageUp = new JButton("Upload List Image");
+        soundUp = new JButton("Upload Sound");
+        aboutField = new JTextField("");
+        videoUp = new JButton("Upload Video");
+        locationField = new JTextField("");
+        locationImageUp = new JButton("Upload Location Image");
+        dietField = new JTextField("");
+        dietImageUp = new JButton("Upload Diet Image");
+        addBirdButton = new JButton("Add Bird");
+
+
+        JComponent[] tempComponents={nameField, heroImageUp, listImageUp, soundUp, aboutField,
+            videoUp, locationField, locationImageUp, dietField, dietImageUp, addBirdButton};
+
+        components=Arrays.copyOf(tempComponents, tempComponents.length);
+
+
+        i=0;
+        for (JComponent component : components){
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.weightx = 0.3;
+            c.gridx = 4;
+            c.gridy = i;
+            panel.add(component, c);
+            component.setVisible(false);
+            i++;
+        }
+
+        nameText = new JLabel("");
+        campusText = new JLabel("");
+        heroImageLink = new JLabel("");
+        listImageLink = new JLabel("");
+        soundLink = new JLabel("");
+        aboutText = new JLabel("");
+        videoLink = new JLabel("");
+        locationText = new JLabel("");
+        locationImageLink = new JLabel("");
+        dietText = new JLabel("");
+        dietImageLink = new JLabel("");
+
+        JLabel[] tempLabels = {nameText, campusText, heroImageLink, listImageLink, soundLink,
+                            aboutText, videoLink, locationText, locationImageLink, dietText, dietImageLink};
         
-        //adding any buttons, labels, or text fields which need variables for later
+        birdLabels = Arrays.copyOf(tempLabels, tempLabels.length);
+
+        i=0;
+        for (JLabel label: birdLabels){
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.weightx = 0.3;
+            c.gridx = 4;
+            c.gridy = i;
+            panel.add(label, c);
+            label.setVisible(true);
+            i++;
+        }
+
 
         response = new JLabel("");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.8;
         c.gridx = 4;
-        c.gridy = 13;
+        c.gridy = 14;
         c.gridwidth = 3;
         panel.add(response, c);
 
-        nameField = new JTextField("");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 1;
-        panel.add(nameField, c);
+
         
-        campusField = new JTextField("");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 2;
-        panel.add(campusField, c);
-        
-        heroImageUp = new JButton("Upload Hero Image");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 3;
-        panel.add(heroImageUp, c);
 
-        listImageUp = new JButton("Upload List Image");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 4;
-        panel.add(listImageUp, c);
-
-        soundUp = new JButton("Upload Sound");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 5;
-        panel.add(soundUp, c);
-
-        aboutField = new JTextField("");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 6;
-        panel.add(aboutField, c);
-
-        videoUp = new JButton("Upload Video");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 7;
-        panel.add(videoUp, c);
-
-        locationField = new JTextField("");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 8;
-        panel.add(locationField, c);
-
-        locationImageUp = new JButton("Upload Location Image");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 9;
-        panel.add(locationImageUp, c);
-
-        dietField = new JTextField("");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 10;
-        panel.add(dietField, c);
-
-        dietImageUp = new JButton("Upload Diet Image");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 4;
-        c.gridy = 11;
-        panel.add(dietImageUp, c);
-
-        addBirdButton = new JButton("Add Bird");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.3;
-        c.gridx = 3;
-        c.gridy = 12;
-        panel.add(addBirdButton, c);
         
         //TODO - Harry - add the rest of the buttons from the odysseus version of this and get them working
                 
@@ -316,17 +278,22 @@ public class BirdTab extends Tab{
                     TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
                     tree.setSelectionPath(selPath);
                     if (selRow > -1){    
-                        if (selRow == 1){
+                        if (selRow >= 1){
                             popUpFrame.setVisible(false);
                             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selPath.getLastPathComponent();
                             String nodeName = selectedNode.toString();
-                            popUpFrame.setTitle(nodeName);
-                            popUpFrame.pack();
-                            popUpPanel.repaint();
-                            popUpFrame.setVisible(true);
+        
+                            DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)selPath.getPath()[0];
+                            campus=rootNode.toString();
+                            if(nodeName=="+[Add Bird]"){
+                                addBirdPressed(true);
+                            } else{
+                                nameText.setText(nodeName);
+                                addBirdPressed(false);
+                            }
                             //TODO - Harry - close popup if the campus the bird is stored in gets removed
                         }
-                    }
+                    } 
                 }
             };
             
@@ -346,8 +313,28 @@ public class BirdTab extends Tab{
         return nameField.getText();
     }
 
-    public String campusFieldText(){
-        return campusField.getText();
+    
+
+    private void addBirdPressed(boolean bool){
+        if (bool==true){
+            for(JComponent comp : components){
+                comp.setVisible(true);
+            }
+            for(JLabel label : birdLabels){
+                label.setVisible(false);
+            }
+        }else{
+            for(JComponent comp : components){
+                comp.setVisible(false);
+            }
+            for(JLabel label : birdLabels){
+                label.setVisible(true);
+            } 
+        }
+    }
+
+    public String getCampus(){
+        return campus;
     }
 
 }
