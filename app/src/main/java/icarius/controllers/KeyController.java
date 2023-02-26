@@ -2,7 +2,6 @@ package icarius.controllers;
 
 import icarius.http.DeleteRequest;
 import icarius.http.PostRequest;
-import icarius.services.KeyStorageService;
 import icarius.services.UtilService;
 import icarius.user.User;
 
@@ -19,7 +18,7 @@ public class KeyController {
         String identity = temp[0];
         String publicKey = UtilService.removeLastCharacter(temp[1]);
         
-        KeyStorageService.storeKey(identity, publicKey);
+        //KeyStorageService.storeKey(identity, publicKey);
 
         System.out.println("New key generated:"
                             + "\n\tIdentity:     " + identity
@@ -31,11 +30,11 @@ public class KeyController {
 
     public static void removeKey(String identity, User user) {
         // Remove key from local memory
-        if(KeyStorageService.removeKey(identity)) {
-            System.out.println("Icarius: Key " + identity + " deleted.");
-        } else {
-            System.out.println("Icarius: Key " + identity + " was not found...");
-        }
+        // if(KeyStorageService.removeKey(identity)) {
+        //     System.out.println("Icarius: Key " + identity + " deleted.");
+        // } else {
+        //     System.out.println("Icarius: Key " + identity + " was not found...");
+        // }
 
         // Request to remove key from server
         DeleteRequest request = new DeleteRequest("/api/apikeys/remove", user);

@@ -3,7 +3,7 @@ package icarius.http;
 import java.io.File;
 import java.util.List;
 
-import icarius.user.User;
+import icarius.auth.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,8 +41,7 @@ public class PostRequest extends ServerRequest{
         
         Request request = new Request.Builder()
         .url(getUrl())
-        .addHeader("IDENTITY", user.getIdentity())
-        .addHeader("KEY", user.getAuth())
+        .addHeader("CREDENTIALS", user.getAuth())
         .post(requestBody)
         .build();
 

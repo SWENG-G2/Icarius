@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import icarius.App;
-import icarius.user.User;
+import icarius.auth.User;
 import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
