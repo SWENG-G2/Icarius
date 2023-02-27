@@ -7,6 +7,8 @@ import icarius.auth.User;
 
 import java.util.HashMap;
 
+import icarius.gui.Gui;
+
 public class App {
     public static final String BASE_URL = "http://localhost:8080";
     public User user;
@@ -18,8 +20,7 @@ public class App {
 
     public static void main(String[] args) {
         App app = new App();
-
-        app.testPOST();
+        Gui gui = new Gui();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES

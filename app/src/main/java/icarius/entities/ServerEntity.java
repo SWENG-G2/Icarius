@@ -54,4 +54,13 @@ public abstract class ServerEntity {
         System.out.println( response );
         return response.contains("removed") ? true : false;
     }
+
+    public int getID(){
+        int integerID = Id.intValue();
+        return integerID;
+    }
+
+    public String getName(){
+        return name;
+    }
 }
