@@ -7,6 +7,8 @@ import icarius.auth.User;
 
 import java.util.HashMap;
 
+import icarius.entities.Bird;
+import icarius.entities.ServerEntity;
 import icarius.gui.Gui;
 
 public class App {
@@ -20,25 +22,31 @@ public class App {
 
     public static void main(String[] args) {
         App app = new App();
-        Gui gui = new Gui();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
 
-    // private void testPOSTBirds() {
-    //     HashMap<String, String> birdProperties = new HashMap<String, String>();
-    //     birdProperties.put("name", "Davey");
-    //     birdProperties.put("listImageURL", "anImageOfADuck.jpg");
-    //     birdProperties.put("heroImageURL", "aHeroImageOfADuck.jpg");
-    //     birdProperties.put("soundURL", "quack.mp3");
-    //     birdProperties.put("aboutMe", "Davey the Duck");
-    //     birdProperties.put("aboutMeVideoURL", "DaveysVideoCV.mp4");
-    //     birdProperties.put("location", "over there");
-    //     birdProperties.put("locationImageURL", "overThere.jpg");
-    //     birdProperties.put("diet", "Werms and Grapes");
-    //     birdProperties.put("dietImageURL", "Image of werms and grapes");
-    //     BirdController.newBird(birdProperties, user);
-    // }
+    private void testGetBird() {
+        Long Id = 2L;
+        Bird bird = new Bird(Id, "Daphne", user);
+        System.out.println(bird.toString());
+    }
+
+    private void testPOSTBirds() {
+        user.setCampusId(5);
+        HashMap<String, String> birdProperties = new HashMap<String, String>();
+        birdProperties.put("name", "Davey");
+        birdProperties.put("listImageURL", "anImageOfADuck.jpg");
+        birdProperties.put("heroImageURL", "aHeroImageOfADuck.jpg");
+        birdProperties.put("soundURL", "quack.mp3");
+        birdProperties.put("aboutMe", "Davey the Duck");
+        birdProperties.put("aboutMeVideoURL", "DaveysVideoCV.mp4");
+        birdProperties.put("location", "over there");
+        birdProperties.put("locationImageURL", "overThere.jpg");
+        birdProperties.put("diet", "Werms and Grapes");
+        birdProperties.put("dietImageURL", "Image of werms and grapes");
+        BirdController.newBird(birdProperties, user);
+    }
 
     // private void testDELETEBirds() {
     //     int birdId = 2;
@@ -53,19 +61,19 @@ public class App {
     // }
 
     private void testGET() {
-        GetRequest test = new GetRequest("/api/campus/all");
-        System.out.println( test.send() );
+        GetRequest test = new GetRequest("/bird/2");
+        System.out.println(test.send());
     }
 
     private void testPOST() {
         PostRequest test = new PostRequest("/api/campus/new", user);
         test.addParameter("name", "user test");
-        System.out.println( test.send() );
+        System.out.println(test.send());
     }
 
     private void testFileUpload() {
         PostRequest test = new PostRequest("/api/file/1/new", user);
         test.addFile("app/src/main/resources/test.jpg", "image");
-        System.out.println( test.send() );
+        System.out.println(test.send());
     }
 }
