@@ -13,7 +13,7 @@ public class DeleteRequest extends ServerRequest {
     public String send() {
         Request request = new Request.Builder()
         .url(getUrl())
-        .addHeader("CREDENTIALS", user.getAuth())
+        .addHeader("credentials", user.getAuth())
         .delete()
         .build();
 

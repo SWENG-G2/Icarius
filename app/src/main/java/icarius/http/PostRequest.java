@@ -41,7 +41,7 @@ public class PostRequest extends ServerRequest{
         
         Request request = new Request.Builder()
         .url(getUrl())
-        .addHeader("CREDENTIALS", user.getAuth())
+        .addHeader("credentials", user.getAuth())
         .post(requestBody)
         .build();
 

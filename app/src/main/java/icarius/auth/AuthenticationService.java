@@ -31,11 +31,13 @@ public class AuthenticationService {
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/London"));
 
             // load and generate RSA public key 
-            byte[] Base64publicKey = user.getKey();
+            byte[] Base64publicKey = user.getKey().getBytes(StandardCharsets.UTF_8);
             PublicKey publicKey = generatePublicKey(Base64publicKey);
 
             // format credentials string
-            String auth = user.getUser() + "=" + user.getPass() + "=" + now;
+            String username = user.getCredentials().getUsername();
+            String password = user.getCredentials().getUsername();
+            String auth = username + "=" + password + "=" + now;
 
             // Encrypt and return auth encoded to base64
             byte[] key = encrypt(publicKey, auth);

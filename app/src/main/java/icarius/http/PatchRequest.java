@@ -17,7 +17,7 @@ public class PatchRequest extends ServerRequest {
     
         Request request = new Request.Builder()
         .url(getUrl())
-        .addHeader("CREDENTIALS", user.getAuth())
+        .addHeader("credentials", user.getAuth())
         .patch(requestBody)
         .build();
 

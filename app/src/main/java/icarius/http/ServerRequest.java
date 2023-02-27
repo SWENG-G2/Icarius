@@ -18,7 +18,7 @@ public abstract class ServerRequest {
     private HashMap<String, String> params = new HashMap<String, String>();
     
     // Client
-    private static OkHttpClient client = new OkHttpClient();
+    protected static final OkHttpClient client = new OkHttpClient();
 
     public ServerRequest(String urlPath) {
         this.url = App.BASE_URL + urlPath;
@@ -49,7 +49,8 @@ public abstract class ServerRequest {
         Call call = client.newCall(request);
         try (Response response = call.execute()) {
             // read response (socket automatically closes after first read)
-            return response.body().string();
+            String body = response.body().string();
+            return body;
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;

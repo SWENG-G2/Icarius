@@ -2,6 +2,7 @@ package icarius;
 
 import icarius.http.GetRequest;
 import icarius.http.PostRequest;
+import icarius.auth.Credentials;
 import icarius.auth.User;
 
 import java.util.HashMap;
@@ -11,12 +12,14 @@ public class App {
     public User user;
 
     public App() {
-        user = new User("user", "pass");
+        Credentials credentials = new Credentials("sysadmin", "sysadmin");
+        user = new User(credentials);
     }
 
     public static void main(String[] args) {
-       App app = new App();
-       app.testPOST();
+        App app = new App();
+
+        app.testPOST();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
