@@ -45,9 +45,7 @@ public class TempBird {
         return campus;
     }
 
-    public int getCampusID(){
-        return campus.getID();
-    }
+
 
     public String getName(){
         return name;

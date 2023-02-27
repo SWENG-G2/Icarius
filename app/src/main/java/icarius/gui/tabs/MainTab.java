@@ -11,9 +11,9 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.awt.Dimension;
 
-
-
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -46,7 +46,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 
-public class BirdTab extends Tab{
+public class MainTab extends Tab{
     private JPanel subPanel1;
     private JPanel subPanel2;
 
@@ -54,6 +54,7 @@ public class BirdTab extends Tab{
     private JLabel response;
     private JScrollPane scrollPane;
 
+    private JTextField campusField;
     private JTextField nameField;
     private JButton heroImageUp;
     private JButton listImageUp;
@@ -66,9 +67,14 @@ public class BirdTab extends Tab{
     private JButton dietImageUp;
     private JComponent[] components = {};
 
+    public JButton addCampusButton;
+    public JButton removeCampusButton;
 
-    private JLabel nameText;
+    private String[] removeCampusText = {};
+    private JComboBox removeCampusBox;
+
     private JLabel campusText;
+    private JLabel nameText;
     private JLabel heroImageLink;
     private JLabel listImageLink;
     private JLabel soundLink;
@@ -83,23 +89,21 @@ public class BirdTab extends Tab{
     private JPanel treeView;
     private GridBagConstraints cT;
     
-    private JFrame popUpFrame;
-    private JPanel popUpPanel;
-    private DefaultTableModel tableModel;
-    private JTable table;
+
+
+    private DefaultMutableTreeNode addCampusRoot;
+    private JTree addCampusTree;
 
     private String campus = "";
 
-    
-    private String[] rowNames={"Hero Image", "List Image", "Sound", "About", 
-                                "Video", "Location", "Location Image", "Diet", "Diet Image"};
 
-    private String[] labelNames = {"Bird Name:", "Hero Image:", "List Image:",
+    private String[] labelNames = {"Campus Name:","Bird Name:", "Hero Image:", "List Image:",
     "Sound:", "About:", "Video:", "Location:", "Location Image:", "Diet:", "Diet Image:"};
   
-    public BirdTab(){
+
+    public MainTab(){
         super();
-        this.tabName="Bird";
+        this.tabName="Main";
 
         subPanel1 = new JPanel();
         subPanel2 = new JPanel();
@@ -126,6 +130,7 @@ public class BirdTab extends Tab{
         panel.add(new JLabel("Response:"), c);
 
         //Initialises all of the JComponents
+        campusField = new JTextField("");
         nameField = new JTextField("");
         heroImageUp = new JButton("Upload Hero Image");  //TODO - nio not io for thing to search for files
         listImageUp = new JButton("Upload List Image");
@@ -137,6 +142,7 @@ public class BirdTab extends Tab{
         dietField = new JTextField("");
         dietImageUp = new JButton("Upload Diet Image");
         addBirdButton = new JButton("Add Bird");
+        addCampusButton = new JButton("Add campus");
 
 
         JComponent[] tempComponents={nameField, heroImageUp, listImageUp, soundUp, aboutField,
@@ -144,20 +150,35 @@ public class BirdTab extends Tab{
 
         components=Arrays.copyOf(tempComponents, tempComponents.length);
 
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 0;
+        panel.add(campusField, c);
+        campusField.setVisible(true);
+        
 
         i=0;
         for (JComponent component : components){
+            i++;
             c.fill = GridBagConstraints.HORIZONTAL;
             c.weightx = 0.3;
             c.gridx = 4;
             c.gridy = i;
             panel.add(component, c);
             component.setVisible(false);
-            i++;
         }
 
-        nameText = new JLabel("");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = i;
+        panel.add(addCampusButton, c);
+        addCampusButton.setVisible(true);
+
+
         campusText = new JLabel("");
+        nameText = new JLabel("");
         heroImageLink = new JLabel("");
         listImageLink = new JLabel("");
         soundLink = new JLabel("");
@@ -168,12 +189,19 @@ public class BirdTab extends Tab{
         dietText = new JLabel("");
         dietImageLink = new JLabel("");
 
-        JLabel[] tempLabels = {nameText, campusText, heroImageLink, listImageLink, soundLink,
+        JLabel[] tempLabels = {nameText, heroImageLink, listImageLink, soundLink,
                             aboutText, videoLink, locationText, locationImageLink, dietText, dietImageLink};
         
         birdLabels = Arrays.copyOf(tempLabels, tempLabels.length);
 
-        i=0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.3;
+        c.gridx = 4;
+        c.gridy = 0;
+        panel.add(campusText, c);
+        campusText.setVisible(false);
+
+        i=1;
         for (JLabel label: birdLabels){
             c.fill = GridBagConstraints.HORIZONTAL;
             c.weightx = 0.3;
@@ -193,9 +221,22 @@ public class BirdTab extends Tab{
         c.gridwidth = 3;
         panel.add(response, c);
 
+        removeCampusBox = new JComboBox<>(removeCampusText);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.8;
+        c.gridx = 0;
+        c.gridy = 15;
+        c.gridwidth = 1;
+        panel.add(removeCampusBox,c);
 
-        
-
+        removeCampusButton = new JButton("Remove Campus");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.8;
+        c.gridx = 0;
+        c.gridy = 16;
+        c.gridwidth = 1;
+        panel.add(removeCampusButton,c);
+        removeCampusButton.setVisible(false);
         
         //TODO - Harry - add the rest of the buttons from the odysseus version of this and get them working
                 
@@ -212,49 +253,22 @@ public class BirdTab extends Tab{
         c.gridheight = 13;
         panel.add(scrollPane, c);
 
-        cT.fill = GridBagConstraints.HORIZONTAL;
         cT.weightx = 0.5;
         cT.gridx = 0;
-        cT.gridwidth = 1;
-        cT.gridheight = 1;
+        cT.gridy = 0;
+        cT.gridwidth = 3;
+        addCampusRoot = new DefaultMutableTreeNode("+[Add Campus]");
+        addCampusTree = new JTree(addCampusRoot);
+        treeView.add(addCampusTree, cT);
 
-        scrollPane.setPreferredSize(new DimensionUIResource(75, 200));
-                
-        popUpFrame = new JFrame();
-        popUpPanel = new JPanel();
-        //popUpPanel.setLayout(new GridBagLayout());
-        popUpFrame.add(popUpPanel);
-
-        tableModel = new DefaultTableModel(){
-            @Override
-            //Stops the user editing the table by pressing on it
-            public boolean isCellEditable(int row, int column){
-                //all cells return false
-                return false;
+        MouseListener mL = new MouseAdapter() {
+            public void mousePressed(MouseEvent e){
+                addCampusPressed(true);
             }
         };
-        table = new JTable(tableModel);
-        
-        table.setShowGrid(true);
-        tableModel.addColumn("Item");
-        tableModel.addColumn("Description");
-    
-        String[] firstRow = {"Item", "Description"};
-        tableModel.addRow(firstRow);
+        addCampusTree.addMouseListener(mL);
 
-        for(String s : rowNames){
-            String[] blankRow = {s,""};
-            tableModel.addRow(blankRow);
-        }
-
-        c.weightx=0.5;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        
-        popUpPanel.add(table);
-        popUpPanel.repaint();                       
+        scrollPane.setPreferredSize(new DimensionUIResource(75, 200));                     
     }
 
     public void updateBirdTrees(TempCampus[] campuses){
@@ -278,16 +292,20 @@ public class BirdTab extends Tab{
                     TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
                     tree.setSelectionPath(selPath);
                     if (selRow > -1){    
+                        DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)selPath.getPath()[0];
+                        campus=rootNode.toString(); //TODO - Harry - remember what this was for
+                        campusText.setText(rootNode.toString());
+                        addCampusPressed(false);
                         if (selRow >= 1){
-                            popUpFrame.setVisible(false);
                             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selPath.getLastPathComponent();
                             String nodeName = selectedNode.toString();
         
-                            DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)selPath.getPath()[0];
-                            campus=rootNode.toString();
                             if(nodeName=="+[Add Bird]"){
                                 addBirdPressed(true);
+
+
                             } else{
+                                campus=rootNode.toString(); //TODO - Harry - remember what this was for
                                 nameText.setText(nodeName);
                                 addBirdPressed(false);
                             }
@@ -300,6 +318,15 @@ public class BirdTab extends Tab{
             tree.addMouseListener(mL);
             
         }
+
+        cT.weightx = 0.5;
+        cT.gridx = 0;
+        cT.gridy = i;
+        cT.gridwidth = 3;
+        treeView.add(addCampusTree, cT);
+
+        
+
         treeView.repaint();
         panel.repaint();
         panel.revalidate();
@@ -333,8 +360,55 @@ public class BirdTab extends Tab{
         }
     }
 
-    public String getCampus(){
+    private void addCampusPressed(boolean bool){
+        if (bool==true){
+            for(JComponent comp : components){
+                comp.setVisible(false);
+            }
+            for(JLabel label : birdLabels){
+                label.setVisible(false);
+            }
+            addCampusButton.setVisible(true);
+            campusField.setVisible(true);
+            campusText.setVisible(false);
+        }else{
+            addCampusButton.setVisible(false);
+            campusField.setVisible(false);
+            campusText.setVisible(true);
+            campusField.setText("");
+        }
+    }
+
+    public String getSelectedCampus(){
         return campus;
     }
 
+    public String getCampusFieldValue(){
+        return campusField.getText();
+    }
+    
+    public void updateCampusRemover(TempCampus[] campuses){
+        String[] campusesText={};
+        for (TempCampus camp : campuses){
+            campusesText=Arrays.copyOf(campusesText, campusesText.length+1);
+            campusesText[campusesText.length-1]=camp.getName();
+        }
+        removeCampusText = Arrays.copyOf(campusesText, campusesText.length);
+        DefaultComboBoxModel model = (DefaultComboBoxModel) removeCampusBox.getModel();
+        model.removeAllElements();
+
+        for (String text : removeCampusText){
+            model.addElement(text);
+        }
+
+        if(removeCampusText.length>0){
+            removeCampusButton.setVisible(true);
+        }else{
+            removeCampusButton.setVisible(false);
+        }
+    }
+
+    public String campusToRemove(){
+        return String.valueOf(removeCampusBox.getSelectedItem());
+    }
 }

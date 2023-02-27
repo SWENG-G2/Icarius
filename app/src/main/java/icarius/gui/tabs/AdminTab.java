@@ -2,9 +2,9 @@ package icarius.gui.tabs;
 
 import javax.swing.JLabel;
 
-public class KeyTab extends Tab{
-    public KeyTab(){
-        this.tabName="Key";
+public class AdminTab extends Tab{
+    public AdminTab(){
+        this.tabName="Admin";
         c.weightx = 0.2;
         c.gridx = 0;
         c.gridy = 2;
