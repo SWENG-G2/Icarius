@@ -5,10 +5,7 @@ import icarius.http.PostRequest;
 import icarius.auth.Credentials;
 import icarius.auth.User;
 
-import java.util.HashMap;
-
 import icarius.entities.Bird;
-import icarius.entities.ServerEntity;
 import icarius.gui.Gui;
 
 public class App {
@@ -22,6 +19,7 @@ public class App {
 
     public static void main(String[] args) {
         App app = new App();
+        Gui gui = new Gui();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
@@ -30,22 +28,6 @@ public class App {
         Long Id = 2L;
         Bird bird = new Bird(Id, "Daphne", user);
         System.out.println(bird.toString());
-    }
-
-    private void testPOSTBirds() {
-        user.setCampusId(5);
-        HashMap<String, String> birdProperties = new HashMap<String, String>();
-        birdProperties.put("name", "Davey");
-        birdProperties.put("listImageURL", "anImageOfADuck.jpg");
-        birdProperties.put("heroImageURL", "aHeroImageOfADuck.jpg");
-        birdProperties.put("soundURL", "quack.mp3");
-        birdProperties.put("aboutMe", "Davey the Duck");
-        birdProperties.put("aboutMeVideoURL", "DaveysVideoCV.mp4");
-        birdProperties.put("location", "over there");
-        birdProperties.put("locationImageURL", "overThere.jpg");
-        birdProperties.put("diet", "Werms and Grapes");
-        birdProperties.put("dietImageURL", "Image of werms and grapes");
-        BirdController.newBird(birdProperties, user);
     }
 
     // private void testDELETEBirds() {

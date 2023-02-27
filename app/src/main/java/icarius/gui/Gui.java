@@ -4,55 +4,25 @@ import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import icarius.gui.items.TempCampus;
 import icarius.gui.items.TempBird;
-import icarius.entities.*;
-import icarius.gui.tabs.BirdTab;
-import icarius.gui.tabs.CampusTab;
-import icarius.gui.tabs.KeyTab;
+import icarius.gui.tabs.MainTab;
+import icarius.gui.tabs.AdminTab;
 import icarius.gui.tabs.loginTab;
-import icarius.user.User;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
-import java.awt.Dimension;
-
-
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.text.Position;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.JPasswordField;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.JTabbedPane;
 
 
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 
 public class Gui {
     private TempCampus[] campuses={};
     private TempBird[] birds={};
     private JFrame mainFrame;
-    private int nextID=0;
 
     private JFrame loginFrame;
     private static final int LOGIN_WINDOW_X_SIZE = 250;
@@ -63,9 +33,8 @@ public class Gui {
     private static final int MAIN_WINDOW_X_SIZE=600;
     private static final int MAIN_WINDOW_Y_SIZE=500;
 
-    private CampusTab campusTab;
-    private BirdTab birdTab;
-    private KeyTab keyTab;
+    private MainTab mainTab;
+    private AdminTab adminTab;
 
 
     public Gui(){
@@ -117,18 +86,15 @@ public class Gui {
             }
         });
 
-        campusTab = new CampusTab();
-        birdTab = new BirdTab();
-        keyTab = new KeyTab();
+        mainTab = new MainTab();
+        adminTab = new AdminTab();
     
-        campusTab.updateTable(campuses);
 
         this.configureCampusButtons();
         this.configureBirdButtons();
 
-        tabbedPane.addTab(campusTab.returnName(), null, campusTab.returnPanel());
-        tabbedPane.addTab(birdTab.returnName(), null, birdTab.returnPanel());
-        tabbedPane.addTab(keyTab.returnName(), null, keyTab.returnPanel());
+        tabbedPane.addTab(mainTab.returnName(), null, mainTab.returnPanel());
+        tabbedPane.addTab(adminTab.returnName(), null, adminTab.returnPanel());
         
         //done for testing purposes, it wouldn't be visable until the user logs in
         mainFrame.setVisible(true);
@@ -184,77 +150,75 @@ public class Gui {
     }
 
     private void configureCampusButtons(){
-        campusTab.createCampusButton.addActionListener(new ActionListener() {
+        mainTab.addCampusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                String campusFieldValue = campusTab.campusText();
+                String campusFieldValue = mainTab.getCampusFieldValue();
 
                 if (campusFieldValue.isBlank() == false){
-                    //TODO - Harry - When actual campus class is being used figure out what to change here
-                    TempCampus newCampus = new TempCampus(campusFieldValue, nextID);
+                    TempCampus campus = null;
+                    for (TempCampus c : campuses){
+                        if (c.getName()==campusFieldValue){
+                            campus = c;
+                        }
+                        System.out.println(campusFieldValue+" is not the same as "+c.getName());
+                    }
+                    if(campus == null){
+                        TempCampus newCampus = new TempCampus(campusFieldValue);
 
-                    campuses=Arrays.copyOf(campuses, campuses.length+1);
-                    campuses[campuses.length-1]=newCampus;
-                    campusTab.updateTable(campuses);
-                    birdTab.updateBirdTrees(campuses);
-                    nextID = nextID + 1;
-                    campusTab.setResponse(campusFieldValue + " added to campus list with ID: " + Integer.toString(nextID));
+                        campuses=Arrays.copyOf(campuses, campuses.length+1);
+                        campuses[campuses.length-1]=newCampus;
+                        mainTab.updateBirdTrees(campuses);
+                        mainTab.updateCampusRemover(campuses);
+                        mainTab.setResponse(campusFieldValue + " added to campus list");
+                    }else{
+                        mainTab.setResponse("Campus: "+campusFieldValue+" already exists");
+                    }
                 } else{
-                    campusTab.setResponse("Campus Name field cannot be left blank");
-                    campusTab.setCampusText("");
+                    mainTab.setResponse("Campus Name field cannot be left blank");
                 }
             }
         });
         
-        campusTab.removeCampusButton.addActionListener(new ActionListener() {
+        mainTab.removeCampusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                String campusFieldValue = campusTab.campusID();
-                try {
-                    int ID = Integer.parseInt(campusFieldValue);
-                    int[] storedIDs = {};
-                    for (TempCampus i : campuses){
-                        storedIDs=Arrays.copyOf(storedIDs, storedIDs.length+1);
-                        storedIDs[storedIDs.length-1]=i.getID();
-                    }
-                    int index = Arrays.binarySearch(storedIDs, ID);
-                    if (index >= 0) {
+                String campusFieldValue = mainTab.campusToRemove();
+                if (campusFieldValue != null) {
+                    TempCampus campus = null;
+                        for (TempCampus c : campuses){
+                            if (c.getName()==campusFieldValue){
+                                campus = c;
+                            }
+                        }
+                    if (campus != null) {
                         TempCampus[] copyCampuses = {};
             
                         for (TempCampus i : campuses) {
-                            if (i.getID() != ID) {
+                            if (i != campus) {
                                 copyCampuses=Arrays.copyOf(copyCampuses, copyCampuses.length +1);
                                 copyCampuses[copyCampuses.length-1]=i;
                             }
                         };
 
                         campuses=copyCampuses;
-                        campusTab.updateTable(campuses);
-                        birdTab.updateBirdTrees(campuses);
-
-                        campusTab.setResponse("Campus ID: " + campusFieldValue + " has been successfully removed.");
+                        mainTab.updateBirdTrees(campuses);
+                        mainTab.updateCampusRemover(campuses);
+                        mainTab.setResponse("Campus: " + campusFieldValue + " has been successfully removed.");
                     } else {
-                        campusTab.setResponse("Campus with ID " + campusFieldValue + " does not exist");
+                        mainTab.setResponse("Campus: " + campusFieldValue + " does not exist");
                     }
-                } catch (NumberFormatException e) {
-                    campusTab.setResponse("Campus ID must be an integer value");
+                } else{
+                    mainTab.setResponse("Campus: "+campusFieldValue+ " does not exist");
                 }
             }
         });
     }
 
     private void configureBirdButtons(){
-        birdTab.addBirdButton.addActionListener(new ActionListener(){
+        mainTab.addBirdButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae){
-                String campusPressed = birdTab.getCampus();
-                if (birdTab.nameFieldText().isBlank() ==false){
-                        /* 
-                        TempCampus campus = null;
-                        for (TempCampus c : campuses){
-                            if (c.getID() == ID){
-                                campus = c;
-                            }
-                        }
-                        */
-
+                String campusPressed = mainTab.getSelectedCampus();
+                if (mainTab.nameFieldText().isBlank() ==false){
+                        
                         TempCampus campus = null;
                         for (TempCampus c : campuses){
                             if (c.getName()==campusPressed){
@@ -264,25 +228,24 @@ public class Gui {
 
                         if(campus != null){
                             //create bird
-                            birdTab.setResponse("the test is campus " + campus.getName() +" at id "+ campus.getID());
                             birds = Arrays.copyOf(birds, birds.length + 1);
-                            TempBird bird = new TempBird(birdTab.nameFieldText(),campus);
+                            TempBird bird = new TempBird(mainTab.nameFieldText(),campus);
                             bird.addCampus(campus);
                             birds[birds.length-1]= bird;
 
-                            birdTab.updateBirdTrees(campuses);
+                            mainTab.updateBirdTrees(campuses);
 
-                            birdTab.setResponse("Bird: "+birdTab.nameFieldText()+" added to campus: "+campusPressed);
+                            mainTab.setResponse("Bird: "+mainTab.nameFieldText()+" added to campus: "+campusPressed);
 
                         } else{
-                            birdTab.setResponse("Campus with ID "+campusPressed+" does not exist");
+                            mainTab.setResponse("Campus: "+campusPressed+" does not exist");
                         }
                     
                 }else{
-                    birdTab.setResponse("Please fill in the required fields");
+                    mainTab.setResponse("Please fill in the required fields");
                 }
             }
          });
     }
-
 }
+

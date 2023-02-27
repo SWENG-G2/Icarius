@@ -1,3 +1,5 @@
+//This object is irrelevant and is just here for me to copy code from
+
 package icarius.gui.tabs;
 
 //import icarius.entities.Campus;
@@ -15,7 +17,7 @@ import java.awt.GridBagConstraints;
 public class CampusTab extends Tab{
 
     private JTextField campusNameField;
-    public JButton createCampusButton;
+    private JButton addCampusButton;
     private JLabel response;
     private JTextField campusIDField;
     public JButton removeCampusButton;
@@ -54,12 +56,12 @@ public class CampusTab extends Tab{
         c.gridy = 0;
         panel.add(campusNameField, c);
 
-        createCampusButton = new JButton("Create");
+        addCampusButton = new JButton("Create");
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.2;
         c.gridx = 2;
         c.gridy = 0;
-        panel.add(createCampusButton, c);
+        panel.add(addCampusButton, c);
 
         response = new JLabel("");
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -142,8 +144,8 @@ public class CampusTab extends Tab{
 
         tableModel.setRowCount(0);
         for (TempCampus i : campuses){
-            String[] row = {i.getName(), Integer.toString(i.getID())};
-            tableModel.addRow(row);
+            //String[] row = {i.getName(), Integer.toString(i.getID())};
+            //tableModel.addRow(row);
         }
 
         if (tableModel.getRowCount()<4){

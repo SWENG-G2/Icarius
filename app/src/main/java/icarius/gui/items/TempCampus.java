@@ -22,23 +22,20 @@ public class TempCampus {
     private JTree tree;
     private DefaultMutableTreeNode root;
 
-    public TempCampus(String Name, int id){
+    public TempCampus(String Name){
         super();
         name = Name;
-        ID=id;
         root = new DefaultMutableTreeNode(name);
         tree = new JTree(root);
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
         DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
         model.insertNodeInto(new DefaultMutableTreeNode("+[Add Bird]"), root, 0);
     }
-    
+
     public String getName(){
         return name;
     }
-    public int getID(){
-        return ID;
-    }
+
 
     public JTree getTree(){
         return tree;

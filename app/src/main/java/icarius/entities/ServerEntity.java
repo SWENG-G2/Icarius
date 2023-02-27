@@ -2,7 +2,7 @@ package icarius.entities;
 
 import icarius.http.DeleteRequest;
 import icarius.http.PostRequest;
-import icarius.user.User;
+import icarius.auth.User;
 
 public abstract class ServerEntity {
     Long Id;
