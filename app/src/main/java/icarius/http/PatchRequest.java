@@ -1,6 +1,6 @@
 package icarius.http;
 
-import icarius.user.User;
+import icarius.auth.User;
 import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -17,8 +17,7 @@ public class PatchRequest extends ServerRequest {
     
         Request request = new Request.Builder()
         .url(getUrl())
-        .addHeader("IDENTITY", user.getIdentity())
-        .addHeader("KEY", user.getAuth())
+        .addHeader("credentials", user.getAuth())
         .patch(requestBody)
         .build();
 

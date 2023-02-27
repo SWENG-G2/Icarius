@@ -1,6 +1,6 @@
 package icarius.http;
 
-import icarius.user.User;
+import icarius.auth.User;
 import okhttp3.Request;
 
 public class DeleteRequest extends ServerRequest {
@@ -13,8 +13,7 @@ public class DeleteRequest extends ServerRequest {
     public String send() {
         Request request = new Request.Builder()
         .url(getUrl())
-        .addHeader("IDENTITY", user.getIdentity())
-        .addHeader("KEY", user.getAuth())
+        .addHeader("credentials", user.getAuth())
         .delete()
         .build();
 

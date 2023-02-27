@@ -9,9 +9,8 @@ import java.util.List;
 import org.dom4j.Node;
 
 import icarius.http.GetRequest;
-import icarius.http.DeleteRequest;
 import icarius.http.PatchRequest;
-import icarius.user.User;
+import icarius.auth.User;
 import java.util.HashMap;
 
 
@@ -23,7 +22,7 @@ public class Campus extends ServerEntity {
     }
 
     // Create campus object and create new database entry
-    public Campus(String name, icarius.user.User user) {
+    public Campus(String name, User user) {
         super(name, user);
     }
 
