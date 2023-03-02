@@ -1,7 +1,7 @@
 package icarius.gui.tabs;
 
 import icarius.gui.items.TempCampus;
-
+import okhttp3.Response;
 
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.plaf.DimensionUIResource;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -34,6 +35,8 @@ public class MainTab extends Tab{
     public JButton createCampusButton;
     public JButton removeCampusButton;
     public JButton addBirdButton;
+
+    public JTree[] trees = {};
 
     private JComboBox campusComboBox;
 
@@ -135,18 +138,17 @@ public class MainTab extends Tab{
 
 
 
-    public void updateBirdTrees(TempCampus[] campuses){
+    public void updateTree(){
         Component[] components = treeView.getComponents();
         for (Component c : components){
             treeView.remove(c);
         }
         int i = 0;
-        for (TempCampus c : campuses){
+        for (JTree tree : trees){
             cT.weightx = 0.5;
             cT.gridx = 0;
             cT.gridy = i;
             cT.gridwidth = 3;
-            JTree tree=c.getTree();
             treeView.add(tree, cT);
             i=i+1;
             
@@ -199,8 +201,6 @@ public class MainTab extends Tab{
         cT.gridwidth = 3;
         treeView.add(addCampusTree, cT);
 
-        
-
         treeView.repaint();
         panel.repaint();
         panel.revalidate();
@@ -228,11 +228,12 @@ public class MainTab extends Tab{
         return subTab.getCampusFieldValue();
     }
     
-    public void updateCampusRemover(TempCampus[] campuses){
+    public void updateCampusRemover(){
         String[] campusesText={};
-        for (TempCampus camp : campuses){
+        for (JTree tree : trees){
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
             campusesText=Arrays.copyOf(campusesText, campusesText.length+1);
-            campusesText[campusesText.length-1]=camp.getName();
+            campusesText[campusesText.length-1]=(String)root.getUserObject();
         }
         DefaultComboBoxModel model = (DefaultComboBoxModel) campusComboBox.getModel();
         model.removeAllElements();
@@ -263,43 +264,69 @@ public class MainTab extends Tab{
     public void saveCampusPressed(TempCampus[] campuses){
         String newName = subTab.getCampusFieldValue();
         String oldName = subTab.getSelectedCampus();
-        TempCampus campus = null;
-        for (TempCampus camp : campuses){
-            if (oldName.equals(camp.getName())){
-                campus=camp;
+        DefaultMutableTreeNode getRoot = null;
+        boolean newNameExists = false;
+        for (JTree tree : trees){
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
+            if (oldName.equals((String)root.getUserObject())){
+                getRoot=root;
+            }
+            if (newName.equals((String)root.getUserObject())){
+                newNameExists=true;
             }
         }
-        if (campus != null){
-            campus.setName(newName);
-            updateCampusRemover(campuses);
-            campus.getRoot().setUserObject(newName);
-            treeView.repaint();
-            subTab.setResponse("Campus "+oldName+ " has been changed to "+ newName);
-            subTab.editCampusClosed(newName);
+        if (getRoot != null){
+            if(newNameExists==false){
+                getRoot.setUserObject(newName);
+                updateCampusRemover();
+                treeView.repaint();
+                subTab.setResponse("Campus "+oldName+ " has been changed to "+ newName);
+                subTab.editCampusClosed(newName);
+                for (TempCampus camp : campuses){
+                    if(oldName.equals(camp.getName())){
+                        camp.setName(newName);
+                    }
+                }
+            }else{
+                subTab.setResponse("Campus with name "+ newName+ " already exists");
+            } 
         }
+        
     }
 
-    public void saveBirdPressed(TempCampus[] campuses){
+    public void saveBirdPressed(){
         String newName = subTab.getNameFieldText();
         String oldName = subTab.getSelectedBird();
         //TODO - when using this with the actual server oldName can probably just be pulled from there
-        TempCampus campus = null;
-        for (TempCampus camp : campuses){
-            if (camp.getName()==subTab.getCampusText()){
-                campus=camp;
+        DefaultMutableTreeNode getRoot = null;
+        JTree getTree = null;
+        for (JTree tree : trees){
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
+            if (subTab.getCampusText().equals((String)root.getUserObject())){
+                getRoot=root;
+                getTree = tree;
             }
         }
-        if (campus != null){
-            TreePath path = getNamedNode(campus.getRoot(), oldName);
-            if (path != null){
-                JTree tree = campus.getTree();
-                tree.setSelectionPath(path);
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)path.getLastPathComponent();
-                selectedNode.setUserObject(newName);
-                treeView.repaint();
-                subTab.setResponse("Bird: "+oldName+" has been changed to "+ newName);
-                subTab.editBirdClosed(newName);
-                //TODO - Harry - figure out how to resize the node so that the new name fits properly
+        if (getRoot != null && getTree != null){
+            TreePath newNamePath = getNamedNode(getRoot, newName);
+            if (newNamePath==null){
+                TreePath path = getNamedNode(getRoot, oldName);
+                if (path != null){
+                    JTree tree = getTree;
+                    tree.setSelectionPath(path);
+                    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+                    selectedNode.setUserObject(newName);
+                    treeView.repaint();
+                    subTab.setResponse("Bird: "+oldName+" has been changed to "+ newName);
+                    subTab.editBirdClosed(newName);
+                    //TODO - Harry - figure out how to resize the node so that the new name fits properly
+                } else{
+                    System.out.println("Something has gone wrong");
+                    System.out.println("oldName = "+oldName);
+                    System.out.println("Root name = "+(String)getRoot.getUserObject());
+                }
+            }else{
+                subTab.setResponse("Bird: "+newName+", campus "+subTab.getCampusText()+ " already exists");
             }
         }
     }
@@ -312,5 +339,66 @@ public class MainTab extends Tab{
             }
         }
         return null;
+    }
+
+    public void setupTrees(){
+        //TODO - Write something which imports the relevent data into the trees
+    }
+
+    public void createTree(String campus){
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(campus);
+        JTree tree = new JTree(root);
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        DefaultMutableTreeNode tempRoot = (DefaultMutableTreeNode)model.getRoot();
+        model.insertNodeInto(new DefaultMutableTreeNode("+[Add Bird]"), tempRoot, 0);
+        trees = Arrays.copyOf(trees, trees.length+1);
+        trees[trees.length-1]=tree;
+    }
+
+    public void addBird(String bird, JTree tree){
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(bird);
+        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+        model.insertNodeInto(node, root, 0);
+    }
+
+    public void removeTree(String campus){
+        JTree[] copyTrees = {};
+        for (JTree tree : trees){
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
+            if (campus.equals((String)root.getUserObject())==false){
+                copyTrees=Arrays.copyOf(copyTrees, copyTrees.length+1);
+                copyTrees[copyTrees.length-1]=tree;
+            } 
+        }
+        trees=Arrays.copyOf(copyTrees, copyTrees.length);
+    }
+
+    public JTree getCampusTree(String campus){
+        for (JTree tree : trees){
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
+            if (campus.equals((String)root.getUserObject())){
+                return tree;
+            } 
+
+        }
+        return null;
+    }
+
+    public boolean birdAlreadyExists(JTree campus, String birdName){
+        
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode)campus.getModel().getRoot();
+            
+        
+        if (root != null){
+            TreePath newNamePath = getNamedNode(root, birdName);
+            if(newNamePath==null){
+                return false;
+            } else{
+                return true;
+            }
+        }
+        System.out.println("ERROR in Gui MainTab bird already exists");
+        return true;
     }
 }

@@ -14,11 +14,6 @@ public class TempCampus {
     public TempCampus(String Name){
         super();
         name = Name;
-        root = new DefaultMutableTreeNode(name);
-        tree = new JTree(root);
-        DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
-        model.insertNodeInto(new DefaultMutableTreeNode("+[Add Bird]"), root, 0);
     }
 
     public String getName(){

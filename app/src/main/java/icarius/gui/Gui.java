@@ -3,7 +3,6 @@ package icarius.gui;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import icarius.gui.items.TempCampus;
-import icarius.gui.items.TempBird;
 import icarius.gui.tabs.MainTab;
 import icarius.gui.tabs.AdminTab;
 import icarius.gui.tabs.loginTab;
@@ -20,12 +19,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.JTabbedPane;
+import javax.swing.JTree;
 
 import java.awt.BorderLayout;
 
 public class Gui {
     private TempCampus[] campuses={};
-    private TempBird[] birds={};
     private JFrame mainFrame;
 
     private JFrame loginFrame;
@@ -170,9 +169,14 @@ public class Gui {
 
                         campuses=Arrays.copyOf(campuses, campuses.length+1);
                         campuses[campuses.length-1]=newCampus;
-                        mainTab.updateBirdTrees(campuses);
-                        mainTab.updateCampusRemover(campuses);
+
+
                         adminTab.updateCampusComboBox(campuses);
+
+                        mainTab.createTree(campusFieldValue);
+                        mainTab.updateTree();
+                        mainTab.updateCampusRemover();
+
                         mainTab.setResponse(campusFieldValue + " added to campus list");
                     }else{
                         mainTab.setResponse("Campus: "+campusFieldValue+" already exists");
@@ -204,9 +208,13 @@ public class Gui {
                         };
 
                         campuses=copyCampuses;
-                        mainTab.updateBirdTrees(campuses);
-                        mainTab.updateCampusRemover(campuses);
                         adminTab.updateCampusComboBox(campuses);
+
+                        mainTab.removeTree(campusFieldValue);
+                        mainTab.updateTree();
+                        mainTab.updateCampusRemover();
+
+
                         mainTab.setResponse("Campus: " + campusFieldValue + " has been successfully removed.");
                     } else {
                         mainTab.setResponse("Campus: " + campusFieldValue + " does not exist");
@@ -232,16 +240,19 @@ public class Gui {
                         }
 
                         if(campus != null){
-                            //create bird
-                            birds = Arrays.copyOf(birds, birds.length + 1);
-                            TempBird bird = new TempBird(mainTab.nameFieldText(),campus);
-                            bird.addCampus(campus);
-                            birds[birds.length-1]= bird;
-
-                            mainTab.updateBirdTrees(campuses);
-
-                            mainTab.setResponse("Bird: "+mainTab.nameFieldText()+" added to campus: "+campusPressed);
-
+                            JTree tree=mainTab.getCampusTree(campusPressed);
+                            if(tree != null){
+                                Boolean doesBirdNameExist = mainTab.birdAlreadyExists(tree, mainTab.nameFieldText());
+                                if(doesBirdNameExist==false){
+                                    mainTab.addBird(mainTab.nameFieldText(), tree);
+                                    mainTab.updateTree();
+                                    mainTab.setResponse("Bird: "+mainTab.nameFieldText()+" added to campus: "+campusPressed);
+                                }else{
+                                    mainTab.setResponse("Bird: "+mainTab.nameFieldText()+ ", Campus: "+ campusPressed+ " already exists");
+                                }
+                            } else{
+                                System.out.println("The bird hasn't been added");
+                            }
                         } else{
                             mainTab.setResponse("Campus: "+campusPressed+" does not exist");
                         }
@@ -255,12 +266,13 @@ public class Gui {
         mainTab.saveCampusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae){
                 mainTab.saveCampusPressed(campuses);
+
             }
         });
 
         mainTab.saveBirdButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae){
-                mainTab.saveBirdPressed(campuses);
+                mainTab.saveBirdPressed();
             }
         });
 
