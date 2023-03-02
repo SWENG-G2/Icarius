@@ -4,24 +4,22 @@ import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import icarius.gui.items.TempCampus;
 import icarius.gui.items.TempBird;
-<<<<<<< HEAD
-import icarius.entities.*;
 import icarius.gui.tabs.MainTab;
-import icarius.gui.tabs.CampusTab;
-=======
-import icarius.gui.tabs.MainTab;
->>>>>>> e8e56316f8dc69d6ff22f0edd59dd8df242e9bf2
 import icarius.gui.tabs.AdminTab;
 import icarius.gui.tabs.loginTab;
+//import icarius.user.User;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+
+
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.JTabbedPane;
-
 
 import java.awt.BorderLayout;
 
@@ -156,17 +154,16 @@ public class Gui {
     }
 
     private void configureCampusButtons(){
-        mainTab.addCampusButton.addActionListener(new ActionListener() {
+        mainTab.createCampusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String campusFieldValue = mainTab.getCampusFieldValue();
 
                 if (campusFieldValue.isBlank() == false){
                     TempCampus campus = null;
                     for (TempCampus c : campuses){
-                        if (c.getName()==campusFieldValue){
+                        if (campusFieldValue.equals(c.getName())){
                             campus = c;
                         }
-                        System.out.println(campusFieldValue+" is not the same as "+c.getName());
                     }
                     if(campus == null){
                         TempCampus newCampus = new TempCampus(campusFieldValue);
@@ -175,6 +172,7 @@ public class Gui {
                         campuses[campuses.length-1]=newCampus;
                         mainTab.updateBirdTrees(campuses);
                         mainTab.updateCampusRemover(campuses);
+                        adminTab.updateCampusComboBox(campuses);
                         mainTab.setResponse(campusFieldValue + " added to campus list");
                     }else{
                         mainTab.setResponse("Campus: "+campusFieldValue+" already exists");
@@ -208,6 +206,7 @@ public class Gui {
                         campuses=copyCampuses;
                         mainTab.updateBirdTrees(campuses);
                         mainTab.updateCampusRemover(campuses);
+                        adminTab.updateCampusComboBox(campuses);
                         mainTab.setResponse("Campus: " + campusFieldValue + " has been successfully removed.");
                     } else {
                         mainTab.setResponse("Campus: " + campusFieldValue + " does not exist");
@@ -252,6 +251,21 @@ public class Gui {
                 }
             }
          });
+
+        mainTab.saveCampusButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae){
+                mainTab.saveCampusPressed(campuses);
+            }
+        });
+
+        mainTab.saveBirdButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae){
+                mainTab.saveBirdPressed(campuses);
+            }
+        });
+
     }
+
+
 }
 
