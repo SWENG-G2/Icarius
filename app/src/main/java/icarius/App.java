@@ -6,6 +6,7 @@ import icarius.auth.Credentials;
 import icarius.auth.User;
 
 import icarius.entities.Bird;
+import icarius.entities.Campus;
 import icarius.gui.Gui;
 
 public class App {
@@ -19,10 +20,18 @@ public class App {
 
     public static void main(String[] args) {
         App app = new App();
-        Gui gui = new Gui();
+        // Gui gui = new Gui();
+        app.test();
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
+
+    private void test() {
+        Long campusId = 5L;
+        Campus campus = new Campus(campusId);
+        campus.birdList(user);
+        System.out.println(campus.getBirdList());
+    }
 
     private void testGetBird() {
         Long Id = 2L;

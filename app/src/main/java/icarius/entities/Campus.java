@@ -1,8 +1,11 @@
 package icarius.entities;
 
+import java.util.Iterator;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,8 @@ import java.util.HashMap;
 
 
 public class Campus extends ServerEntity {
+    
+    private List<Bird> birds;
 
     // Create campus object from existing database entry
     public Campus(Long Id, String name) {
@@ -63,6 +68,42 @@ public class Campus extends ServerEntity {
         PatchRequest request = new PatchRequest("/api/campus/update" , user);
         request.addParameters(params);
         request.send();
+    }
+
+
+    public String birdList(User user) {
+        this.birds = new ArrayList<>();
+        String birdId;
+        // send and store GET request response
+        GetRequest request = new GetRequest("/campus/" + Id);
+        String response = request.send();
+        
+        // System.out.println(response);
+
+        if (response == null) {
+            return null;
+        } else {
+            // Fetch name from XML response
+            try {
+                Document document = DocumentHelper.parseText(response);
+                Element root = document.getRootElement();
+                // iterate through child elements of presentation with element name "slide"
+                for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
+                    Element slide = it.next();
+                    birdId = slide.attributeValue("title");
+                    Bird newBird = new Bird(Long.parseLong(birdId), user);
+                    this.birds.add(newBird);
+                }
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            }
+            
+            return response;
+        }
+    }
+
+    public List<Bird> getBirdList() {
+        return birds;
     }
 
     @Override

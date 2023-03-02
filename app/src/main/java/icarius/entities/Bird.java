@@ -165,33 +165,4 @@ public class Bird extends ServerEntity {
                 + "\n\t\t diet: " + diet
                 + "\n\t\t dietImageURL: " + dietImageURL;
     }
-
-    public class BirdList {
-        private List<Bird> birdList = new ArrayList<Bird>();
-
-        public BirdList(User user) {
-            // send and store GET request response
-            GetRequest request = new GetRequest("/birds/list/" + campus.getID());
-            String response = request.send();
-
-            // Parse XML response into bird object list
-            try {
-                Document document = DocumentHelper.parseText(response);
-
-                List<Node> nodes = document.selectNodes("//*[name()='bird']");
-                for (Node node : nodes) {
-                    int id = Integer.parseInt(node.valueOf("@title"));
-                    String name = node.selectSingleNode("*[name()='text']").getText();
-                    birdList.add(new Bird(Id, name, user));
-                }
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public List<Bird> getBirdList() {
-            return birdList;
-        }
-    }
-
 }
