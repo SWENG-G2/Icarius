@@ -280,6 +280,7 @@ public class MainTab extends Tab{
                 getRoot.setUserObject(newName);
                 updateCampusRemover();
                 treeView.repaint();
+                //TODO - Connall - Update campus in the database
                 subTab.setResponse("Campus "+oldName+ " has been changed to "+ newName);
                 subTab.editCampusClosed(newName);
                 for (TempCampus camp : campuses){
@@ -316,6 +317,7 @@ public class MainTab extends Tab{
                     tree.setSelectionPath(path);
                     DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)path.getLastPathComponent();
                     selectedNode.setUserObject(newName);
+                    //TODO - Connall - There should be funcs which update the selected bird info here
                     treeView.repaint();
                     subTab.setResponse("Bird: "+oldName+" has been changed to "+ newName);
                     subTab.editBirdClosed(newName);
@@ -339,10 +341,6 @@ public class MainTab extends Tab{
             }
         }
         return null;
-    }
-
-    public void setupTrees(){
-        //TODO - Write something which imports the relevent data into the trees
     }
 
     public void createTree(String campus){

@@ -76,7 +76,7 @@ public class SubTabMain extends Tab{
     protected JButton createCampusButton;
 //    private JButton removeCampusButton;
 
-    private String[] labelNames = {"Campus Name: ","Bird Name: ", "Hero Image: ", "List Image: ",
+    private String[] labelNames = {"Bird Name: ", "Hero Image: ", "List Image: ",
     "Sound: ", "About: ", "Video: ", "Location: ", "Location Image: ", "Diet: ", "Diet Image: "};
 
     protected SubTabMain(){
