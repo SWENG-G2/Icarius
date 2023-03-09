@@ -2,6 +2,9 @@ package icarius;
 
 import icarius.http.GetRequest;
 import icarius.http.PostRequest;
+
+import java.util.List;
+
 import icarius.auth.Credentials;
 import icarius.auth.User;
 
@@ -13,6 +16,8 @@ import icarius.gui.Gui;
 public class App {
     public static final String BASE_URL = "http://localhost:8080";
     public User user;
+    
+    public List<Campus> campuses;
 
     public App() {
         Credentials credentials = new Credentials("sysadmin", "sysadmin");
@@ -22,22 +27,36 @@ public class App {
     public static void main(String[] args) {
         App app = new App();
         // Gui gui = new Gui();
-        app.testGetBird();
         app.testGetCampus();
     }
 
+    public void getCampusList() {
+        // Make a request with endpoint: /campus/list
+        // Iterate through the slides
+            // Get the attribute that gives the Id
+            // Create a campus object with that Id and read it
+
+    }
+
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
+
+    private void testCreateBird() {
+        long campus_Id = 5;
+        Bird newBird = new Bird("Beautiful Beautiful Beautiful...Beautiful Bird");
+        newBird.create(user, campus_Id);
+        System.out.println(newBird.getID());
+    }
 
     private void testGetBird() {
         long bird_Id = 2;
         Bird bird = new Bird(bird_Id);
         System.out.println(bird.toString());
     }
-
     
     private void testGetCampus() {
         long campus_Id = 5;
         Campus campus = new Campus(campus_Id);
+        System.out.println(campus.toString());
         System.out.println(campus.getBirds());
     }
 

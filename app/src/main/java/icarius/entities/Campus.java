@@ -29,57 +29,14 @@ public class Campus extends ServerEntity {
         super(Id);
     }
 
-    // Create campus object and create new database entry
-    public Campus(String name, User user) {
-        super(name, user);
-    }
-
     public Campus(Long id) {
         super(id);
     }
 
-    @Override
     protected Long create(User user) {
         return create("/api/campus/new", user);
     }
 
-    @Override
-    protected String read() {
-        this.birds = new ArrayList<>();
-        String birdId;
-        // send and store GET request response
-        GetRequest request = new GetRequest("/campus/" + Id);
-        String response = request.send();
-        
-        // System.out.println(response);
-
-        if (response == null) {
-            return null;
-        } else {
-            // Fetch name from XML response
-            try {
-                Document document = DocumentHelper.parseText(response);
-                Element root = document.getRootElement();
-                // iterate through child elements of presentation with element name "slide"
-                for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
-                    Element slide = it.next();
-                    birdId = slide.attributeValue("title");
-                    Bird newBird = new Bird(Long.parseLong(birdId));
-                    this.birds.add(newBird);
-                }
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-            
-            return response;
-        }
-    }
-
-    public List<Bird> getBirds(){
-        return this.birds;
-    }
-
-    @Override
     protected void update(User user) {
         HashMap<String, String> params = new HashMap<>();
         params.put("name", this.name);
@@ -88,38 +45,74 @@ public class Campus extends ServerEntity {
         request.send();
     }
 
-    @Override
     protected Boolean delete(User user) {
         return delete("/api/campus/remove", user);
     }
 
-    public class CampusList {
-        private List<Campus> campusList = new ArrayList<Campus>();
+    @Override
+    public String read() {
+        this.birds = new ArrayList<>();
+        String birdId;
+        // send and store GET request response
+        GetRequest request = new GetRequest("/campus/" + Id);
+        String response = request.send();
 
-        public CampusList() {
-            // send and store GET request response
-            GetRequest request = new GetRequest("/campus/list");
-            String response = request.send();
-
-            // Parse XML response into campus object list
+        if (response == null) {
+            return null;
+        } else {
+            // Fetch name from XML response
             try {
                 Document document = DocumentHelper.parseText(response);
-
-                List<Node> nodes = document.selectNodes("//*[name()='slide']");
-                for (Node node : nodes) {
-                    int id = Integer.parseInt(node.valueOf("@title"));
-                    String name = node.selectSingleNode("*[name()='text']").getText();
-                    campusList.add(new Campus(Id, name));
+                Element root = document.getRootElement();
+                Element infoSlide = root.element("info");
+                this.name = infoSlide.element("title").getData().toString();
+                // iterate through child elements of presentation with element name "slide"
+                for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
+                    Element slide = it.next();
+                    birdId = slide.attributeValue("title");
+                    Bird newBird = new Bird(Long.parseLong(birdId));
+                    newBird.read();
+                    this.birds.add(newBird);
                 }
             } catch (DocumentException e) {
                 e.printStackTrace();
             }
-        }
-
-        public List<Campus> getCampusList() {
-            return campusList;
+            
+            return this.name;
         }
     }
+
+    public List<Bird> getBirds(){
+        return this.birds;
+    }
+
+    // public class CampusList {
+    //     private List<Campus> campusList = new ArrayList<Campus>();
+
+    //     public CampusList() {
+    //         // send and store GET request response
+    //         GetRequest request = new GetRequest("/campus/list");
+    //         String response = request.send();
+
+    //         // Parse XML response into campus object list
+    //         try {
+    //             Document document = DocumentHelper.parseText(response);
+
+    //             List<Node> nodes = document.selectNodes("//*[name()='slide']");
+    //             for (Node node : nodes) {
+    //                 int id = Integer.parseInt(node.valueOf("@title"));
+    //                 String name = node.selectSingleNode("*[name()='text']").getText();
+    //                 campusList.add(new Campus(Id, name));
+    //             }
+    //         } catch (DocumentException e) {
+    //             e.printStackTrace();
+    //         }
+    //     }
+
+    //     public List<Campus> getCampusList() {
+    //         return campusList;
+    //     }
+    // }
 
     @Override
     public String toString() {

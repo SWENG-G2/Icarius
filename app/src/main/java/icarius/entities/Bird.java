@@ -26,27 +26,44 @@ public class Bird extends ServerEntity {
     public String diet;
     public String dietImageURL;
 
-    public Campus campus;
+    // public Campus campus;
 
+    // If you want to create a bird object that is already on the server
     public Bird(Long Id) {
         super(Id);
     }
 
-    public Bird(String name, User user) {
-        super(name, user);
-    }
-
-    public Bird(Long Id, User user) {
-        super(Id);
+    // If you want to create a bird object that isn't on the server
+    public Bird(String name) {
+        super(name);
     }
 
     public long getId() {
         return Id;
     }
 
-    @Override
-    protected Long create(User user) {
-        return create("/api/birds/" + campus.getID() + "/new", user);
+    public Long create(User user, Long campusId) {
+        return create("/api/birds/" + campusId + "/new", user);
+    }
+
+    protected void update(User user, Long campusId) {
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("heroImageURL", heroImageURL);
+        parameters.put("soundURL", soundURL);
+        parameters.put("aboutMe", aboutMe);
+        parameters.put("aboutMeVideoURL", aboutMeVideoURL);
+        parameters.put("location", location);
+        parameters.put("locationImageURL", locationImageURL);
+        parameters.put("diet", diet);
+        parameters.put("dietImageURL", dietImageURL);
+
+        PatchRequest request = new PatchRequest("/api/birds/" + campusId + "/edit", user);
+        request.addParameters(parameters);
+        request.send();
+    }
+
+    protected Boolean delete(User user, Long campusId) {
+        return delete("/api/birds/" + campusId + "/remove", user);
     }
 
     @Override
@@ -127,28 +144,6 @@ public class Bird extends ServerEntity {
 
             return this.name;
         }
-    }
-
-    @Override
-    protected void update(User user) {
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("heroImageURL", heroImageURL);
-        parameters.put("soundURL", soundURL);
-        parameters.put("aboutMe", aboutMe);
-        parameters.put("aboutMeVideoURL", aboutMeVideoURL);
-        parameters.put("location", location);
-        parameters.put("locationImageURL", locationImageURL);
-        parameters.put("diet", diet);
-        parameters.put("dietImageURL", dietImageURL);
-
-        PatchRequest request = new PatchRequest("/api/birds/" + campus.getID() + "/edit", user);
-        request.addParameters(parameters);
-        request.send();
-    }
-
-    @Override
-    protected Boolean delete(User user) {
-        return delete("/api/birds/" + campus.getID() + "/remove", user);
     }
 
     @Override
