@@ -15,9 +15,8 @@ import org.dom4j.Node;
 import org.dom4j.Element;
 
 import icarius.http.GetRequest;
-import icarius.http.DeleteRequest;
 import icarius.http.PatchRequest;
-import icarius.user.User;
+import icarius.auth.User;
 import java.util.HashMap;
 
 

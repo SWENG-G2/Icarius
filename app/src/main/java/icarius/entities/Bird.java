@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import icarius.http.PatchRequest;
 import icarius.http.GetRequest;
-import icarius.user.User;
+import icarius.auth.User;
 
 public class Bird extends ServerEntity {
     // Bird information
@@ -46,17 +46,15 @@ public class Bird extends ServerEntity {
 
     @Override
     protected Long create(User user) {
-        return create("/api/birds/" + user.getCampusIdString() + "/new", user);
+        return create("/api/birds/" + campus.getID() + "/new", user);
     }
 
     @Override
     public String read() {
         String slideTitle;
         String nodeTitle;
-        String urlType;
         GetRequest request = new GetRequest("/bird/" + Id);
         String response = request.send();
-        List birdInformationValues = new ArrayList(); // stores values read from XML
 
         if (response == null) {
             return null;
@@ -143,14 +141,14 @@ public class Bird extends ServerEntity {
         parameters.put("diet", diet);
         parameters.put("dietImageURL", dietImageURL);
 
-        PatchRequest request = new PatchRequest("/api/birds/" + campus.Id + "/edit", user);
+        PatchRequest request = new PatchRequest("/api/birds/" + campus.getID() + "/edit", user);
         request.addParameters(parameters);
         request.send();
     }
 
     @Override
     protected Boolean delete(User user) {
-        return delete("/api/birds/" + campus.Id + "/remove", user);
+        return delete("/api/birds/" + campus.getID() + "/remove", user);
     }
 
     @Override
@@ -166,33 +164,4 @@ public class Bird extends ServerEntity {
                 + "\n\t\t diet: " + diet
                 + "\n\t\t dietImageURL: " + dietImageURL;
     }
-
-    public class BirdList {
-        private List<Bird> birdList = new ArrayList<Bird>();
-
-        public BirdList(User user) {
-            // send and store GET request response
-            GetRequest request = new GetRequest("/birds/list/" + user.getCampusIdString());
-            String response = request.send();
-
-            // Parse XML response into bird object list
-            try {
-                Document document = DocumentHelper.parseText(response);
-
-                List<Node> nodes = document.selectNodes("//*[name()='bird']");
-                for (Node node : nodes) {
-                    int id = Integer.parseInt(node.valueOf("@title"));
-                    String name = node.selectSingleNode("*[name()='text']").getText();
-                    birdList.add(new Bird(Id));
-                }
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public List<Bird> getBirdList() {
-            return birdList;
-        }
-    }
-
 }

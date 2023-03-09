@@ -2,7 +2,7 @@ package icarius.entities;
 
 import icarius.http.DeleteRequest;
 import icarius.http.PostRequest;
-import icarius.user.User;
+import icarius.auth.User;
 
 public abstract class ServerEntity {
     Long Id;
@@ -53,5 +53,14 @@ public abstract class ServerEntity {
 
         System.out.println( response );
         return response.contains("removed") ? true : false;
+    }
+
+    public int getID(){
+        int integerID = Id.intValue();
+        return integerID;
+    }
+
+    public String getName(){
+        return name;
     }
 }
