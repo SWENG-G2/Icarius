@@ -13,12 +13,14 @@ import okhttp3.Response;
 
 public abstract class ServerRequest {
     // Request properties
-    private final String url;
-    protected final User user;
+    private String url;
+    protected User user;
     private HashMap<String, String> params = new HashMap<String, String>();
 
     // Client
     protected static final OkHttpClient client = new OkHttpClient();
+
+    public ServerRequest() {}
 
     public ServerRequest(String urlPath) {
         this.url = App.BASE_URL + urlPath;
@@ -28,6 +30,10 @@ public abstract class ServerRequest {
     public ServerRequest(String urlPath, User user) {
         this.url = App.BASE_URL + urlPath;
         this.user = user;
+    }
+
+    public void setUrl(String urlPath) {
+        this.url = App.BASE_URL + urlPath;
     }
 
     public void addParameter(String key, String value) {
