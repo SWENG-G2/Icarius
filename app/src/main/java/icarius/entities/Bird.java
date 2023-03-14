@@ -62,7 +62,7 @@ public class Bird extends ServerEntity {
         request.send();
     }
 
-    protected Boolean delete(User user, Long campusId) {
+    public Boolean delete(User user, Long campusId) {
         return delete("/api/birds/" + campusId + "/remove", user);
     }
 
