@@ -15,16 +15,16 @@ public abstract class ServerEntity {
     }
 
     // If constructed with name, create on server
-    public ServerEntity(String name, User user) {
+    public ServerEntity(String name) {
         this.name = name;
-        this.Id = create(user);
     }
 
     // Abstract Functions to implement server CRUD operations
-    protected abstract Long create(User user);
+    // protected abstract Long create(User user);
+    // protected abstract Long create(User user, Long Id);
     protected abstract String read();
-    protected abstract void update(User user);
-    protected abstract Boolean delete(User user);
+    // protected abstract void update(User user);
+    // protected abstract Boolean delete(User user);
 
 
 

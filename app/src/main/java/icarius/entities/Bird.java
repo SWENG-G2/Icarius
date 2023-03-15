@@ -26,30 +26,47 @@ public class Bird extends ServerEntity {
     public String diet;
     public String dietImageURL;
 
-    public Campus campus;
+    // public Campus campus;
 
-    public Bird(Long Id, String name, User user) {
+    // If you want to create a bird object that is already on the server
+    public Bird(Long Id) {
         super(Id);
     }
 
-    public Bird(String name, User user) {
-        super(name, user);
-    }
-
-    public Bird(Long Id, User user) {
-        super(Id);
+    // If you want to create a bird object that isn't on the server
+    public Bird(String name) {
+        super(name);
     }
 
     public long getId() {
         return Id;
     }
 
-    @Override
-    protected Long create(User user) {
-        return create("/api/birds/" + campus.getID() + "/new", user);
+    public Long create(User user, Long campusId) {
+        return create("/api/birds/" + campusId + "/new", user);
     }
 
-    @Override 
+    protected void update(User user, Long campusId) {
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("heroImageURL", heroImageURL);
+        parameters.put("soundURL", soundURL);
+        parameters.put("aboutMe", aboutMe);
+        parameters.put("aboutMeVideoURL", aboutMeVideoURL);
+        parameters.put("location", location);
+        parameters.put("locationImageURL", locationImageURL);
+        parameters.put("diet", diet);
+        parameters.put("dietImageURL", dietImageURL);
+
+        PatchRequest request = new PatchRequest("/api/birds/" + campusId + "/edit", user);
+        request.addParameters(parameters);
+        request.send();
+    }
+
+    public Boolean delete(User user, Long campusId) {
+        return delete("/api/birds/" + campusId + "/remove", user);
+    }
+
+    @Override
     public String read() {
         String slideTitle;
         String nodeTitle;
@@ -72,17 +89,17 @@ public class Bird extends ServerEntity {
                         Element node = it2.next();
                         // picks out the text from 'text' nodes
                         if (node.getName().equals("text")) {
-                            switch(slideTitle){
-                                case "heroSlide":  
+                            switch (slideTitle) {
+                                case "heroSlide":
                                     this.name = node.getData().toString();
                                     break;
-                                case "About me":  
+                                case "About me":
                                     this.aboutMe = node.getData().toString();
                                     break;
-                                case "Diet":  
+                                case "Diet":
                                     this.diet = node.getData().toString();
                                     break;
-                                case "Location": 
+                                case "Location":
                                     this.location = node.getData().toString();
                                     break;
                                 default:
@@ -94,24 +111,23 @@ public class Bird extends ServerEntity {
                         for (Iterator<Attribute> it3 = node.attributeIterator(); it3.hasNext();) {
                             Attribute attribute = it3.next();
                             // picks out the url's from relevant nodes
-                            nodeTitle = node.getName();                            
+                            nodeTitle = node.getName();
                             if (attribute.getName().equals("url")) {
-                                switch(slideTitle){
-                                    case "heroSlide":  
-                                        if (nodeTitle.equals("audio")){
+                                switch (slideTitle) {
+                                    case "heroSlide":
+                                        if (nodeTitle.equals("audio")) {
                                             this.soundURL = attribute.getData().toString();
-                                        }
-                                        else if(nodeTitle.equals("image")) {
+                                        } else if (nodeTitle.equals("image")) {
                                             this.heroImageURL = attribute.getData().toString();
                                         }
                                         break;
-                                    case "About me":  
+                                    case "About me":
                                         this.aboutMeVideoURL = attribute.getData().toString();
                                         break;
-                                    case "Diet":  
+                                    case "Diet":
                                         this.dietImageURL = attribute.getData().toString();
                                         break;
-                                    case "Location": 
+                                    case "Location":
                                         this.locationImageURL = attribute.getData().toString();
                                         break;
                                     default:
@@ -125,37 +141,15 @@ public class Bird extends ServerEntity {
             } catch (DocumentException e) {
                 e.printStackTrace();
             }
-            
+
             return this.name;
         }
     }
 
     @Override
-    protected void update(User user) {
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("heroImageURL", heroImageURL);
-        parameters.put("soundURL", soundURL);
-        parameters.put("aboutMe", aboutMe);
-        parameters.put("aboutMeVideoURL", aboutMeVideoURL);
-        parameters.put("location", location);
-        parameters.put("locationImageURL", locationImageURL);
-        parameters.put("diet", diet);
-        parameters.put("dietImageURL", dietImageURL);
-
-        PatchRequest request = new PatchRequest("/api/birds/" + campus.getID() + "/edit", user);
-        request.addParameters(parameters);
-        request.send();
-    }
-
-    @Override
-    protected Boolean delete(User user) {
-        return delete("/api/birds/" + campus.getID() + "/remove", user);
-    }
-
-    @Override
     public String toString() {
         return "\nId: " + Id + "\t\t Bird: " + name
-                // + "\n\t\t Campus: " + campus.name
+        // + "\n\t\t Campus: " + campus.name
                 + "\n\t\t heroImageURL: " + heroImageURL
                 + "\n\t\t soundUrl: " + soundURL
                 + "\n\t\t aboutMe: " + aboutMe

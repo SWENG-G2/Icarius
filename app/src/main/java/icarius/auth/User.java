@@ -1,5 +1,6 @@
 package icarius.auth;
 
+
 import icarius.http.KeyRequest;
 import lombok.Getter;
 
