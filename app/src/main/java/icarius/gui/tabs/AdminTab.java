@@ -30,7 +30,6 @@ public class AdminTab extends Tab{
     private JButton addCampusButton;
 
     public AdminTab(){
-        
         this.tabName="Admin";
         
 

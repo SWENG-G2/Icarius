@@ -3,7 +3,6 @@ package icarius.gui.items;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 
 
 public class TempCampus {

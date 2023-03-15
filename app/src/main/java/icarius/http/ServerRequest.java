@@ -36,6 +36,10 @@ public abstract class ServerRequest {
         this.url = App.BASE_URL + urlPath;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public void addParameter(String key, String value) {
         params.put(key, value);
     }

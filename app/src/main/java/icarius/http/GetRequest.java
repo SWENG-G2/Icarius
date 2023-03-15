@@ -3,6 +3,9 @@ package icarius.http;
 import okhttp3.Request;
 
 public class GetRequest extends ServerRequest {
+    public GetRequest() {
+    }
+
     public GetRequest(String urlPath) {
         super(urlPath);
     }

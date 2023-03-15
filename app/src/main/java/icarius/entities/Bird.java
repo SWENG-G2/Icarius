@@ -4,13 +4,10 @@ import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
 import org.dom4j.Element;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import icarius.http.PatchRequest;
 import icarius.http.GetRequest;
 import icarius.auth.User;

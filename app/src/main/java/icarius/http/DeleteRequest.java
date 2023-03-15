@@ -5,6 +5,9 @@ import okhttp3.Request;
 
 public class DeleteRequest extends ServerRequest {
 
+    public DeleteRequest() {
+    }
+
     public DeleteRequest(String urlPath, User user) {
         super(urlPath, user);
     }

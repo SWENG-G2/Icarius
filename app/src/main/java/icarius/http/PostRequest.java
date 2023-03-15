@@ -26,6 +26,9 @@ public class PostRequest extends ServerRequest{
         }}
     );
 
+    public PostRequest() {
+    }
+
     public PostRequest(String urlPath, User user) {
         super(urlPath, user);
     }

@@ -1,8 +1,6 @@
 package icarius;
 
 import icarius.http.GetRequest;
-import icarius.http.PostRequest;
-
 import java.util.List;
 import java.util.ArrayList;
 
@@ -15,19 +13,14 @@ import icarius.gui.Gui;
 
 import java.util.Iterator;
 
-import org.dom4j.Node;
-
-import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
 import org.dom4j.Element;
 
 public class App {
     public static final String BASE_URL = "http://localhost:8080";
     public User user;
-
     public List<Campus> campuses;
 
     public App() {
@@ -37,7 +30,8 @@ public class App {
 
     public static void main(String[] args) {
         App app = new App();
-        // Gui gui = new Gui();
+        app.getCampusList();
+        Gui gui = new Gui();
     }
 
     public String getCampusList() {
