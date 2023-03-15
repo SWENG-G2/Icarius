@@ -1,10 +1,7 @@
 package icarius.gui.tabs;
 
-
-
-//import ch.qos.logback.classic.db.names.ColumnName;
-
 import javax.swing.JPanel;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
