@@ -11,7 +11,6 @@ import icarius.auth.User;
 
 import icarius.entities.Bird;
 import icarius.entities.Campus;
-import icarius.entities.ServerEntity;
 import icarius.gui.Gui;
 
 import java.util.Iterator;
@@ -39,7 +38,6 @@ public class App {
     public static void main(String[] args) {
         App app = new App();
         // Gui gui = new Gui();
-        app.testCreateBird();
     }
 
     public String getCampusList() {
@@ -84,29 +82,6 @@ public class App {
     }
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
-
-    private void testDeleteBird() {
-        long campusId = 5;
-        long birdId = 5;
-        Bird oldBird = new Bird(birdId);
-        oldBird.delete(this.user, campusId);
-        System.out.println(oldBird.getID());
-    }
-
-    private void testCreateBird() {
-        long campusId = 5;
-        Bird newBird = new Bird("Beautiful Beautiful Beautiful...Beautiful Bird");
-        newBird.diet = "Blueberries";
-        newBird.dietImageURL = "beautifulBird.png";
-        newBird.aboutMe = "pretty boy";
-        newBird.aboutMeVideoURL = "beautBird.mp4";
-        newBird.heroImageURL = "herooo.png";
-        newBird.location = "Yorkie";
-        newBird.locationImageURL = "yorkOuse.png";
-        newBird.soundURL = "chirpiedopie.mp3";
-        newBird.create(this.user, campusId);
-        System.out.println(newBird.getID());
-    }
 
     private void testGetBird() {
         long bird_Id = 2;

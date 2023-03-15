@@ -21,6 +21,8 @@ import java.util.HashMap;
 
 
 public class Campus extends ServerEntity {
+    
+    private List<Bird> birds;
 
     public List<Bird> birds;
 
