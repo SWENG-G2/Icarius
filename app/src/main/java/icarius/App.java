@@ -52,8 +52,9 @@ public class App {
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
                     campusId = slide.attributeValue("title");
-                    Campus newCampus = new Campus(Long.parseLong(campusId));
-                    newCampus.read();
+                    Campus newCampus = new Campus();
+                    newCampus.setId(Long.parseLong(campusId));
+                    newCampus.read(null);
                     this.campuses.add(newCampus);
                 }
             } catch (DocumentException e) {
@@ -77,18 +78,18 @@ public class App {
 
     // TEMPORARY FUNCTIONS FOR TESTING PURPOSES
 
-    private void testGetBird() {
-        long bird_Id = 2;
-        Bird bird = new Bird(bird_Id);
-        System.out.println(bird.toString());
-    }
+    // private void testGetBird() {
+    //     long bird_Id = 2;
+    //     Bird bird = new Bird(bird_Id);
+    //     System.out.println(bird.toString());
+    // }
 
-    private void testGetCampus() {
-        long campus_Id = 5;
-        Campus campus = new Campus(campus_Id);
-        System.out.println(campus.toString());
-        System.out.println(campus.getBirds());
-    }
+    // private void testGetCampus() {
+    //     long campus_Id = 5;
+    //     Campus campus = new Campus(campus_Id);
+    //     System.out.println(campus.toString());
+    //     System.out.println(campus.getBirds());
+    // }
 
     // private void testPOSTBirds() {
     // user.setCampusId(5);
