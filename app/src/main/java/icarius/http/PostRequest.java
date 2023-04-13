@@ -11,6 +11,7 @@ import java.util.Collections;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
@@ -26,11 +27,8 @@ public class PostRequest extends ServerRequest{
         }}
     );
 
-    public PostRequest() {
-    }
-
-    public PostRequest(String urlPath, User user) {
-        super(urlPath, user);
+    public PostRequest(String urlPath, User user, OkHttpClient okHttpClient) {
+        super(urlPath, user, okHttpClient);
     }
 
     @Override

@@ -1,18 +1,17 @@
 package icarius.http;
 
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public class GetRequest extends ServerRequest {
-    public GetRequest() {
-    }
 
-    public GetRequest(String urlPath) {
-        super(urlPath);
+    public GetRequest(String urlPath, OkHttpClient okHttpClient) {
+        super(urlPath, okHttpClient);
     }
 
     @Override
     public String send() {
-        Request request = new Request.Builder()
+        request = new Request.Builder()
                 .url(getUrl())
                 .build();
         return execute(request);

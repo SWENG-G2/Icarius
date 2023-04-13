@@ -1,23 +1,23 @@
 package icarius.entities;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import java.util.HashMap;
-import java.util.Iterator;
+import icarius.auth.User;
+import icarius.http.DeleteRequest;
+import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import icarius.http.DeleteRequest;
-import icarius.http.GetRequest;
-import icarius.auth.User;
+import okhttp3.OkHttpClient;
 
 @Data
-@NoArgsConstructor
 public class Bird implements ServerActions {
     // Bird information
     private Long id;
@@ -32,6 +32,12 @@ public class Bird implements ServerActions {
     private String diet;
     private String dietImageURL;
 
+    private final OkHttpClient okHttpClient;
+
+    public Bird(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+    }
+
     @Override
     public Long create(User user, PostRequest request) {
         if (name == null) {
@@ -40,11 +46,8 @@ public class Bird implements ServerActions {
 
         // Send create bird request to server
         if (request == null) {
-            request = new PostRequest();
+            request = new PostRequest("/api/birds/" + campusId + "/new", user, okHttpClient);
         }
-
-        request.setUrl("/api/birds/" + campusId + "/new");
-        request.setUser(user);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("name", name);
@@ -73,12 +76,11 @@ public class Bird implements ServerActions {
             throw new RuntimeException("Bird id not set");
         }
         if (request == null) {
-            request = new GetRequest();
+            request = new GetRequest("/bird/" + id, okHttpClient);
         }
 
         String slideTitle;
         String nodeTitle;
-        request.setUrl("/bird/" + id);
         String response = request.send();
 
         if (response == null) {
@@ -160,7 +162,7 @@ public class Bird implements ServerActions {
             throw new RuntimeException("Bird id not set");
         }
         if (request == null) {
-            request = new PatchRequest();
+            request = new PatchRequest("/api/birds/" + campusId + "/edit", user, okHttpClient);
         }
 
         HashMap<String, String> parameters = new HashMap<>();
@@ -175,8 +177,6 @@ public class Bird implements ServerActions {
         parameters.put("dietImageURL", dietImageURL);
         request.addParameters(parameters);
 
-        request.setUrl("/api/birds/" + campusId + "/edit");
-        request.setUser(user);
         request.send();
     }
 
@@ -187,18 +187,15 @@ public class Bird implements ServerActions {
         }
 
         if (request == null) {
-            request = new DeleteRequest();
+            request = new DeleteRequest("/api/birds/" + campusId + "/remove", user, okHttpClient);
         }
-
-        request.setUrl("/api/birds/" + campusId + "/remove");
-        request.setUser(user);
 
         request.addParameter("id", String.valueOf(id));
         String response = request.send();
 
-        System.out.println( response );
+        System.out.println(response);
         return response.contains("removed") ? true : false;
-    }    
+    }
 
     @Override
     public String toString() {

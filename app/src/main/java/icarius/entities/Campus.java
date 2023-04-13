@@ -18,16 +18,22 @@ import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import okhttp3.OkHttpClient;
 import icarius.auth.User;
 import java.util.HashMap;
 
 @Data
-@NoArgsConstructor
 public class Campus implements ServerActions {
     private Long id;
     private String name;
     private List<Bird> birds;
     private List<Long> birdIds;
+
+    private final OkHttpClient okHttpClient;
+
+    public Campus(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+    }
 
     @Override
     public Long create(User user, PostRequest request) {
@@ -37,10 +43,8 @@ public class Campus implements ServerActions {
 
         // Send create campus request to server
         if (request == null) {
-            request = new PostRequest();
+            request = new PostRequest("/api/campus/new", user, okHttpClient);
         }
-        request.setUrl("/api/campus/new");
-        request.setUser(user);
         request.addParameter("name", name);
         String response =  request.send();
 
@@ -58,12 +62,11 @@ public class Campus implements ServerActions {
         }
 
         if (request == null) {
-            request = new GetRequest();
+            request = new GetRequest("/campus/" + id, okHttpClient);
         }
 
         this.birdIds = new ArrayList<>();
         // send and store GET request response
-        request.setUrl("/campus/" + id);
         String response = request.send();
 
         if (response == null) {
@@ -88,20 +91,6 @@ public class Campus implements ServerActions {
             return this.name;
         }
     }
-
-    private void fetchBirds(GetRequest request) {
-        if (request == null) {
-            request = new GetRequest();
-        }
-
-        this.birds = new ArrayList<>();
-        for (Long birdId : birdIds) {
-            Bird newBird = new Bird();
-            newBird.setId(birdId);
-            newBird.read(request);
-            this.birds.add(newBird);
-        }
-    }
     
     @Override
     public void update(User user, PatchRequest request) {
@@ -110,10 +99,8 @@ public class Campus implements ServerActions {
         }
 
         if (request == null) {
-            request = new PatchRequest();
+            request = new PatchRequest("/api/campus/update", user, okHttpClient);
         }
-        request.setUrl("/api/campus/update");
-        request.setUser(user);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("name", this.name);
@@ -129,11 +116,8 @@ public class Campus implements ServerActions {
         }
 
         if (request == null) {
-            request = new DeleteRequest();
+            request = new DeleteRequest("/api/campus/remove", user, okHttpClient);
         }
-
-        request.setUrl("/api/campus/remove");
-        request.setUser(user);
 
         request.addParameter("id", String.valueOf(id));
         String response = request.send();
