@@ -3,14 +3,15 @@ package icarius.http;
 import java.io.IOException;
 
 import okhttp3.Call;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class KeyRequest extends ServerRequest {
     public static final String keyEndPoint = "/key";
 
-    public KeyRequest() {
-        super(keyEndPoint);
+    public KeyRequest(OkHttpClient okHttpClient) {
+        super(keyEndPoint, okHttpClient);
     }
 
     @Override

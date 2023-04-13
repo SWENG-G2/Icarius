@@ -2,9 +2,12 @@ package icarius.http;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import icarius.App;
 import icarius.auth.User;
+import lombok.Getter;
+import lombok.Setter;
 import okhttp3.Call;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -14,37 +17,42 @@ import okhttp3.Response;
 public abstract class ServerRequest {
     // Request properties
     private String url;
+
+    @Setter
     protected User user;
-    private HashMap<String, String> params = new HashMap<String, String>();
+    @Setter
+    private HashMap<String, String> params;
 
-    // Client
-    protected static final OkHttpClient client = new OkHttpClient();
+    @Setter
+    protected OkHttpClient client;
 
-    public ServerRequest() {}
+    @Getter
+    protected Request request;
 
-    public ServerRequest(String urlPath) {
+    protected ServerRequest(String urlPath, OkHttpClient client) {
         this.url = App.BASE_URL + urlPath;
-        user = null;
+        this.user = null;
+        this.params = new HashMap<>();
+        this.client = client;
     }
 
-    public ServerRequest(String urlPath, User user) {
+    protected ServerRequest(String urlPath, User user, OkHttpClient client) {
         this.url = App.BASE_URL + urlPath;
         this.user = user;
+        this.params = new HashMap<>();
+        this.client = client;
     }
 
     public void setUrl(String urlPath) {
         this.url = App.BASE_URL + urlPath;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public void addParameter(String key, String value) {
         params.put(key, value);
     }
 
-    public void addParameters(HashMap<String, String> parameters) {
+    public void addParameters(Map<String, String> parameters) {
         params.putAll(parameters);
     }
 
@@ -59,8 +67,7 @@ public abstract class ServerRequest {
         Call call = client.newCall(request);
         try (Response response = call.execute()) {
             // read response (socket automatically closes after first read)
-            String body = response.body().string();
-            return body;
+            return response.body().string();
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;

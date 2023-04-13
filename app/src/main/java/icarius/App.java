@@ -1,6 +1,8 @@
 package icarius;
 
 import icarius.http.GetRequest;
+import okhttp3.OkHttpClient;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -22,10 +24,12 @@ public class App {
     public static final String BASE_URL = "http://localhost:8080";
     public User user;
     public List<Campus> campuses;
+    private final OkHttpClient okHttpClient;
 
     public App() {
         Credentials credentials = new Credentials("sysadmin", "sysadmin");
-        user = new User(credentials);
+        this.okHttpClient = new OkHttpClient();
+        this.user = new User(credentials, okHttpClient);
     }
 
     public static void main(String[] args) {
@@ -38,7 +42,7 @@ public class App {
         this.campuses = new ArrayList<>();
         String campusId;
         // send and store GET request response
-        GetRequest request = new GetRequest("/campus/list");
+        GetRequest request = new GetRequest("/campus/list", this.okHttpClient);
         String response = request.send();
 
         if (response == null) {
@@ -52,7 +56,7 @@ public class App {
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
                     campusId = slide.attributeValue("title");
-                    Campus newCampus = new Campus();
+                    Campus newCampus = new Campus(okHttpClient);
                     newCampus.setId(Long.parseLong(campusId));
                     newCampus.read(null);
                     this.campuses.add(newCampus);
