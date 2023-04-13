@@ -9,10 +9,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import icarius.entities.Campus;
 import icarius.gui.items.TempCampus;
 
 import java.awt.GridBagConstraints;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class AdminTab extends Tab{
@@ -154,9 +156,9 @@ public class AdminTab extends Tab{
 
     }
 
-    public void updateCampusComboBox(TempCampus[] campuses){
+    public void updateCampusComboBox(List<Campus> campuses){
         String[] campusesText={};
-        for (TempCampus camp : campuses){
+        for (Campus camp : campuses){
             campusesText=Arrays.copyOf(campusesText, campusesText.length+1);
             campusesText[campusesText.length-1]=camp.getName();
         }

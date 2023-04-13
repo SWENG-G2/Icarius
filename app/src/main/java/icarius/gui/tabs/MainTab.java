@@ -1,10 +1,13 @@
 package icarius.gui.tabs;
 
+import icarius.auth.User;
+import icarius.entities.Campus;
 import icarius.gui.items.TempCampus;
 import okhttp3.Response;
 
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -261,7 +264,7 @@ public class MainTab extends Tab{
 
 
 
-    public void saveCampusPressed(TempCampus[] campuses){
+    public void saveCampusPressed(User user, List<Campus> campuses){
         String newName = subTab.getCampusFieldValue();
         String oldName = subTab.getSelectedCampus();
         DefaultMutableTreeNode getRoot = null;
@@ -280,14 +283,16 @@ public class MainTab extends Tab{
                 getRoot.setUserObject(newName);
                 updateCampusRemover();
                 treeView.repaint();
-                //TODO - Connall - Update campus in the database
-                subTab.setResponse("Campus "+oldName+ " has been changed to "+ newName);
-                subTab.editCampusClosed(newName);
-                for (TempCampus camp : campuses){
+                
+                for (Campus camp : campuses){
                     if(oldName.equals(camp.getName())){
                         camp.setName(newName);
+                        camp.update(user, null);
                     }
                 }
+
+                subTab.setResponse("Campus "+oldName+ " has been changed to "+ newName);
+                subTab.editCampusClosed(newName);
             }else{
                 subTab.setResponse("Campus with name "+ newName+ " already exists");
             } 

@@ -17,7 +17,6 @@ import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import okhttp3.OkHttpClient;
 import icarius.auth.User;
 import java.util.HashMap;
