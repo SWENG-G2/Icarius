@@ -3,8 +3,6 @@ package icarius.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import java.util.Iterator;
 
 import org.dom4j.Document;
@@ -26,7 +24,6 @@ public class Campus implements ServerActions {
     private Long id;
     private String name;
     private List<Bird> birds;
-    private List<Long> birdIds;
 
     private final OkHttpClient okHttpClient;
 
@@ -64,7 +61,7 @@ public class Campus implements ServerActions {
             request = new GetRequest("/campus/" + id, okHttpClient);
         }
 
-        this.birdIds = new ArrayList<>();
+        this.birds = new ArrayList<>();
         // send and store GET request response
         String response = request.send();
 
@@ -81,7 +78,13 @@ public class Campus implements ServerActions {
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
                     String birdId = slide.attributeValue("title");
-                    birdIds.add(Long.parseLong(birdId));
+
+                    // fetch bird
+                    Bird bird = new Bird(okHttpClient);
+                    bird.setId(Long.parseLong(birdId));
+                    bird.setCampusId(id);
+                    bird.read(null);
+                    birds.add( bird );
                 }
             } catch (DocumentException e) {
                 e.printStackTrace();
@@ -98,6 +101,7 @@ public class Campus implements ServerActions {
         }
 
         if (request == null) {
+            // TODO - update path (ID is never sent to server)
             request = new PatchRequest("/api/campus/update", user, okHttpClient);
         }
 
@@ -121,8 +125,8 @@ public class Campus implements ServerActions {
         request.addParameter("id", String.valueOf(id));
         String response = request.send();
 
-        System.out.println( response );
-        return response.contains("removed") ? true : false;
+        System.out.println( "deletion says: " + response );
+        return (response != null) ? true : false;
     }
 
     @Override

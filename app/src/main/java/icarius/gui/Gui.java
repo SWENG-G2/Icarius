@@ -2,22 +2,19 @@ package icarius.gui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
-import icarius.App;
+import icarius.auth.Credentials;
 import icarius.auth.User;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
-import icarius.gui.items.TempCampus;
 import icarius.gui.tabs.MainTab;
 import icarius.gui.tabs.AdminTab;
 import icarius.gui.tabs.loginTab;
 import icarius.http.GetRequest;
-import icarius.http.PostRequest;
 import okhttp3.OkHttpClient;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -90,14 +87,31 @@ public class Gui {
             
             this.campuses = updatedList;
         }
-
-        // TODO - Harry - This function updates campus array but not tree?
     }
 
     private void initializeGUI(){
         updateCampusesArray();
+        initialiseCampuses();
         mainTab.updateTree();
         mainTab.updateCampusRemover();
+    }
+
+    private void initialiseCampuses(){
+        adminTab.updateCampusComboBox(campuses);
+        for (Campus camp : campuses){
+            mainTab.createTree(camp.getName());
+            mainTab.updateTree();
+            mainTab.updateCampusRemover();
+
+            JTree campTree = mainTab.getCampusTree(camp.getName());
+            List<Bird> birds = camp.getBirds();
+            if (birds != null) {
+                for (Bird bird : birds){
+                    mainTab.addBird(bird.getName(), campTree);
+                    mainTab.updateTree();
+                }
+            }
+        }    
     }
 
     private void setupFlatLaf(){
@@ -154,7 +168,7 @@ public class Gui {
         
         //TODO - Connall - set to false
         //done for testing purposes, it wouldn't be visable until the user logs in
-        mainFrame.setVisible(true);
+        mainFrame.setVisible(false);
 
     }
 
@@ -174,32 +188,35 @@ public class Gui {
 
         //TODO - Connall - set to true
         //false for testing purposes, normally this would be true
-        loginFrame.setVisible(false);
+        loginFrame.setVisible(true);
     }
     
     private void configureLoginButton(){
         LoginTab.loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
 
-                String usernameEntered = LoginTab.usernameField.getText();
-                String keyEntered = LoginTab.getKey();
+                String username = LoginTab.usernameField.getText();
+                String password = LoginTab.getKey();
+                
+                Credentials credentials = new Credentials(username, password);
+                user.setCredentials(credentials);
 
-                // TODO - Connall - connect this to the stored usernames and IDs in the server
-                // IMPORTANT - sysadmin logins and regular admin logins need to be seperated
-                // as the key panel of icarus is only added to the main frame if sysadmin logs in
-
-                if (usernameEntered.equals("sysadmin") && keyEntered.equals("pass")) {
-                    loginFrame.setVisible(false);
-                    //TODO - Harry - sort out the key tab
-                    mainFrame.validate();
-                    mainFrame.setVisible(true);
-                } else if (usernameEntered.equals("admin") && keyEntered.equals("pass")) {
-                    loginFrame.setVisible(false);
-                    mainFrame.setVisible(true);
+                if(user.validate()) {
+                    if (user.getAdmin()) {
+                        // If system admin
+                        loginFrame.setVisible(false);
+                        mainFrame.validate();
+                        mainFrame.setVisible(true);
+                        //TODO - Harry - sort out the key tab
+                    } else {
+                        // If regular admin
+                        loginFrame.setVisible(false);
+                        mainFrame.validate();
+                        mainFrame.setVisible(true);
+                    }
                 } else {
                     LoginTab.invalidLogin();
                 }
-
             }
         });
     }
@@ -212,8 +229,10 @@ public class Gui {
                     // If input is null
                     mainTab.setResponse("Campus Name field cannot be left blank");
                 } else if ( campusExists(campusFieldValue) ) {
+                    // If campus exists with same name
                     mainTab.setResponse("Campus: "+campusFieldValue+" already exists");
                 } else {
+                    // Create campus
                     Campus newCampus = new Campus(user.getOkHttpClient());
                     newCampus.setName(campusFieldValue);
                     newCampus.create(user, null);
@@ -234,7 +253,7 @@ public class Gui {
             public void actionPerformed(ActionEvent ae) {
                 String campusFieldValue = mainTab.campusToRemove();
                 if (campusFieldValue.isBlank()) {
-                    mainTab.setResponse("Campus: " + campusFieldValue + " does not exist");
+                    mainTab.setResponse("Campus: '" + campusFieldValue + "' does not exist");
                 } else {
                     Campus campusToRemove = null;
 
@@ -249,9 +268,9 @@ public class Gui {
                     // Remove campus from server and locally
                     if (campusToRemove.delete(user, null)) {
                         campuses.remove(campusToRemove);
-                        mainTab.setResponse("Campus: " + campusFieldValue + " has been successfully removed.");
+                        mainTab.setResponse("Campus: '" + campusFieldValue + "' has been successfully removed.");
                     } else {
-                        mainTab.setResponse("Campus: Failed to remove " + campusFieldValue + " from server!");
+                        mainTab.setResponse("Campus: Failed to remove '" + campusFieldValue + "' from server!");
                     }
 
                     updateCampusesArray();
@@ -272,20 +291,26 @@ public class Gui {
                 if (mainTab.nameFieldText().isBlank() == false){
                         Campus campus = null;
                         for (Campus c : campuses){
-                            if (c.getName()==campusPressed){
+                            if ( c.getName().equals(campusPressed) ){
                                 campus = c;
+                                break;
                             }
                         }
+                        System.out.println("Campus: " + campus);
 
-                        if(campus != null){
+                        if(campus == null) {
+                            mainTab.setResponse("Campus: "+campusPressed+" does not exist");
+                        } else {
                             JTree tree=mainTab.getCampusTree(campusPressed);
                             if(tree != null){
                                 Boolean doesBirdNameExist = mainTab.birdAlreadyExists(tree, mainTab.nameFieldText());
                                 if(doesBirdNameExist==false){
                                     // Create Bird
                                     Bird newBird = new Bird(user.getOkHttpClient());
-                                    newBird.setName(campusPressed);
+                                    newBird.setName(mainTab.nameFieldText());
+                                    newBird.setCampusId(campus.getId());
                                     newBird.create(user, null);
+                                    updateCampusesArray();
 
                                     mainTab.addBird(mainTab.nameFieldText(), tree);
                                     mainTab.updateTree();
@@ -296,10 +321,8 @@ public class Gui {
                             } else{
                                 System.out.println("The bird hasn't been added");
                             }
-                        } else{
-                            mainTab.setResponse("Campus: "+campusPressed+" does not exist");
                         }
-                    
+
                 }else{
                     mainTab.setResponse("Please fill in the required fields");
                 }
@@ -317,7 +340,7 @@ public class Gui {
 
         mainTab.saveBirdButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae){
-                mainTab.saveBirdPressed();
+                mainTab.saveBirdPressed(user, campuses);
             }
         });
 

@@ -31,7 +31,7 @@ public class AuthenticationService {
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Europe/London"));
 
             // load and generate RSA public key 
-            byte[] Base64publicKey = user.getKey().getBytes(StandardCharsets.UTF_8);
+            byte[] Base64publicKey = user.getPublicKey().getBytes(StandardCharsets.UTF_8);
             PublicKey publicKey = generatePublicKey(Base64publicKey);
 
             // format credentials string

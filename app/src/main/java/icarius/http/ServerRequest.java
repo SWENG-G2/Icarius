@@ -67,7 +67,11 @@ public abstract class ServerRequest {
         Call call = client.newCall(request);
         try (Response response = call.execute()) {
             // read response (socket automatically closes after first read)
-            return response.body().string();
+            if (response.code() == 200) {
+                return response.body().string();
+            } else {
+                return null;
+            }
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;

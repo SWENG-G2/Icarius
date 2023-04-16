@@ -1,6 +1,7 @@
 package icarius.gui.tabs;
 
 import icarius.auth.User;
+import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.gui.items.TempCampus;
 import okhttp3.Response;
@@ -285,9 +286,10 @@ public class MainTab extends Tab{
                 treeView.repaint();
                 
                 for (Campus camp : campuses){
-                    if(oldName.equals(camp.getName())){
+                    if( oldName.equals(camp.getName()) ){
                         camp.setName(newName);
                         camp.update(user, null);
+                        break;
                     }
                 }
 
@@ -300,7 +302,7 @@ public class MainTab extends Tab{
         
     }
 
-    public void saveBirdPressed(){
+    public void saveBirdPressed(User user, List<Campus> campuses){
         String newName = subTab.getNameFieldText();
         String oldName = subTab.getSelectedBird();
         //TODO - when using this with the actual server oldName can probably just be pulled from there
@@ -314,26 +316,36 @@ public class MainTab extends Tab{
             }
         }
         if (getRoot != null && getTree != null){
-            TreePath newNamePath = getNamedNode(getRoot, newName);
-            if (newNamePath==null){
-                TreePath path = getNamedNode(getRoot, oldName);
-                if (path != null){
-                    JTree tree = getTree;
-                    tree.setSelectionPath(path);
-                    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)path.getLastPathComponent();
-                    selectedNode.setUserObject(newName);
-                    //TODO - Connall - There should be funcs which update the selected bird info here
-                    treeView.repaint();
-                    subTab.setResponse("Bird: "+oldName+" has been changed to "+ newName);
-                    subTab.editBirdClosed(newName);
-                    //TODO - Harry - figure out how to resize the node so that the new name fits properly
-                } else{
-                    System.out.println("Something has gone wrong");
-                    System.out.println("oldName = "+oldName);
-                    System.out.println("Root name = "+(String)getRoot.getUserObject());
+            TreePath path = getNamedNode(getRoot, oldName);
+            if (path != null){
+                JTree tree = getTree;
+                tree.setSelectionPath(path);
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+                selectedNode.setUserObject(newName);
+
+                //TODO - Add other bird paramters
+                // Get bird
+                for (Campus c : campuses) {
+                    if (c.getName() == subTab.getCampusText()) {
+                        for (Bird b : c.getBirds()) {
+                            if (b.getName() == oldName) {
+                                b.setName(newName);
+                                b.update(user, null);
+                                break;
+                            }
+                        }
+                    }
                 }
-            }else{
-                subTab.setResponse("Bird: "+newName+", campus "+subTab.getCampusText()+ " already exists");
+                
+
+                treeView.repaint();
+                subTab.setResponse("Bird: "+oldName+" has been updated");
+                subTab.editBirdClosed(newName);
+                //TODO - Harry - figure out how to resize the node so that the new name fits properly
+            } else{
+                System.out.println("Something has gone wrong");
+                System.out.println("oldName = "+oldName);
+                System.out.println("Root name = "+(String)getRoot.getUserObject());
             }
         }
     }

@@ -2,16 +2,18 @@ package icarius.auth;
 
 import icarius.http.KeyRequest;
 import lombok.Getter;
+import lombok.Setter;
 import okhttp3.OkHttpClient;
 
 @Getter
+@Setter
 public class User {
     private Credentials credentials;
-    private String key;
+    private String publicKey;
+    private Boolean admin;
     private final OkHttpClient okHttpClient;
 
-    public User(Credentials credentials, OkHttpClient okHttpClient) {
-        this.credentials = credentials;
+    public User(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
         refreshKey();
     }
@@ -21,6 +23,12 @@ public class User {
     }
 
     private void refreshKey() {
-        key = new KeyRequest(okHttpClient).send();
+        publicKey = new KeyRequest(okHttpClient).send();
+    }
+
+    public boolean validate() {
+        // TODO: validate credentials and see if admin
+        admin = true;
+        return true;
     }
 }

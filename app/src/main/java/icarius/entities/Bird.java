@@ -23,6 +23,7 @@ public class Bird implements ServerActions {
     private Long id;
     private Long campusId;
     private String name;
+    private String listImageURL;
     private String heroImageURL;
     private String soundURL;
     private String aboutMe;
@@ -51,6 +52,7 @@ public class Bird implements ServerActions {
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("name", name);
+        parameters.put("listImageURL", listImageURL);
         parameters.put("heroImageURL", heroImageURL);
         parameters.put("soundURL", soundURL);
         parameters.put("aboutMe", aboutMe);
@@ -166,6 +168,7 @@ public class Bird implements ServerActions {
         }
 
         HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("id", Long.toString(this.getId()));
         parameters.put("name", this.name);
         parameters.put("heroImageURL", heroImageURL);
         parameters.put("soundURL", soundURL);
