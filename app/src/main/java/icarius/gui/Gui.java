@@ -23,6 +23,9 @@ import javax.swing.JTree;
 
 import java.awt.BorderLayout;
 
+// TODO - Harry - Move campus delete into campus edit
+// TODO - Harry - can't add bird with name of campus to campus - fix that
+
 public class Gui {
     private TempCampus[] campuses={};
     private JFrame mainFrame;
