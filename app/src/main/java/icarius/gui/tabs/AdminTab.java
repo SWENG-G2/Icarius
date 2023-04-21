@@ -126,7 +126,7 @@ public class AdminTab extends Tab{
         };
         table = new JTable(tableModel);
         tableModel.addColumn("Username");
-        tableModel.addColumn("Password");
+        
         tableModel.addColumn("Campuses");
         table.setShowGrid(true);
 

@@ -84,6 +84,8 @@ public class SubTabMain extends Tab{
         initialiseComponents();
         initialiseStaticLabels();
         setupEditButtons();
+        c.fill = GridBagConstraints.LINE_END;
+
 
         c.weightx = 0.2;
         c.gridx = 0;
