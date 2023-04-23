@@ -141,7 +141,7 @@ public class MainTab extends Tab{
 
 
 
-    public void updateTree(){
+    public void updateTree(List<Campus> campuses){
         Component[] components = treeView.getComponents();
         for (Component c : components){
             treeView.remove(c);
@@ -177,9 +177,17 @@ public class MainTab extends Tab{
 
                             } else{
                                 campus=rootNode.toString();
-                                //TODO - get the relevent bird data, put it into this array (should only hold 10 strings)
-                                String[] birdInfo = {nodeName, "TODO","TODO","TODO"};
-                                subTab.setBirdLabels(birdInfo);
+                                
+                                
+                                String[] birdInfo = getBirdInfo(nodeName, campus, campuses);
+                                if (birdInfo != null){
+                                    subTab.setBirdLabels(birdInfo);
+                                    //getBirdInfo sometimes returns null when it shouldn't if the bird has been added or edited 
+                                    //whilst the current session of icarius is running. If it's not caught in an if statement it
+                                    //crashes the program, if it is caught the program works exactly as it should. 
+                                }
+                                  
+                                
                                 subTab.addBirdNodePressed(false);
                                 subTab.visibleEditBirdButton(true);
                                 subTab.visibleEditCampusButton(false);
@@ -287,17 +295,19 @@ public class MainTab extends Tab{
         }
         if (getRoot != null){
             if(newNameExists==false){
-                getRoot.setUserObject(newName);
-                updateCampusRemover();
-                treeView.repaint();
                 
                 for (Campus camp : campuses){
-                    if( oldName.equals(camp.getName()) ){
+                    if(oldName.equals(camp.getName())){
+                        //TODO - Connall - I don't know why this isn't working,
+                        // it must be something in the campus.setName funtion
                         camp.setName(newName);
                         camp.update(user, null);
                         break;
                     }
                 }
+                getRoot.setUserObject(newName);
+                updateCampusRemover();
+                treeView.repaint();
 
                 subTab.setResponse("Campus "+oldName+ " has been changed to "+ newName);
                 subTab.editCampusClosed(newName);
@@ -323,30 +333,27 @@ public class MainTab extends Tab{
         if (getRoot != null && getTree != null){
             TreePath path = getNamedNode(getRoot, oldName);
             if (path != null){
-                JTree tree = getTree;
-                tree.setSelectionPath(path);
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)path.getLastPathComponent();
-                selectedNode.setUserObject(newName);
-
-                //TODO - Add other bird paramters
-                // Get bird
-                for (Campus c : campuses) {
-                    if (c.getName() == subTab.getCampusText()) {
-                        for (Bird b : c.getBirds()) {
-                            if (b.getName() == oldName) {
-                                b.setName(newName);
-                                b.update(user, null);
-                                break;
-                            }
-                        }
+                String[] birdInfo = subTab.getEditedBirdInfo();
+                Boolean updated = updateBirdInfo(oldName, getRoot.toString(), campuses, birdInfo, user);
+                if (updated == true){
+                    JTree tree = getTree;
+                    tree.setSelectionPath(path);
+                    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+                    selectedNode.setUserObject(newName);
+                    //TODO - Harry - figure out how to resize the node so that the new name fits properly
+                    treeView.repaint();
+                    String[] newBirdInfo=getBirdInfo(newName, getRoot.toString(), campuses);
+                    if(newBirdInfo != null){
+                        subTab.setBirdLabels(newBirdInfo);
+                    } else{
+                        System.out.println("ERROR 1 in GUI-MainTab-saveBirdPressed");
                     }
+                    subTab.setResponse("Bird: "+newName+" has been updated");
+                    subTab.editBirdClosed();
+                } else{
+                    System.out.println("ERROR 2 in GUI-MainTab-saveBirdPressed");
                 }
                 
-
-                treeView.repaint();
-                subTab.setResponse("Bird: "+newName+" has been updated");
-                subTab.editBirdClosed(newName);
-                //TODO - Harry - figure out how to resize the node so that the new name fits properly
             } else{
                 System.out.println("Something has gone wrong");
                 System.out.println("oldName = "+oldName);
@@ -424,7 +431,45 @@ public class MainTab extends Tab{
         return true;
     }
 
-    private void updateBirdName(String newName, String oldName){
+    private String[] getBirdInfo(String birdName, String campus, List<Campus> campuses){
+        for (Campus c : campuses) {
+            if (c.getName().equals(subTab.getCampusText())) {
+                for (Bird b : c.getBirds()) {
+                    if (birdName.equals(b.getName())) {
+                        // TODO - Connall - there's something wrong with the getX() funtions where
+                        // they can't return certain characters, such as an apostrophe (')
+                        String[] birdInfo = {b.getName(), b.getHeroImageURL(), b.getListImageURL(),
+                        b.getSoundURL(), b.getAboutMe(), b.getAboutMeVideoURL(),
+                        b.getLocation(), b.getLocationImageURL(), b.getDiet(), b.getDietImageURL()};
+                        return birdInfo;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
+    private boolean updateBirdInfo(String oldBirdName, String campus, List<Campus> campuses, String[] birdInfo, User user){
+        for (Campus c : campuses) {
+            if (c.getName().equals(subTab.getCampusText())) {
+                for (Bird b : c.getBirds()) {
+                    if (oldBirdName.equals(b.getName())) {
+                        b.setName(birdInfo[0]);
+                        b.setHeroImageURL(birdInfo[1]);
+                        b.setListImageURL(birdInfo[2]);
+                        b.setSoundURL(birdInfo[3]);
+                        b.setAboutMe(birdInfo[4]);
+                        b.setAboutMeVideoURL(birdInfo[5]);
+                        b.setLocation(birdInfo[6]);
+                        b.setLocationImageURL(birdInfo[7]);
+                        b.setDiet(birdInfo[8]);
+                        b.setDietImageURL(birdInfo[9]);
+                        b.update(user, null);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

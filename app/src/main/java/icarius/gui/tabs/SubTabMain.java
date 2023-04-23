@@ -76,21 +76,21 @@ public class SubTabMain extends Tab{
     protected JButton createCampusButton;
 //    private JButton removeCampusButton;
 
-    private String[] labelNames = {"Bird Name: ", "Hero Image: ", "List Image: ",
-    "Sound: ", "About: ", "Video: ", "Location: ", "Location Image: ", "Diet: ", "Diet Image: "};
+    private String[] labelNames = {"Bird Name:    ", "Hero Image:    ", "List Image:    ",
+    "Sound:    ", "About:    ", "Video:    ", "Location:    ", "Location Image:    ", "Diet:    ", "Diet Image:    "};
 
     protected SubTabMain(){
         initialiseInfoLabels();
         initialiseComponents();
         initialiseStaticLabels();
         setupEditButtons();
-        c.fill = GridBagConstraints.LINE_END;
+        c.anchor=GridBagConstraints.LINE_END;
 
 
         c.weightx = 0.2;
         c.gridx = 0;
         c.gridy = 0;
-        panel.add(new JLabel("Campus Name: "), c);
+        panel.add(new JLabel("Campus Name:    "), c);
 
         int i = 1;
         for (JLabel label : staticLabels){
@@ -101,7 +101,7 @@ public class SubTabMain extends Tab{
         c.weightx = 0.2;
         c.gridx = 0;
         c.gridy = i+1;
-        panel.add(new JLabel("Response: "), c);
+        panel.add(new JLabel("Response:    "), c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
 
@@ -324,6 +324,7 @@ public class SubTabMain extends Tab{
         int i = 0;
         for (String info : birdInfo){
             birdLabels[i].setText(info);
+            i++;
         }
     }
 
@@ -465,8 +466,7 @@ public class SubTabMain extends Tab{
         saveCampusButton.setVisible(false);
     }
 
-    protected void editBirdClosed(String birdName){
-        nameText.setText(birdName);
+    protected void editBirdClosed(){
         nameField.setText("");
         saveBirdButton.setVisible(false);
         editBirdButton.setVisible(true);
@@ -481,4 +481,11 @@ public class SubTabMain extends Tab{
         }
     }
 
+
+    public String[] getEditedBirdInfo(){
+        //TODO - Replace the URL's with actual URL's
+        String[] birdInfo = {nameField.getText(), "URL", "URL", "URL", aboutField.getText(),
+                            "URL", locationField.getText(),"URL",dietField.getText(),"URL"};
+        return birdInfo;
+    }
 }

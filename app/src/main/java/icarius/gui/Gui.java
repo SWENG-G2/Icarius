@@ -92,7 +92,7 @@ public class Gui {
     private void initializeGUI(){
         updateCampusesArray();
         initialiseCampuses();
-        mainTab.updateTree();
+        mainTab.updateTree(campuses);
         mainTab.updateCampusRemover();
     }
 
@@ -100,7 +100,7 @@ public class Gui {
         adminTab.updateCampusComboBox(campuses);
         for (Campus camp : campuses){
             mainTab.createTree(camp.getName());
-            mainTab.updateTree();
+            mainTab.updateTree(campuses);
             mainTab.updateCampusRemover();
 
             JTree campTree = mainTab.getCampusTree(camp.getName());
@@ -108,7 +108,7 @@ public class Gui {
             if (birds != null) {
                 for (Bird bird : birds){
                     mainTab.addBird(bird.getName(), campTree);
-                    mainTab.updateTree();
+                    mainTab.updateTree(campuses);
                 }
             }
         }    
@@ -241,7 +241,7 @@ public class Gui {
                     adminTab.updateCampusComboBox(campuses);
 
                     mainTab.createTree(campusFieldValue);
-                    mainTab.updateTree();
+                    mainTab.updateTree(campuses);
                     mainTab.updateCampusRemover();
 
                     mainTab.setResponse(campusFieldValue + " added to campus list");
@@ -277,7 +277,7 @@ public class Gui {
                     adminTab.updateCampusComboBox(campuses);
 
                     mainTab.removeTree(campusFieldValue);
-                    mainTab.updateTree();
+                    mainTab.updateTree(campuses);
                     mainTab.updateCampusRemover();
                 }
             }
@@ -316,7 +316,7 @@ public class Gui {
                                     updateCampusesArray();
 
                                     mainTab.addBird(mainTab.nameFieldText(), tree);
-                                    mainTab.updateTree();
+                                    mainTab.updateTree(campuses);
                                     mainTab.setResponse("Bird: "+mainTab.nameFieldText()+" added to campus: "+campusPressed);
                                 }else{
                                     mainTab.setResponse("Bird: "+mainTab.nameFieldText()+ ", Campus: "+ campusPressed+ " already exists");
