@@ -309,6 +309,9 @@ public class Gui {
                                     Bird newBird = new Bird(user.getOkHttpClient());
                                     newBird.setName(mainTab.nameFieldText());
                                     newBird.setCampusId(campus.getId());
+                                    newBird.setAboutMe(mainTab.aboutFieldText());
+                                    newBird.setDiet(mainTab.dietFieldText());
+                                    newBird.setLocation(mainTab.locationFieldText());
                                     newBird.create(user, null);
                                     updateCampusesArray();
 

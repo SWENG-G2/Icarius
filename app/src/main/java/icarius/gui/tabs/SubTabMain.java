@@ -422,6 +422,17 @@ public class SubTabMain extends Tab{
         return nameField.getText();
     }
 
+    public String aboutFieldText(){
+        return aboutField.getText();
+    }
+
+    public String locationFieldText(){
+        return locationField.getText();
+    }
+    public String dietFieldText(){
+        return dietField.getText();
+    }
+
     protected String getCampusText(){
         return campusText.getText();
     }

@@ -3,7 +3,6 @@ package icarius.gui.tabs;
 import icarius.auth.User;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
-import icarius.gui.items.TempCampus;
 import okhttp3.Response;
 
 import java.util.Arrays;
@@ -179,7 +178,7 @@ public class MainTab extends Tab{
                             } else{
                                 campus=rootNode.toString();
                                 //TODO - get the relevent bird data, put it into this array (should only hold 10 strings)
-                                String[] birdInfo = {nodeName};
+                                String[] birdInfo = {nodeName, "TODO","TODO","TODO"};
                                 subTab.setBirdLabels(birdInfo);
                                 subTab.addBirdNodePressed(false);
                                 subTab.visibleEditBirdButton(true);
@@ -218,10 +217,17 @@ public class MainTab extends Tab{
         return subTab.nameFieldText();
     }
 
-    
+    public String aboutFieldText(){
+        return subTab.aboutFieldText();
+    }    
 
+    public String locationFieldText(){
+        return subTab.locationFieldText();
+    }
 
-
+    public String dietFieldText(){
+        return subTab.dietFieldText();
+    }
 
 
     public String getSelectedCampus(){
@@ -305,7 +311,6 @@ public class MainTab extends Tab{
     public void saveBirdPressed(User user, List<Campus> campuses){
         String newName = subTab.getNameFieldText();
         String oldName = subTab.getSelectedBird();
-        //TODO - when using this with the actual server oldName can probably just be pulled from there
         DefaultMutableTreeNode getRoot = null;
         JTree getTree = null;
         for (JTree tree : trees){
@@ -339,7 +344,7 @@ public class MainTab extends Tab{
                 
 
                 treeView.repaint();
-                subTab.setResponse("Bird: "+oldName+" has been updated");
+                subTab.setResponse("Bird: "+newName+" has been updated");
                 subTab.editBirdClosed(newName);
                 //TODO - Harry - figure out how to resize the node so that the new name fits properly
             } else{
@@ -354,7 +359,9 @@ public class MainTab extends Tab{
         while (e.hasMoreElements()){
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
             if (node.toString().equalsIgnoreCase(name)){
-                return new TreePath(node.getPath());
+                if(node.isRoot()==false){
+                    return new TreePath(node.getPath()); 
+                }
             }
         }
         return null;
@@ -415,5 +422,9 @@ public class MainTab extends Tab{
         }
         System.out.println("ERROR in Gui MainTab bird already exists");
         return true;
+    }
+
+    private void updateBirdName(String newName, String oldName){
+
     }
 }

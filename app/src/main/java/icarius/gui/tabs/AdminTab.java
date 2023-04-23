@@ -10,7 +10,6 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import icarius.entities.Campus;
-import icarius.gui.items.TempCampus;
 
 import java.awt.GridBagConstraints;
 import java.util.Arrays;
@@ -150,8 +149,8 @@ public class AdminTab extends Tab{
        panel.add(scrollPane, c);
     }
     
-
-    public void updateTable(String username, String password, TempCampus[] campuses){
+    //TODO - Change this to campus
+    public void updateTable(String username, String password, List<Campus> campuses){
         tableModel.setRowCount(0);
 
     }
