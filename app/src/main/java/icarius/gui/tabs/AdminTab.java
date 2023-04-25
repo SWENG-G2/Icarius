@@ -130,7 +130,7 @@ public class AdminTab extends Tab{
         table.setShowGrid(true);
 
         for(int i=0; i<4; i++){
-            String[] blankRow = {"","",""};
+            String[] blankRow = {"",""};
             tableModel.addRow(blankRow);
         }
 

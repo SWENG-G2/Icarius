@@ -12,20 +12,22 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 import javax.swing.plaf.DimensionUIResource;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.TreePath;
 
 import java.awt.event.*;
-
-
+import java.io.File;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Component;
@@ -38,10 +40,11 @@ public class MainTab extends Tab{
     public JButton createCampusButton;
     public JButton removeCampusButton;
     public JButton addBirdButton;
+    public JButton deleteCampusButton;
+    public JButton deleteBirdButton;
 
     public JTree[] trees = {};
 
-    private JComboBox campusComboBox;
 
     public JButton saveCampusButton;
     public JButton saveBirdButton;
@@ -54,7 +57,8 @@ public class MainTab extends Tab{
     private DefaultMutableTreeNode addCampusRoot;
     private JTree addCampusTree;
 
-    private String campus = "";
+    private String selectedCampus = "";
+    private String selectedBird = "";
 
 
     public MainTab(){
@@ -62,38 +66,26 @@ public class MainTab extends Tab{
         this.tabName="Main";
 
         subTab = new SubTabMain();
+        setupUploadButtons();
+
+        deleteCampusButton = subTab.deleteCampusButton;
+        deleteBirdButton = subTab.deleteBirdButton;
 
         c.weightx = 0.5;
         c.gridx = 3;
         c.gridy = 0;
         c.gridheight = 15;
         c.gridwidth = 3;
+        
         panel.add(subTab.returnPanel(), c);
 
-        subTab.returnPanel().setPreferredSize(new DimensionUIResource(350, 300));  
+        subTab.returnPanel().setPreferredSize(new DimensionUIResource(340, 350));  
         //adding labels which won't need to change later
 
         c.gridheight=1;
         c.gridwidth=1;
 
-        String[] comboBoxText={};
 
-        campusComboBox = new JComboBox<>(comboBoxText);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.8;
-        c.gridx = 0;
-        c.gridy = 15;
-        c.gridwidth = 3;
-        panel.add(campusComboBox,c);
-
-        removeCampusButton = new JButton("Remove Campus");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.8;
-        c.gridx = 0;
-        c.gridy = 16;
-        c.gridwidth = 1;
-        panel.add(removeCampusButton,c);
-        removeCampusButton.setVisible(false);
                         
         createCampusButton = subTab.createCampusButton;
         addBirdButton = subTab.addBirdButton;
@@ -110,8 +102,10 @@ public class MainTab extends Tab{
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 3;
-        c.gridheight = 13;
+        c.gridheight = 15;
         panel.add(scrollPane, c);
+
+        c.weighty = 1;
 
         cT.fill = GridBagConstraints.HORIZONTAL;
         cT.weightx = 0.5;
@@ -128,6 +122,15 @@ public class MainTab extends Tab{
                 subTab.visibleEditBirdButton(false);
                 subTab.visibleEditCampusButton(false);
                 subTab.showStaticLabels(false);
+                subTab.showCampusLabel(true);
+                subTab.editCampusOpen(false);
+                subTab.showWelcomeMessage(false);
+                subTab.showCampusField(true);
+                subTab.showCancelBird(false);
+                subTab.showDeleteBird(false);
+                selectedCampus = "";
+                selectedBird = "";
+                subTab.clearResponse();
             }
         };
         addCampusTree.addMouseListener(mL);
@@ -162,24 +165,30 @@ public class MainTab extends Tab{
                     tree.setSelectionPath(selPath);
                     if (selRow > -1){    
                         DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)selPath.getPath()[0];
-                        campus=rootNode.toString();
+                        selectedCampus=rootNode.toString();
                         subTab.setCampusText(rootNode.toString());
                         subTab.addCampusNodePressed(false);
+                        subTab.editCampusOpen(false);
+                        subTab.showWelcomeMessage(false);
+                        subTab.clearResponse();
+                        subTab.showDeleteBird(false);
                         if (selRow >= 1){
                             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode)selPath.getLastPathComponent();
                             String nodeName = selectedNode.toString();
                             subTab.editBirdSelected(false);
                             subTab.showStaticLabels(true);
                             if(nodeName=="+[Add Bird]"){
-                                subTab.addBirdNodePressed(true);
+                                selectedBird="";
+                                subTab.editBirdSelected(false);
                                 subTab.visibleEditBirdButton(false);
                                 subTab.visibleEditCampusButton(false);
-
+                                subTab.showSaveCampus(false);
+                                subTab.showCancelBird(false);
+                                subTab.addBirdNodePressed(true);
                             } else{
-                                campus=rootNode.toString();
-                                
-                                
-                                String[] birdInfo = getBirdInfo(nodeName, campus, campuses);
+                                selectedCampus=rootNode.toString();
+                                selectedBird=nodeName;
+                                String[] birdInfo = getBirdInfo(nodeName, selectedCampus, campuses);
                                 if (birdInfo != null){
                                     subTab.setBirdLabels(birdInfo);
                                     //getBirdInfo sometimes returns null when it shouldn't if the bird has been added or edited 
@@ -187,16 +196,19 @@ public class MainTab extends Tab{
                                     //crashes the program, if it is caught the program works exactly as it should. 
                                 }
                                   
-                                
+                                subTab.showCancelBird(false);
                                 subTab.addBirdNodePressed(false);
                                 subTab.visibleEditBirdButton(true);
                                 subTab.visibleEditCampusButton(false);
                             }
                         } else{
                             subTab.showStaticLabels(false);
+                            subTab.showCampusLabel(true);
                             subTab.campusNodePressed();
                             subTab.visibleEditBirdButton(false);
                             subTab.visibleEditCampusButton(true);
+                            subTab.showCancelBird(false);
+                            selectedBird="";
                         }
                     } 
                 }
@@ -233,42 +245,44 @@ public class MainTab extends Tab{
         return subTab.locationFieldText();
     }
 
+
+
     public String dietFieldText(){
         return subTab.dietFieldText();
     }
 
 
     public String getSelectedCampus(){
-        return campus;
+        return selectedCampus;
+    }
+
+    public String getSelectedBird(){
+        return selectedBird;
     }
 
     public String getCampusFieldValue(){
         return subTab.getCampusFieldValue();
     }
     
-    public void updateCampusRemover(){
-        String[] campusesText={};
-        for (JTree tree : trees){
-            DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
-            campusesText=Arrays.copyOf(campusesText, campusesText.length+1);
-            campusesText[campusesText.length-1]=(String)root.getUserObject();
+    public void showWelcomeMessage(boolean bool){
+        boolean notBool;
+        if (bool == true){
+            notBool = false;
+        } else{
+            notBool = true;
         }
-        DefaultComboBoxModel model = (DefaultComboBoxModel) campusComboBox.getModel();
-        model.removeAllElements();
-
-        for (String text : campusesText){
-            model.addElement(text);
-        }
-
-        if(campusesText.length>0){
-            removeCampusButton.setVisible(true);
-        }else{
-            removeCampusButton.setVisible(false);
-        }
-    }
-
-    public String campusToRemove(){
-        return String.valueOf(campusComboBox.getSelectedItem());
+        subTab.showWelcomeMessage(bool);
+        subTab.showStaticLabels(notBool);
+        subTab.addBirdNodePressed(notBool);
+        subTab.editCampusOpen(notBool);
+        subTab.visibleEditBirdButton(notBool);
+        subTab.visibleEditCampusButton(notBool);
+        subTab.editBirdSelected(notBool);
+        subTab.showSaveCampus(notBool);
+        subTab.showCancelBird(notBool);
+        subTab.showSaveBird(notBool);
+        subTab.showBirdLabels(notBool);
+        subTab.showDeleteBird(notBool);
     }
 
 
@@ -306,7 +320,6 @@ public class MainTab extends Tab{
                     }
                 }
                 getRoot.setUserObject(newName);
-                updateCampusRemover();
                 treeView.repaint();
 
                 subTab.setResponse("Campus "+oldName+ " has been changed to "+ newName);
@@ -427,8 +440,26 @@ public class MainTab extends Tab{
                 return true;
             }
         }
-        System.out.println("ERROR in Gui MainTab bird already exists");
+        System.out.println("ERROR in Gui MainTab birdAlreadyExists");
         return true;
+    }
+
+    public boolean deleteBird(JTree campus, String birdName){
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode)campus.getModel().getRoot();
+            
+        
+        if (root != null){
+            TreePath newNamePath = getNamedNode(root, birdName);
+            if(newNamePath==null){
+                return false;
+            } else{
+                DefaultTreeModel model = (DefaultTreeModel)campus.getModel();
+                model.removeNodeFromParent((MutableTreeNode)newNamePath.getLastPathComponent());
+                return true;
+            }
+        }
+        System.out.println("ERROR in Gui MainTab deleteBird");
+        return false;
     }
 
     private String[] getBirdInfo(String birdName, String campus, List<Campus> campuses){
@@ -472,4 +503,41 @@ public class MainTab extends Tab{
         }
         return false;
     }
+
+        //TODO - make sure this is nio and not io
+        private void setupUploadButtons(){
+            for (JButton button : subTab.uploadButtons){
+                button.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent ae){
+                        final JFileChooser fc = new JFileChooser();
+                        if (button == subTab.uploadButtons[2]){
+                            fc.setDialogTitle("Select an audio file");
+                            fc.setAcceptAllFileFilterUsed(false);
+                            FileNameExtensionFilter filter = new FileNameExtensionFilter("MP3, MP4 and WAV files", "MP3", "MP4", "WAV");
+                            fc.addChoosableFileFilter(filter);
+                        } else if (button == subTab.uploadButtons[4]){
+                            fc.setDialogTitle("Select a video");
+                            fc.setAcceptAllFileFilterUsed(false);
+                            FileNameExtensionFilter filter = new FileNameExtensionFilter("MP4, MOV, WMV and AVI files", "MP4", "MOV", "WMV","AVI");
+                            fc.addChoosableFileFilter(filter);
+                        }else{
+                            fc.setDialogTitle("Select an image");
+                            fc.setAcceptAllFileFilterUsed(false);
+                            FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG, JPEG, JPG and GIF images", "png", "gif", "jpeg","JPG");
+                            fc.addChoosableFileFilter(filter);
+                        }
+                        
+                        int returnVal = fc.showOpenDialog(null);
+                        if (returnVal == JFileChooser.APPROVE_OPTION){
+                            File file = fc.getSelectedFile();
+                            System.out.println("Opening "+file.getName());
+                            button.setText("File selected: "+file.getName());
+                            //TODO - Connall - upload to the server
+                            String path = file.getPath();
+                        }
+    
+                    }
+                 });
+            }
+        }
 }
