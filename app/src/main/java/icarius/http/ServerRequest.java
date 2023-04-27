@@ -22,6 +22,7 @@ public abstract class ServerRequest {
     @Setter
     protected User user;
     @Setter
+    @Getter
     private HashMap<String, String> params;
 
     @Setter
@@ -48,7 +49,6 @@ public abstract class ServerRequest {
         this.url = App.BASE_URL + urlPath;
     }
 
-
     public void addParameter(String key, String value) {
         params.put(key, value);
     }
@@ -68,7 +68,7 @@ public abstract class ServerRequest {
         Call call = client.newCall(request);
         try (Response response = call.execute()) {
             // read response (socket automatically closes after first read)
-            int code =  response.code();
+            int code = response.code();
             String body = response.body().string();
             Headers headers = response.headers();
             return new ServerResponse(code, body, headers);
