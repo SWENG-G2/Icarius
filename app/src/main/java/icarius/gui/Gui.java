@@ -11,6 +11,7 @@ import icarius.gui.tabs.AdminTab;
 import icarius.gui.tabs.loginTab;
 import icarius.http.GetRequest;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,8 +64,8 @@ public class Gui {
     private void updateCampusesArray(){
         // send and store GET request response
         GetRequest request = new GetRequest("/campus/list", user.getOkHttpClient());
-        String response = request.send();
-        
+        String response = request.send().getBody();
+
         if (response != null) {
             String campusId;
             List<Campus> updatedList = new ArrayList<>();
@@ -164,8 +165,6 @@ public class Gui {
         tabbedPane.addTab(mainTab.returnName(), null, mainTab.returnPanel());
         tabbedPane.addTab(adminTab.returnName(), null, adminTab.returnPanel());
         
-        //TODO - Connall - set to false
-        //done for testing purposes, it wouldn't be visable until the user logs in
         mainFrame.setVisible(false);
 
     }
@@ -181,11 +180,7 @@ public class Gui {
         this.configureLoginButton();
 
         loginFrame.add(LoginTab.returnPanel());
-
         loginFrame.validate();
-
-        //TODO - Connall - set to true
-        //false for testing purposes, normally this would be true
         loginFrame.setVisible(true);
     }
     
@@ -199,7 +194,7 @@ public class Gui {
                 Credentials credentials = new Credentials(username, password);
                 user.setCredentials(credentials);
 
-                if(user.validate()) {
+                if(user.validate(null)) {
                     if (user.getAdmin()) {
                         // If system admin
                         loginFrame.setVisible(false);
@@ -360,7 +355,13 @@ public class Gui {
                                 if(hasBirdBeenDeleted==true){
                                     mainTab.setResponse("Campus: "+campusPressed+", Bird: "+ mainTab.getSelectedBird()+" deleted");
                                     mainTab.showWelcomeMessage(true);
-                                    //TODO - Connall - remove the bird from the server
+                                    
+                                    for (Bird bird : campus.getBirds()) {
+                                        if (bird.getName().equals(mainTab.getSelectedBird())) {
+                                            bird.delete(user, null);
+                                        }
+                                    }
+
                                 }else{
                                     mainTab.setResponse("ERROR: bird has not been deleted");
                                 }

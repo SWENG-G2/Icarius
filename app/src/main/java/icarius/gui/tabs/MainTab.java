@@ -3,6 +3,7 @@ package icarius.gui.tabs;
 import icarius.auth.User;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
+import icarius.http.PostRequest;
 import okhttp3.Response;
 
 import java.util.Arrays;
@@ -312,8 +313,6 @@ public class MainTab extends Tab{
                 
                 for (Campus camp : campuses){
                     if(oldName.equals(camp.getName())){
-                        //TODO - Connall - I don't know why this isn't working,
-                        // it must be something in the campus.setName funtion
                         camp.setName(newName);
                         camp.update(user, null);
                         break;
@@ -321,7 +320,6 @@ public class MainTab extends Tab{
                 }
                 getRoot.setUserObject(newName);
                 treeView.repaint();
-
                 subTab.setResponse("Campus "+oldName+ " has been changed to "+ newName);
                 subTab.editCampusClosed(newName);
             }else{
@@ -504,40 +502,42 @@ public class MainTab extends Tab{
         return false;
     }
 
-        //TODO - make sure this is nio and not io
-        private void setupUploadButtons(){
-            for (JButton button : subTab.uploadButtons){
-                button.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent ae){
-                        final JFileChooser fc = new JFileChooser();
-                        if (button == subTab.uploadButtons[2]){
-                            fc.setDialogTitle("Select an audio file");
-                            fc.setAcceptAllFileFilterUsed(false);
-                            FileNameExtensionFilter filter = new FileNameExtensionFilter("MP3, MP4 and WAV files", "MP3", "MP4", "WAV");
-                            fc.addChoosableFileFilter(filter);
-                        } else if (button == subTab.uploadButtons[4]){
-                            fc.setDialogTitle("Select a video");
-                            fc.setAcceptAllFileFilterUsed(false);
-                            FileNameExtensionFilter filter = new FileNameExtensionFilter("MP4, MOV, WMV and AVI files", "MP4", "MOV", "WMV","AVI");
-                            fc.addChoosableFileFilter(filter);
-                        }else{
-                            fc.setDialogTitle("Select an image");
-                            fc.setAcceptAllFileFilterUsed(false);
-                            FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG, JPEG, JPG and GIF images", "png", "gif", "jpeg","JPG");
-                            fc.addChoosableFileFilter(filter);
-                        }
-                        
-                        int returnVal = fc.showOpenDialog(null);
-                        if (returnVal == JFileChooser.APPROVE_OPTION){
-                            File file = fc.getSelectedFile();
-                            System.out.println("Opening "+file.getName());
-                            button.setText("File selected: "+file.getName());
-                            //TODO - Connall - upload to the server
-                            String path = file.getPath();
-                        }
-    
+    //TODO - make sure this is nio and not io
+    private void setupUploadButtons(){
+        for (JButton button : subTab.uploadButtons){
+            button.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent ae){
+                    final JFileChooser fc = new JFileChooser();
+                    if (button == subTab.uploadButtons[2]){
+                        fc.setDialogTitle("Select an audio file");
+                        fc.setAcceptAllFileFilterUsed(false);
+                        FileNameExtensionFilter filter = new FileNameExtensionFilter("MP3, MP4 and WAV files", "MP3", "MP4", "WAV");
+                        fc.addChoosableFileFilter(filter);
+                    } else if (button == subTab.uploadButtons[4]){
+                        fc.setDialogTitle("Select a video");
+                        fc.setAcceptAllFileFilterUsed(false);
+                        FileNameExtensionFilter filter = new FileNameExtensionFilter("MP4, MOV, WMV and AVI files", "MP4", "MOV", "WMV","AVI");
+                        fc.addChoosableFileFilter(filter);
+                    }else{
+                        fc.setDialogTitle("Select an image");
+                        fc.setAcceptAllFileFilterUsed(false);
+                        FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG, JPEG, JPG and GIF images", "png", "gif", "jpeg","JPG");
+                        fc.addChoosableFileFilter(filter);
                     }
-                 });
+                    
+                    int returnVal = fc.showOpenDialog(null);
+                    if (returnVal == JFileChooser.APPROVE_OPTION){
+                        File file = fc.getSelectedFile();
+                        System.out.println("Opening "+file.getName());
+                        button.setText("File selected: "+file.getName());
+                        
+                        String path = file.getPath();
+                        // TODO - need campus Id and User for request
+                        // TODO - create upload file request and save path to bird
+                    }
+
+                }
+                });
             }
         }
 }

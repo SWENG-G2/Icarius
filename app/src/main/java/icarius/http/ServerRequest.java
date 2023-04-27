@@ -9,6 +9,7 @@ import icarius.auth.User;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.Call;
+import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -62,21 +63,20 @@ public abstract class ServerRequest {
         return urlB.build().toString();
     }
 
-    protected String execute(Request request) {
+    protected ServerResponse execute(Request request) {
         // Execute Call
         Call call = client.newCall(request);
         try (Response response = call.execute()) {
             // read response (socket automatically closes after first read)
-            if (response.code() == 200) {
-                return response.body().string();
-            } else {
-                return null;
-            }
+            int code =  response.code();
+            String body = response.body().string();
+            Headers headers = response.headers();
+            return new ServerResponse(code, body, headers);
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;
         }
     }
 
-    public abstract String send();
+    public abstract ServerResponse send();
 }

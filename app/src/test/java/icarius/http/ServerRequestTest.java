@@ -76,7 +76,7 @@ public class ServerRequestTest {
 
         classUnderTest.setClient(clientMock);
 
-        String result = classUnderTest.execute(expectedRequest);
+        String result = classUnderTest.execute(expectedRequest).getBody();
 
         assertNull(result);
     }

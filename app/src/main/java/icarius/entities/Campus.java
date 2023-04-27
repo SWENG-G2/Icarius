@@ -42,7 +42,7 @@ public class Campus implements ServerActions {
             request = new PostRequest("/api/campus/new", user, okHttpClient);
         }
         request.addParameter("name", name);
-        String response =  request.send();
+        String response =  request.send().getBody();
 
         // Print response and return created campus Id
         System.out.println(response);
@@ -63,7 +63,7 @@ public class Campus implements ServerActions {
 
         this.birds = new ArrayList<>();
         // send and store GET request response
-        String response = request.send();
+        String response = request.send().getBody();
 
         if (response == null) {
             return null;
@@ -101,12 +101,12 @@ public class Campus implements ServerActions {
         }
 
         if (request == null) {
-            // TODO - update path (ID is never sent to server)
-            request = new PatchRequest("/api/campus/update", user, okHttpClient);
+            request = new PatchRequest("/api/campus/edit", user, okHttpClient);
         }
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("name", this.name);
+        params.put("newName", this.name);
+        params.put("id", this.getId()+"");
         request.addParameters(params);
 
         request.send();
@@ -123,7 +123,7 @@ public class Campus implements ServerActions {
         }
 
         request.addParameter("id", String.valueOf(id));
-        String response = request.send();
+        String response = request.send().getBody();
 
         System.out.println( "deletion says: " + response );
         return (response != null) ? true : false;

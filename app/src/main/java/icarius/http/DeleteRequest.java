@@ -11,7 +11,7 @@ public class DeleteRequest extends ServerRequest {
     }
 
     @Override
-    public String send() {
+    public ServerResponse send() {
         Request request = new Request.Builder()
         .url(getUrl())
         .addHeader("credentials", user.getAuth())

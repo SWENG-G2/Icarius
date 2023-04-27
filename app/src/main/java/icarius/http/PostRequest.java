@@ -32,7 +32,7 @@ public class PostRequest extends ServerRequest{
     }
 
     @Override
-    public String send() {
+    public ServerResponse send() {
         RequestBody requestBody;
         if ( containsFile() ) {
             requestBody = buildFileUpload();

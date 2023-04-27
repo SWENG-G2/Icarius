@@ -45,7 +45,7 @@ public class GetRequestTest {
 
         GetRequest getRequest = new GetRequest(TEST_PATH, clientMock);
 
-        String result = getRequest.send();
+        String result = getRequest.send().getBody();
 
         Request request = getRequest.getRequest();
 

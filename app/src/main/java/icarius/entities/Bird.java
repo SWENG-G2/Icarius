@@ -63,7 +63,7 @@ public class Bird implements ServerActions {
         parameters.put("dietImageURL", dietImageURL);
         request.addParameters(parameters);
 
-        String response = request.send();
+        String response = request.send().getBody();
 
         // Print response and return created bird Id
         System.out.println(response);
@@ -83,7 +83,7 @@ public class Bird implements ServerActions {
 
         String slideTitle;
         String nodeTitle;
-        String response = request.send();
+        String response = request.send().getBody();
 
         if (response == null) {
             return null;
@@ -194,7 +194,7 @@ public class Bird implements ServerActions {
         }
 
         request.addParameter("id", String.valueOf(id));
-        String response = request.send();
+        String response = request.send().getBody();
 
         System.out.println(response);
         return response.contains("removed") ? true : false;
