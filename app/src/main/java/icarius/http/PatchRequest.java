@@ -13,7 +13,7 @@ public class PatchRequest extends ServerRequest {
     }
 
     @Override
-    public String send() {
+    public ServerResponse send() {
         RequestBody requestBody = new FormBody.Builder().build();
     
         Request request = new Request.Builder()

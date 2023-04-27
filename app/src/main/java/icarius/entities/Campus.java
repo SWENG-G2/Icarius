@@ -3,8 +3,6 @@ package icarius.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import java.util.Iterator;
 
 import org.dom4j.Document;
@@ -17,7 +15,6 @@ import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import okhttp3.OkHttpClient;
 import icarius.auth.User;
 import java.util.HashMap;
@@ -27,7 +24,6 @@ public class Campus implements ServerActions {
     private Long id;
     private String name;
     private List<Bird> birds;
-    private List<Long> birdIds;
 
     private final OkHttpClient okHttpClient;
 
@@ -46,7 +42,7 @@ public class Campus implements ServerActions {
             request = new PostRequest("/api/campus/new", user, okHttpClient);
         }
         request.addParameter("name", name);
-        String response =  request.send();
+        String response =  request.send().getBody();
 
         // Print response and return created campus Id
         System.out.println(response);
@@ -65,9 +61,9 @@ public class Campus implements ServerActions {
             request = new GetRequest("/campus/" + id, okHttpClient);
         }
 
-        this.birdIds = new ArrayList<>();
+        this.birds = new ArrayList<>();
         // send and store GET request response
-        String response = request.send();
+        String response = request.send().getBody();
 
         if (response == null) {
             return null;
@@ -82,7 +78,13 @@ public class Campus implements ServerActions {
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
                     String birdId = slide.attributeValue("title");
-                    birdIds.add(Long.parseLong(birdId));
+
+                    // fetch bird
+                    Bird bird = new Bird(okHttpClient);
+                    bird.setId(Long.parseLong(birdId));
+                    bird.setCampusId(id);
+                    bird.read(null);
+                    birds.add( bird );
                 }
             } catch (DocumentException e) {
                 e.printStackTrace();
@@ -99,11 +101,12 @@ public class Campus implements ServerActions {
         }
 
         if (request == null) {
-            request = new PatchRequest("/api/campus/update", user, okHttpClient);
+            request = new PatchRequest("/api/campus/edit", user, okHttpClient);
         }
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("name", this.name);
+        params.put("newName", this.name);
+        params.put("id", this.getId()+"");
         request.addParameters(params);
 
         request.send();
@@ -120,10 +123,10 @@ public class Campus implements ServerActions {
         }
 
         request.addParameter("id", String.valueOf(id));
-        String response = request.send();
+        String response = request.send().getBody();
 
-        System.out.println( response );
-        return response.contains("removed") ? true : false;
+        System.out.println( "deletion says: " + response );
+        return (response != null) ? true : false;
     }
 
     @Override

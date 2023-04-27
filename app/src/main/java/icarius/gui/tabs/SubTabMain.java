@@ -3,20 +3,25 @@ package icarius.gui.tabs;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.ImageFilter;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.GridBagConstraints;
 
 public class SubTabMain extends Tab{
 
     private JLabel response;
 
+    private JLabel campusLabel;
     private JLabel nameLabel;
     private JLabel heroImageLabel;
     private JLabel listImageLabel;
@@ -27,8 +32,10 @@ public class SubTabMain extends Tab{
     private JLabel locationImageLabel;
     private JLabel dietLabel;
     private JLabel dietImageLabel;
-    private JLabel[] staticLabels={nameLabel, heroImageLabel, listImageLabel, soundLabel, aboutLabel,
+    private JLabel[] staticLabels={campusLabel, nameLabel, heroImageLabel, listImageLabel, soundLabel, aboutLabel,
                                 videoLabel, locationLabel, locationImageLabel, dietLabel, dietImageLabel};
+
+    private JLabel welcomeMessage;
 
     private JLabel campusText;
     private JLabel nameText;
@@ -57,27 +64,29 @@ public class SubTabMain extends Tab{
     protected JButton addBirdButton;
     private JComponent[] components = {};
 
+
     private JButton editBirdButton;
     protected JButton saveBirdButton;
     private JButton cancelBirdButton;
+    protected JButton deleteBirdButton;
 
     private JButton editCampusButton;
     protected JButton saveCampusButton;
     private JButton cancelCampusButton;
+    protected JButton deleteCampusButton;
 
     private String selectedBird="";
     private String selectedCampus="";
 
-    private JButton[] uploadButtons = {};
+    protected JButton[] uploadButtons = {};
 
     
     private JButton[] addEditOrSaveButtons = {};
 
     protected JButton createCampusButton;
-//    private JButton removeCampusButton;
 
-    private String[] labelNames = {"Bird Name: ", "Hero Image: ", "List Image: ",
-    "Sound: ", "About: ", "Video: ", "Location: ", "Location Image: ", "Diet: ", "Diet Image: "};
+    private String[] labelNames = {"Campus Name:    ", "Bird Name:    ", "Hero Image:    ", "List Image:    ",
+    "Sound:    ", "About:    ", "Video:    ", "Location:    ", "Location Image:    ", "Diet:    ", "Diet Image:    "};
 
     protected SubTabMain(){
         initialiseInfoLabels();
@@ -85,12 +94,17 @@ public class SubTabMain extends Tab{
         initialiseStaticLabels();
         setupEditButtons();
 
-        c.weightx = 0.2;
+        c.weightx = 1;
         c.gridx = 0;
         c.gridy = 0;
-        panel.add(new JLabel("Campus Name: "), c);
+        c.gridwidth = 2;
+        panel.add(welcomeMessage=new JLabel("Select an item to continue."), c);
+        welcomeMessage.setVisible(true);
 
-        int i = 1;
+        c.anchor=GridBagConstraints.LINE_END;
+
+        c.gridwidth=1;
+        int i = 0;
         for (JLabel label : staticLabels){
             addComponent(label, 0, i);
             i++;
@@ -98,21 +112,31 @@ public class SubTabMain extends Tab{
 
         c.weightx = 0.2;
         c.gridx = 0;
-        c.gridy = i+1;
-        panel.add(new JLabel("Response: "), c);
+        c.gridy = i+2;
+        panel.add(new JLabel("Response:    "), c);
+
+        c.weightx = 0.8;
+        c.gridx = 1;
+        c.gridy = i+3;
+        panel.add(deleteCampusButton, c);
+        deleteCampusButton.setVisible(false);
+
+        c.weightx = 0.8;
+        c.gridx = 1;
+        c.gridy = i+3;
+        panel.add(deleteBirdButton, c);
+        deleteBirdButton.setVisible(false);
 
         c.fill = GridBagConstraints.HORIZONTAL;
 
         i=0;
-        addComponent(campusField, 1, i);
         for (JComponent component : components){
-            i++;
             addComponent(component, 1, i);
             component.setVisible(false);
+            i++;
         }
 
 
-        //By default add campus is selected
         
         addComponent(cancelBirdButton, 0, i+1);
         cancelBirdButton.setVisible(false);
@@ -125,7 +149,7 @@ public class SubTabMain extends Tab{
             button.setVisible(false);
         }
 
-        createCampusButton.setVisible(true);
+        createCampusButton.setVisible(false);
 
 
         addComponent(campusText, 1, 0);
@@ -142,7 +166,7 @@ public class SubTabMain extends Tab{
         addBirdButton.setVisible(false);
 
         c.gridwidth=3;
-        addComponent(response, 1, i+1);
+        addComponent(response, 1, i+2);
         c.gridwidth=1;
 
         showStaticLabels(false);
@@ -175,14 +199,18 @@ public class SubTabMain extends Tab{
         saveCampusButton = new JButton("Save Changes");
         cancelCampusButton = new JButton("Cancel");
 
+        deleteCampusButton = new JButton("Delete Campus");
+        deleteBirdButton = new JButton("Delete Bird");
+
+
+
         JButton[] tempUploadButtons={heroImageUp, listImageUp, soundUp,
                     videoUp, locationImageUp, dietImageUp};
 
         uploadButtons=Arrays.copyOf(tempUploadButtons, tempUploadButtons.length);
 
-        setupUploadButtons();
 
-        JComponent[] tempComponents={nameField, heroImageUp, listImageUp, soundUp, aboutField,
+        JComponent[] tempComponents={campusField, nameField, heroImageUp, listImageUp, soundUp, aboutField,
             videoUp, locationField, locationImageUp, dietField, dietImageUp};
 
 
@@ -227,24 +255,15 @@ public class SubTabMain extends Tab{
         staticLabels=Arrays.copyOf(tempLabels, tempLabels.length);
     }
 
-    private void openDirectory() throws IOException{
-        File directory = new File("C://Program Files//");
-        Desktop.getDesktop().open(directory);
+    protected void showSaveCampus(boolean bool){
+        saveCampusButton.setVisible(bool);
     }
 
-    //TODO - make sure this is nio and not io
-    private void setupUploadButtons(){
-        for (JButton button : uploadButtons){
-            button.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent ae){
-                    try{
-                        openDirectory();
-                    } catch(Exception IOException){
-                        System.out.println("ERROR OPENING FILE EXPLORER");
-                    }
-                }
-             });
+    public void showBirdLabels(boolean bool){
+        for (JLabel label: birdLabels){
+            label.setVisible(bool);
         }
+        campusText.setVisible(bool);
     }
 
     private void addComponent(JComponent component, int x, int y){
@@ -263,6 +282,7 @@ public class SubTabMain extends Tab{
                 label.setVisible(false);
             }
             createCampusButton.setVisible(true);
+            campusField.setText("");
             campusField.setVisible(true);
             campusText.setVisible(false);
             addBirdButton.setVisible(false);
@@ -279,10 +299,12 @@ public class SubTabMain extends Tab{
             for(JComponent comp : components){
                 comp.setVisible(true);
             }
+            components[0].setVisible(false);
             for(JLabel label : birdLabels){
                 label.setVisible(false);
             }
             addBirdButton.setVisible(true);
+            saveBirdButton.setVisible(false);
         }else{
             for(JComponent comp : components){
                 comp.setVisible(false);
@@ -314,6 +336,10 @@ public class SubTabMain extends Tab{
         nameText.setText(text);
     }
 
+    protected void showWelcomeMessage(boolean bool){
+        welcomeMessage.setVisible(bool);
+    }
+
     protected JButton[] uploadButtons(){
         return uploadButtons;
     }
@@ -322,13 +348,18 @@ public class SubTabMain extends Tab{
         int i = 0;
         for (String info : birdInfo){
             birdLabels[i].setText(info);
+            i++;
         }
+    }
+
+    protected void showCampusLabel(boolean bool){
+        staticLabels[0].setVisible(bool);
     }
 
     protected void editBirdSelected(boolean bool){
         if (bool == true){
             selectedBird = nameText.getText();
-            int i = 0;
+            int i = -1;
             
             for (JLabel label : birdLabels){
                 label.setVisible(false);
@@ -336,17 +367,27 @@ public class SubTabMain extends Tab{
 
             for (JComponent comp : components){
               if (comp instanceof JTextField){
-                JTextField field = (JTextField)comp;
-                field.setText(birdLabels[i].getText());
+                if(i>=0){
+                    JTextField field = (JTextField)comp;
+                    field.setText(birdLabels[i].getText());
+                }
               } else if (comp instanceof JButton){
                 JButton button = (JButton)comp;
-                button.setText("Upload Different Image");
+                if (button == soundUp){
+                    button.setText("Upload Different Audio File");
+                } else if (button == videoUp){
+                    button.setText("Upload Different Video");
+                } else{
+                    button.setText("Upload Different Image");
+                }
+                deleteBirdButton.setVisible(true);
               } else{
                 System.out.println("GUI ERROR: IN editSelected FUNC IN SubTabMain\n bool is true, i = "+i);
               }
               comp.setVisible(true);
               i++;
             }
+            components[0].setVisible(false);
         }else{
             for (JLabel label : birdLabels){
                 label.setVisible(true);
@@ -376,6 +417,15 @@ public class SubTabMain extends Tab{
         editCampusButton.setVisible(bool);
     }
 
+    protected void editCampusOpen(boolean bool){
+        deleteCampusButton.setVisible(bool);
+        cancelCampusButton.setVisible(bool);
+    }
+
+    protected void showCampusField(boolean bool){
+        campusField.setVisible(bool);
+    }
+
     private void setupEditButtons(){
         editBirdButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae){
@@ -393,6 +443,7 @@ public class SubTabMain extends Tab{
                 editBirdButton.setVisible(true);
                 cancelBirdButton.setVisible(false);
                 saveBirdButton.setVisible(false);
+                deleteBirdButton.setVisible(false);
             }
         });
 
@@ -405,6 +456,7 @@ public class SubTabMain extends Tab{
                 editCampusButton.setVisible(false);
                 cancelCampusButton.setVisible(true);
                 saveCampusButton.setVisible(true);
+                deleteCampusButton.setVisible(true);
                 //TODO - work on commit changes button
             }
         });
@@ -412,12 +464,28 @@ public class SubTabMain extends Tab{
         cancelCampusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae){
                 editCampusClosed(selectedCampus);
+                deleteCampusButton.setVisible(false);
             }
         });
     }
 
     public String getNameFieldText() {
         return nameField.getText();
+    }
+
+    public void showSaveBird(boolean bool){
+        saveBirdButton.setVisible(bool);
+    }
+
+    public String aboutFieldText(){
+        return aboutField.getText();
+    }
+
+    public String locationFieldText(){
+        return locationField.getText();
+    }
+    public String dietFieldText(){
+        return dietField.getText();
     }
 
     protected String getCampusText(){
@@ -440,7 +508,10 @@ public class SubTabMain extends Tab{
         for (JComponent comp : components){
             comp.setVisible(false);
         }
+        addBirdButton.setVisible(false);
     }
+
+    
 
     protected void editCampusClosed(String campusName){
         campusText.setText(campusName);
@@ -452,8 +523,7 @@ public class SubTabMain extends Tab{
         saveCampusButton.setVisible(false);
     }
 
-    protected void editBirdClosed(String birdName){
-        nameText.setText(birdName);
+    protected void editBirdClosed(){
         nameField.setText("");
         saveBirdButton.setVisible(false);
         editBirdButton.setVisible(true);
@@ -468,4 +538,21 @@ public class SubTabMain extends Tab{
         }
     }
 
+
+    public String[] getEditedBirdInfo(){
+        //TODO - Replace the URL's with actual URL's
+        String[] birdInfo = {nameField.getText(), "URL", "URL", "URL", aboutField.getText(),
+                            "URL", locationField.getText(),"URL",dietField.getText(),"URL"};
+        return birdInfo;
+    }
+    protected void clearResponse(){
+        response.setText("");
+    }
+    public void showCancelBird(boolean bool){
+        cancelBirdButton.setVisible(bool);
+    }
+
+    public void showDeleteBird(boolean bool){
+        deleteBirdButton.setVisible(bool);
+    }
 }

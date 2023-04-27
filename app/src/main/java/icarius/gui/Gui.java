@@ -2,22 +2,33 @@ package icarius.gui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
-import icarius.gui.items.TempCampus;
+import icarius.auth.Credentials;
+import icarius.auth.User;
+import icarius.entities.Bird;
+import icarius.entities.Campus;
 import icarius.gui.tabs.MainTab;
 import icarius.gui.tabs.AdminTab;
 import icarius.gui.tabs.loginTab;
-//import icarius.user.User;
+import icarius.http.GetRequest;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-
-
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
 import javax.swing.JTabbedPane;
 import javax.swing.JTree;
 
@@ -27,7 +38,9 @@ import java.awt.BorderLayout;
 // TODO - Harry - can't add bird with name of campus to campus - fix that
 
 public class Gui {
-    private TempCampus[] campuses={};
+    public User user;
+    public List<Campus> campuses;
+    
     private JFrame mainFrame;
 
     private JFrame loginFrame;
@@ -43,8 +56,8 @@ public class Gui {
     private AdminTab adminTab;
 
 
-    public Gui(){
-        super();
+    public Gui(User user){
+        this.user = user;
         this.setupFlatLaf();
         this.setupMainFrame();
         this.setupLoginFrame();
@@ -52,16 +65,55 @@ public class Gui {
     }
 
     private void updateCampusesArray(){
-        //TODO - Connall - Change the campuses array from type TempCampus[] to Campus[] and then
-        //write some code in here which imports the campuses from the database and puts them in
-        //that array.
-        //This function will be called whenever a campus is added, removed, or had its name changed
+        // send and store GET request response
+        GetRequest request = new GetRequest("/campus/list", user.getOkHttpClient());
+        String response = request.send().getBody();
+
+        if (response != null) {
+            String campusId;
+            List<Campus> updatedList = new ArrayList<>();
+            // Fetch name from XML response
+            try {
+                Document document = DocumentHelper.parseText(response);
+                Element root = document.getRootElement();
+                // iterate through child elements of presentation with element name "slide"
+                for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
+                    Element slide = it.next();
+                    Campus newCampus = new Campus(user.getOkHttpClient());
+                    campusId = slide.attributeValue("title");
+                    newCampus.setId(Long.parseLong(campusId));
+                    newCampus.read(null);
+                    updatedList.add(newCampus);
+                }
+            } catch (DocumentException e) {
+                e.printStackTrace();
+            }
+            
+            this.campuses = updatedList;
+        }
     }
 
     private void initializeGUI(){
         updateCampusesArray();
-        mainTab.updateTree();
-        mainTab.updateCampusRemover();
+        initialiseCampuses();
+        mainTab.updateTree(campuses);
+    }
+
+    private void initialiseCampuses(){
+        adminTab.updateCampusComboBox(campuses);
+        for (Campus camp : campuses){
+            mainTab.createTree(camp.getName());
+            mainTab.updateTree(campuses);
+
+            JTree campTree = mainTab.getCampusTree(camp.getName());
+            List<Bird> birds = camp.getBirds();
+            if (birds != null) {
+                for (Bird bird : birds){
+                    mainTab.addBird(bird.getName(), campTree);
+                    mainTab.updateTree(campuses);
+                }
+            }
+        }    
     }
 
     private void setupFlatLaf(){
@@ -84,7 +136,7 @@ public class Gui {
 
     private void setupMainFrame(){
         mainFrame = new JFrame();
-        mainFrame.setTitle("Icarus");
+        mainFrame.setTitle("Icarius");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(MAIN_WINDOW_X_SIZE, MAIN_WINDOW_Y_SIZE);
 
@@ -116,9 +168,7 @@ public class Gui {
         tabbedPane.addTab(mainTab.returnName(), null, mainTab.returnPanel());
         tabbedPane.addTab(adminTab.returnName(), null, adminTab.returnPanel());
         
-        //TODO - Connall - set to false
-        //done for testing purposes, it wouldn't be visable until the user logs in
-        mainFrame.setVisible(true);
+        mainFrame.setVisible(false);
 
     }
 
@@ -133,37 +183,36 @@ public class Gui {
         this.configureLoginButton();
 
         loginFrame.add(LoginTab.returnPanel());
-
         loginFrame.validate();
-
-        //TODO - Connall - set to true
-        //false for testing purposes, normally this would be true
-        loginFrame.setVisible(false);
+        loginFrame.setVisible(true);
     }
     
     private void configureLoginButton(){
         LoginTab.loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
 
-                String usernameEntered = LoginTab.usernameField.getText();
-                String keyEntered = LoginTab.getKey();
+                String username = LoginTab.usernameField.getText();
+                String password = LoginTab.getKey();
+                
+                Credentials credentials = new Credentials(username, password);
+                user.setCredentials(credentials);
 
-                // TODO - Connall - connect this to the stored usernames and IDs in the server
-                // IMPORTANT - sysadmin logins and regular admin logins need to be seperated
-                // as the key panel of icarus is only added to the main frame if sysadmin logs in
-
-                if (usernameEntered.equals("sysadmin") && keyEntered.equals("pass")) {
-                    loginFrame.setVisible(false);
-                    //TODO - Harry - sort out the key tab
-                    mainFrame.validate();
-                    mainFrame.setVisible(true);
-                } else if (usernameEntered.equals("admin") && keyEntered.equals("pass")) {
-                    loginFrame.setVisible(false);
-                    mainFrame.setVisible(true);
+                if(user.validate(null)) {
+                    if (user.getAdmin()) {
+                        // If system admin
+                        loginFrame.setVisible(false);
+                        mainFrame.validate();
+                        mainFrame.setVisible(true);
+                        //TODO - Harry - sort out the key tab
+                    } else {
+                        // If regular admin
+                        loginFrame.setVisible(false);
+                        mainFrame.validate();
+                        mainFrame.setVisible(true);
+                    }
                 } else {
                     LoginTab.invalidLogin();
                 }
-
             }
         });
     }
@@ -172,81 +221,69 @@ public class Gui {
         mainTab.createCampusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String campusFieldValue = mainTab.getCampusFieldValue();
-                //TODO - Change this from TempCampus to Campus, if updateCampusesArray() is done.
-                if (campusFieldValue.isBlank() == false){
-                    TempCampus campus = null;
-                    for (TempCampus c : campuses){
-                        if (campusFieldValue.equals(c.getName())){
-                            campus = c;
-                        }
-                    }
-                    if(campus == null){
-                        TempCampus newCampus = new TempCampus(campusFieldValue);
-
-                        //TODO - These two lines need to be replaced with update campus stuff when 
-                        //they're done
-                        campuses=Arrays.copyOf(campuses, campuses.length+1);
-                        campuses[campuses.length-1]=newCampus;
-                        
-                        //TODO - Connall - write code here which will create the campus and upload it to the database
-                        updateCampusesArray();
-
-                        adminTab.updateCampusComboBox(campuses);
-
-                        mainTab.createTree(campusFieldValue);
-                        mainTab.updateTree();
-                        mainTab.updateCampusRemover();
-
-                        mainTab.setResponse(campusFieldValue + " added to campus list");
-                    }else{
-                        mainTab.setResponse("Campus: "+campusFieldValue+" already exists");
-                    }
-                } else{
+                if (campusFieldValue.isBlank()) {
+                    // If input is null
                     mainTab.setResponse("Campus Name field cannot be left blank");
+                } else if ( campusExists(campusFieldValue) ) {
+                    // If campus exists with same name
+                    
+                    mainTab.setResponse("Campus: "+campusFieldValue+" already exists");
+                } else {
+                    // Create campus
+                    Campus newCampus = new Campus(user.getOkHttpClient());
+                    newCampus.setName(campusFieldValue);
+                    newCampus.create(user, null);
+                    updateCampusesArray();
+
+                    adminTab.updateCampusComboBox(campuses);
+
+                    mainTab.createTree(campusFieldValue);
+                    mainTab.updateTree(campuses);
+
+                    mainTab.setResponse(campusFieldValue + " added to campus list");
                 }
             }
         });
-        
-        mainTab.removeCampusButton.addActionListener(new ActionListener() {
+
+        mainTab.deleteCampusButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                String campusFieldValue = mainTab.campusToRemove();
-                if (campusFieldValue != null) {
-                    //TODO - Change this from TempCampus to Campus, if updateCampusesArray() is done 
-                    TempCampus campus = null;
-                        for (TempCampus c : campuses){
-                            if (c.getName()==campusFieldValue){
-                                campus = c;
-                            }
+                String campusFieldValue = mainTab.getSelectedCampus();
+                if (campusFieldValue.isBlank()) {
+                    mainTab.setResponse("Campus: '" + campusFieldValue + "' does not exist");
+                } else {
+                    Campus campusToRemove = null;
+
+                    // Search for campus
+                    for (Campus campus : campuses) {
+                        if (campus.getName().equals(campusFieldValue)) {
+                            campusToRemove = campus;
+                            break;
                         }
-                    if (campus != null) {
-                        TempCampus[] copyCampuses = {};
-            
-                        //TODO - this for loop is temporary, just removed the campus from the campus array
-                        for (TempCampus i : campuses) {
-                            if (i != campus) {
-                                copyCampuses=Arrays.copyOf(copyCampuses, copyCampuses.length +1);
-                                copyCampuses[copyCampuses.length-1]=i;
-                            }
-                        };
-
-                        campuses=copyCampuses;
-
-                        //TODO - Connall - write the code that removes the campus from the server
-                        updateCampusesArray();
-                        adminTab.updateCampusComboBox(campuses);
-
-                        mainTab.removeTree(campusFieldValue);
-                        mainTab.updateTree();
-                        mainTab.updateCampusRemover();
-
-
-                        mainTab.setResponse("Campus: " + campusFieldValue + " has been successfully removed.");
-                    } else {
-                        mainTab.setResponse("Campus: " + campusFieldValue + " does not exist");
                     }
-                } else{
-                    mainTab.setResponse("Campus: "+campusFieldValue+ " does not exist");
+                    System.out.println(campusToRemove);
+                    // Remove campus from server and locally
+                    if (campusToRemove.delete(user, null)) {
+                        
+                        campuses.remove(campusToRemove);
+                        mainTab.setResponse("Campus: '" + campusFieldValue + "' has been successfully removed.");
+                    } else {
+                        mainTab.setResponse("Campus: Failed to remove '" + campusFieldValue + "' from server!");
+                    }
+
+                    updateCampusesArray();
+                    adminTab.updateCampusComboBox(campuses);
+                    mainTab.showWelcomeMessage(true);
+
+                    mainTab.removeTree(campusFieldValue);
+                    mainTab.updateTree(campuses);
                 }
+            }
+        });
+
+        mainTab.saveCampusButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae){
+                mainTab.saveCampusPressed(user, campuses);
+
             }
         });
     }
@@ -255,23 +292,35 @@ public class Gui {
         mainTab.addBirdButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae){
                 String campusPressed = mainTab.getSelectedCampus();
-                if (mainTab.nameFieldText().isBlank() ==false){
-                        //TODO - Change this from TempCampus to Campus, if updateCampusesArray() is done 
-                        TempCampus campus = null;
-                        for (TempCampus c : campuses){
-                            if (c.getName()==campusPressed){
+                if (mainTab.nameFieldText().isBlank() == false){
+                        Campus campus = null;
+                        for (Campus c : campuses){
+                            if ( c.getName().equals(campusPressed) ){
                                 campus = c;
+                                break;
                             }
                         }
+                        System.out.println("Campus: " + campus);
 
-                        if(campus != null){
+                        if(campus == null) {
+                            mainTab.setResponse("Campus: "+campusPressed+" does not exist");
+                        } else {
                             JTree tree=mainTab.getCampusTree(campusPressed);
                             if(tree != null){
                                 Boolean doesBirdNameExist = mainTab.birdAlreadyExists(tree, mainTab.nameFieldText());
                                 if(doesBirdNameExist==false){
-                                    //TODO - Connall - Create the bird in the actual server
+                                    // Create Bird
+                                    Bird newBird = new Bird(user.getOkHttpClient());
+                                    newBird.setName(mainTab.nameFieldText());
+                                    newBird.setCampusId(campus.getId());
+                                    newBird.setAboutMe(mainTab.aboutFieldText());
+                                    newBird.setDiet(mainTab.dietFieldText());
+                                    newBird.setLocation(mainTab.locationFieldText());
+                                    newBird.create(user, null);
+                                    updateCampusesArray();
+
                                     mainTab.addBird(mainTab.nameFieldText(), tree);
-                                    mainTab.updateTree();
+                                    mainTab.updateTree(campuses);
                                     mainTab.setResponse("Bird: "+mainTab.nameFieldText()+" added to campus: "+campusPressed);
                                 }else{
                                     mainTab.setResponse("Bird: "+mainTab.nameFieldText()+ ", Campus: "+ campusPressed+ " already exists");
@@ -279,33 +328,74 @@ public class Gui {
                             } else{
                                 System.out.println("The bird hasn't been added");
                             }
-                        } else{
-                            mainTab.setResponse("Campus: "+campusPressed+" does not exist");
                         }
-                    
+
                 }else{
                     mainTab.setResponse("Please fill in the required fields");
                 }
             }
          });
 
-        //TODO - Harry - write a func to delete a bird
-
-        mainTab.saveCampusButton.addActionListener(new ActionListener() {
+        mainTab.deleteBirdButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae){
-                mainTab.saveCampusPressed(campuses);
+                String campusPressed = mainTab.getSelectedCampus();
+                if (mainTab.nameFieldText().isBlank() == false){
+                        Campus campus = null;
+                        for (Campus c : campuses){
+                            if ( c.getName().equals(campusPressed) ){
+                                campus = c;
+                                break;
+                            }
+                        }
+                        System.out.println("Campus: " + campus);
 
+                        if(campus == null) {
+                            mainTab.setResponse("Campus: "+campusPressed+" does not exist");
+                        } else {
+                            JTree tree=mainTab.getCampusTree(campusPressed);
+                            if(tree != null){
+                                Boolean hasBirdBeenDeleted = mainTab.deleteBird(tree, mainTab.getSelectedBird());
+                                if(hasBirdBeenDeleted==true){
+                                    mainTab.setResponse("Campus: "+campusPressed+", Bird: "+ mainTab.getSelectedBird()+" deleted");
+                                    mainTab.showWelcomeMessage(true);
+                                    
+                                    for (Bird bird : campus.getBirds()) {
+                                        if (bird.getName().equals(mainTab.getSelectedBird())) {
+                                            bird.delete(user, null);
+                                        }
+                                    }
+
+                                }else{
+                                    mainTab.setResponse("ERROR: bird has not been deleted");
+                                }
+                            } else{
+                                System.out.println("The bird hasn't been deleted");
+                            }
+                        }
+
+                }else{
+                    mainTab.setResponse("Please fill in the required fields");
+                }
             }
-        });
+         });
+
 
         mainTab.saveBirdButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae){
-                mainTab.saveBirdPressed();
+                mainTab.saveBirdPressed(user, campuses);
             }
         });
 
     }
 
+    private boolean campusExists(String name) {
+        for (Campus campus : campuses) {
+            if (campus.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
 

@@ -9,10 +9,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import icarius.gui.items.TempCampus;
+import icarius.entities.Campus;
 
 import java.awt.GridBagConstraints;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class AdminTab extends Tab{
@@ -31,7 +32,7 @@ public class AdminTab extends Tab{
 
     public AdminTab(){
         this.tabName="Admin";
-        
+        // TODO - Harry - Create credentials button action?
 
         //adding labels which won't need to change later
         
@@ -124,12 +125,12 @@ public class AdminTab extends Tab{
         };
         table = new JTable(tableModel);
         tableModel.addColumn("Username");
-        tableModel.addColumn("Password");
+        
         tableModel.addColumn("Campuses");
         table.setShowGrid(true);
 
         for(int i=0; i<4; i++){
-            String[] blankRow = {"","",""};
+            String[] blankRow = {"",""};
             tableModel.addRow(blankRow);
         }
 
@@ -148,15 +149,15 @@ public class AdminTab extends Tab{
        panel.add(scrollPane, c);
     }
     
-
-    public void updateTable(String username, String password, TempCampus[] campuses){
+    //TODO - Change this to campus
+    public void updateTable(String username, String password, List<Campus> campuses){
         tableModel.setRowCount(0);
 
     }
 
-    public void updateCampusComboBox(TempCampus[] campuses){
+    public void updateCampusComboBox(List<Campus> campuses){
         String[] campusesText={};
-        for (TempCampus camp : campuses){
+        for (Campus camp : campuses){
             campusesText=Arrays.copyOf(campusesText, campusesText.length+1);
             campusesText[campusesText.length-1]=camp.getName();
         }

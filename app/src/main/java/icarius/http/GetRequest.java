@@ -10,7 +10,7 @@ public class GetRequest extends ServerRequest {
     }
 
     @Override
-    public String send() {
+    public ServerResponse send() {
         request = new Request.Builder()
                 .url(getUrl())
                 .build();

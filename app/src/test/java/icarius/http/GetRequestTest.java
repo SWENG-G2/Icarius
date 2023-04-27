@@ -1,4 +1,4 @@
-package icarius.http;
+    package icarius.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,7 +45,7 @@ public class GetRequestTest {
 
         GetRequest getRequest = new GetRequest(TEST_PATH, clientMock);
 
-        String result = getRequest.send();
+        String result = getRequest.send().getBody();
 
         Request request = getRequest.getRequest();
 
