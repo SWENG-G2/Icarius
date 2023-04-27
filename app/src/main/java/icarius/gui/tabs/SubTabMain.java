@@ -176,6 +176,7 @@ public class SubTabMain extends Tab{
 
 
 
+    //Initialises all of the components which aren't JLabels, puts them into the relevant arrays
     private void initialiseComponents(){
         //Initialises all of the JComponents
         campusField = new JTextField("");
@@ -222,6 +223,7 @@ public class SubTabMain extends Tab{
         addEditOrSaveButtons = Arrays.copyOf(tempAESButtons, tempAESButtons.length);
     }
 
+    //Initialies labels which display info when an existing bird or campus is pressed (also response), puts them into relevant arrays
     private void initialiseInfoLabels(){
         campusText = new JLabel("");
         nameText = new JLabel("");
@@ -243,6 +245,10 @@ public class SubTabMain extends Tab{
         response = new JLabel("");
     }
 
+    //Initialises labels that don't need to change, this is done by cycling through the staticLabels array in a for 
+    //loop and initialising the label using a string from the labelNames array (this is cycled through using i).
+    //at the end it copys the now initialised labels from tempLabels back into staticLabels (if this is not done 
+    //staticLabels will only contain the uninitialised labels and the program won't work)
     private void initialiseStaticLabels(){
         int i=0;
         JLabel[] tempLabels = {};
@@ -259,6 +265,7 @@ public class SubTabMain extends Tab{
         saveCampusButton.setVisible(bool);
     }
 
+    //bird labels are the labels which desplay the info of for the bird when pressed
     public void showBirdLabels(boolean bool){
         for (JLabel label: birdLabels){
             label.setVisible(bool);
@@ -273,6 +280,8 @@ public class SubTabMain extends Tab{
         panel.add(component, c);
     }
 
+    //when the add campus node in the JTree is pressed this is called. Basically just shows the components
+    //that need to be shown and hides the one which need to be hidden.
     protected void addCampusNodePressed(boolean bool){
         if (bool==true){
             for(JComponent comp : components){
@@ -294,6 +303,7 @@ public class SubTabMain extends Tab{
         }
     }
 
+    //Similar to addCampusNodePressed except for when the add bird JTree node is pressed 
     protected void addBirdNodePressed(boolean bool){
         if (bool==true){
             for(JComponent comp : components){
@@ -327,7 +337,7 @@ public class SubTabMain extends Tab{
     protected String getCampusFieldValue(){
         return campusField.getText();
     }
-    
+
     protected void setCampusText(String text){
         campusText.setText(text);
     }
@@ -344,6 +354,7 @@ public class SubTabMain extends Tab{
         return uploadButtons;
     }
 
+    //Sets the bird info labels, in MainTab the String[] birdInfo is created using b.get[blank] to get data from the server 
     protected void setBirdLabels(String[] birdInfo){
         int i = 0;
         for (String info : birdInfo){
@@ -356,6 +367,7 @@ public class SubTabMain extends Tab{
         staticLabels[0].setVisible(bool);
     }
 
+    //when edit bird is pressed this runs, hides/shows the components that it needs to
     protected void editBirdSelected(boolean bool){
         if (bool == true){
             selectedBird = nameText.getText();
@@ -372,6 +384,7 @@ public class SubTabMain extends Tab{
                     field.setText(birdLabels[i].getText());
                 }
               } else if (comp instanceof JButton){
+                //sets the text on the upload buttons
                 JButton button = (JButton)comp;
                 if (button == soundUp){
                     button.setText("Upload Different Audio File");
@@ -417,6 +430,7 @@ public class SubTabMain extends Tab{
         editCampusButton.setVisible(bool);
     }
 
+    //These things only need to be opened when edit campus is pressed
     protected void editCampusOpen(boolean bool){
         deleteCampusButton.setVisible(bool);
         cancelCampusButton.setVisible(bool);
@@ -426,6 +440,7 @@ public class SubTabMain extends Tab{
         campusField.setVisible(bool);
     }
 
+    // only needs to be called once when the subTab is created
     private void setupEditButtons(){
         editBirdButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae){
@@ -436,7 +451,7 @@ public class SubTabMain extends Tab{
                 //TODO - work on commit changes button
             }
         });
-
+        
         cancelBirdButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae){
                 editBirdSelected(false);
@@ -469,6 +484,7 @@ public class SubTabMain extends Tab{
         });
     }
 
+
     public String getNameFieldText() {
         return nameField.getText();
     }
@@ -500,6 +516,7 @@ public class SubTabMain extends Tab{
         return selectedCampus;
     }
 
+    //When a campus node is pressed that isn't add campus this needs to happen, it hides all of the text that shouldn't be visable and shows that should be
     protected void campusNodePressed(){
         for (JLabel label : birdLabels){
             label.setText("");
@@ -528,7 +545,6 @@ public class SubTabMain extends Tab{
         saveBirdButton.setVisible(false);
         editBirdButton.setVisible(true);
         cancelBirdButton.setVisible(false);
-        //TODO - When the othe fields are set up this should also change for them
         editBirdSelected(false);
     }
 
@@ -538,13 +554,12 @@ public class SubTabMain extends Tab{
         }
     }
 
-
+    //this is called in the edit bird "menu" when save is pressed, it just returns the text from the text fields (regardless if they've changed or not)
     public String[] getEditedBirdInfo(){
-        //TODO - Replace the URL's with actual URL's
-        String[] birdInfo = {nameField.getText(), "URL", "URL", "URL", aboutField.getText(),
-                            "URL", locationField.getText(),"URL",dietField.getText(),"URL"};
+        String[] birdInfo = {nameField.getText(), aboutField.getText(), locationField.getText(),dietField.getText()};
         return birdInfo;
     }
+    //clears the reponse field
     protected void clearResponse(){
         response.setText("");
     }
@@ -554,5 +569,24 @@ public class SubTabMain extends Tab{
 
     public void showDeleteBird(boolean bool){
         deleteBirdButton.setVisible(bool);
+    }
+
+    //list.indexOf(object) apparetly doesn't work for JButton arrays, so this is just a replacement of that
+    protected int returnButtonIndex(JButton button){
+        int index = -1;
+        if (button == uploadButtons[0]){
+            index = 0;
+        } else if (button == uploadButtons[1]){
+            index = 1;
+        } else if (button == uploadButtons[2]){
+            index = 2;
+        } else if (button == uploadButtons[3]){
+            index = 3;
+        } else if (button == uploadButtons[4]){
+            index = 4;
+        } else if (button == uploadButtons[5]){
+            index = 5;
+        }
+        return index;
     }
 }

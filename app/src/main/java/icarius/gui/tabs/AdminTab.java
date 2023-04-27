@@ -12,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import icarius.entities.Campus;
 
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class AdminTab extends Tab{
     private JScrollPane scrollPane;
     private JTextField usernameField;
     private JTextField passwordField;
+    private JLabel response;
     private JComboBox campusComboBox;
     private JComboBox userComboBox;
 
@@ -33,6 +36,8 @@ public class AdminTab extends Tab{
     public AdminTab(){
         this.tabName="Admin";
         // TODO - Harry - Create credentials button action?
+
+        //I haven't done much on this yet, everything that's here so far is pretty self explanatory
 
         //adding labels which won't need to change later
         
@@ -58,6 +63,17 @@ public class AdminTab extends Tab{
         c.gridx = 0;
         c.gridy = 2;
         panel.add(new JLabel("Password:"), c);
+
+        c.weightx = 0.2;
+        c.gridx=0;
+        c.gridy=4;
+        panel.add(new JLabel("Response: "),c);
+
+        c.weightx = 0.2;
+        c.gridx=1;
+        c.gridy=4;
+        response = new JLabel("");
+        panel.add(response, c);
 
         c.weightx = 0.2;
         c.gridx = 2;
@@ -147,6 +163,8 @@ public class AdminTab extends Tab{
        c.gridwidth = 4;
        c.gridheight = 1;
        panel.add(scrollPane, c);
+
+       configureButtons();
     }
     
     //TODO - Change this to campus
@@ -170,5 +188,37 @@ public class AdminTab extends Tab{
 
     }
 
-    //TODO - write an update table function
+    private void configureButtons(){
+        createUserButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                String username = usernameField.getText();
+                String password = passwordField.getText();
+                if (username.isBlank()==false && password.isBlank()==false){
+
+                    //TODO - add to server here
+                    users=Arrays.copyOf(users, users.length+1);
+                    users[users.length-1] = username;
+                    updateTable();
+                } else{
+                    response.setText("Please fill in the relevent fields");
+                }
+            }
+        });
+        
+    }
+
+    private void updateTable(){
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+        for (String user : users){
+            model.addRow(new Object[]{user, "TODO - add combobox"});
+        }
+        
+        //TODO - figure out why the last row doesn't make a blank row when only one row is added
+        if (model.getRowCount()<4){
+            for(int i=0; (i+model.getRowCount())<=4; i++){
+                model.addRow(new Object[]{"", ""});
+            }
+        }
+    }
 }

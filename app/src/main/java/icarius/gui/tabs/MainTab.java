@@ -8,6 +8,7 @@ import okhttp3.Response;
 
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -61,6 +62,19 @@ public class MainTab extends Tab{
     private String selectedCampus = "";
     private String selectedBird = "";
 
+    private String HIFilePath = "";
+    private String LiIFilePath = "";
+    private String SFilePath="";
+    private String VFilePath="";
+    private String loIFilePath="";
+    private String DIFilePath = "";
+    private String[] filePaths = {HIFilePath,LiIFilePath,SFilePath,VFilePath,loIFilePath,DIFilePath};
+
+    //filePaths stores the filePaths of the files selected from each of the upload buttons before they are uploaded
+    //I've got it so that when anything else is selected these reset to being blank, to prevent any errors from occuring
+    //(if you're refactoring you probably need to make sure that this happens when cancel is pressed in the bird edit menu too
+    // I haven't done it because that in subTabMain, if I had more time I'd have moved that into mainTab so that this would work)
+
 
     public MainTab(){
         super();
@@ -93,6 +107,7 @@ public class MainTab extends Tab{
         saveCampusButton = subTab.saveCampusButton;
         saveBirdButton = subTab.saveBirdButton;
 
+        //This is the panel which contains the JTrees
         treeView = new JPanel(new GridBagLayout());    
         cT = new GridBagConstraints();
         scrollPane = new JScrollPane(treeView);
@@ -131,6 +146,9 @@ public class MainTab extends Tab{
                 subTab.showDeleteBird(false);
                 selectedCampus = "";
                 selectedBird = "";
+                for (String path: filePaths){
+                    path = "";
+                }
                 subTab.clearResponse();
             }
         };
@@ -186,6 +204,10 @@ public class MainTab extends Tab{
                                 subTab.showSaveCampus(false);
                                 subTab.showCancelBird(false);
                                 subTab.addBirdNodePressed(true);
+                                //TODO - Double check that this for loop works
+                                for (String path: filePaths){
+                                    path = "";
+                                }
                             } else{
                                 selectedCampus=rootNode.toString();
                                 selectedBird=nodeName;
@@ -195,6 +217,9 @@ public class MainTab extends Tab{
                                     //getBirdInfo sometimes returns null when it shouldn't if the bird has been added or edited 
                                     //whilst the current session of icarius is running. If it's not caught in an if statement it
                                     //crashes the program, if it is caught the program works exactly as it should. 
+                                    for (String path: filePaths){
+                                        path = "";
+                                    }
                                 }
                                   
                                 subTab.showCancelBird(false);
@@ -210,6 +235,9 @@ public class MainTab extends Tab{
                             subTab.visibleEditCampusButton(true);
                             subTab.showCancelBird(false);
                             selectedBird="";
+                            for (String path: filePaths){
+                                path = "";
+                            }
                         }
                     } 
                 }
@@ -425,6 +453,7 @@ public class MainTab extends Tab{
         return null;
     }
 
+    //checks if a bird already exists
     public boolean birdAlreadyExists(JTree campus, String birdName){
         
         DefaultMutableTreeNode root = (DefaultMutableTreeNode)campus.getModel().getRoot();
@@ -460,6 +489,7 @@ public class MainTab extends Tab{
         return false;
     }
 
+    //This gets the bird info stored in the server for a specific bird (with name String birdName) to display when that birds node is pressed in the tree 
     private String[] getBirdInfo(String birdName, String campus, List<Campus> campuses){
         for (Campus c : campuses) {
             if (c.getName().equals(subTab.getCampusText())) {
@@ -470,6 +500,9 @@ public class MainTab extends Tab{
                         String[] birdInfo = {b.getName(), b.getHeroImageURL(), b.getListImageURL(),
                         b.getSoundURL(), b.getAboutMe(), b.getAboutMeVideoURL(),
                         b.getLocation(), b.getLocationImageURL(), b.getDiet(), b.getDietImageURL()};
+                        for (String path : filePaths){
+                            path = "";
+                        }
                         return birdInfo;
                     }
                 }
@@ -478,21 +511,24 @@ public class MainTab extends Tab{
         return null;
     }
 
+    //called when save is pressed in edit bird, updates the bird info in the server
     private boolean updateBirdInfo(String oldBirdName, String campus, List<Campus> campuses, String[] birdInfo, User user){
         for (Campus c : campuses) {
             if (c.getName().equals(subTab.getCampusText())) {
                 for (Bird b : c.getBirds()) {
                     if (oldBirdName.equals(b.getName())) {
+
                         b.setName(birdInfo[0]);
-                        b.setHeroImageURL(birdInfo[1]);
-                        b.setListImageURL(birdInfo[2]);
-                        b.setSoundURL(birdInfo[3]);
-                        b.setAboutMe(birdInfo[4]);
-                        b.setAboutMeVideoURL(birdInfo[5]);
-                        b.setLocation(birdInfo[6]);
-                        b.setLocationImageURL(birdInfo[7]);
-                        b.setDiet(birdInfo[8]);
-                        b.setDietImageURL(birdInfo[9]);
+                        b.setAboutMe(birdInfo[1]);
+                        b.setLocation(birdInfo[2]);
+                        b.setDiet(birdInfo[3]);
+                        //TODO - Connall in each of these if statements create a url using the file path and set it in the bird
+                        if (filePaths[0]!=""){} 
+                        if (filePaths[1]!=""){}
+                        if (filePaths[2]!=""){}
+                        if (filePaths[3]!=""){}
+                        if (filePaths[4]!=""){}
+                        if (filePaths[5]!=""){}
                         b.update(user, null);
                         return true;
                     }
@@ -502,27 +538,32 @@ public class MainTab extends Tab{
         return false;
     }
 
-    //TODO - make sure this is nio and not io
+    //TODO - make sure this is nio and not io 
+    //idk what the difference between those is it's just something Guiseppe said once
+    //this is pretty self explanatory though
     private void setupUploadButtons(){
         for (JButton button : subTab.uploadButtons){
             button.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent ae){
                     final JFileChooser fc = new JFileChooser();
-                    if (button == subTab.uploadButtons[2]){
+                    if (subTab.returnButtonIndex(button)==2){
                         fc.setDialogTitle("Select an audio file");
                         fc.setAcceptAllFileFilterUsed(false);
                         FileNameExtensionFilter filter = new FileNameExtensionFilter("MP3, MP4 and WAV files", "MP3", "MP4", "WAV");
                         fc.addChoosableFileFilter(filter);
-                    } else if (button == subTab.uploadButtons[4]){
+                        
+                    } else if (subTab.returnButtonIndex(button)==3){
                         fc.setDialogTitle("Select a video");
                         fc.setAcceptAllFileFilterUsed(false);
                         FileNameExtensionFilter filter = new FileNameExtensionFilter("MP4, MOV, WMV and AVI files", "MP4", "MOV", "WMV","AVI");
                         fc.addChoosableFileFilter(filter);
+                        
                     }else{
                         fc.setDialogTitle("Select an image");
                         fc.setAcceptAllFileFilterUsed(false);
                         FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG, JPEG, JPG and GIF images", "png", "gif", "jpeg","JPG");
                         fc.addChoosableFileFilter(filter);
+                        
                     }
                     
                     int returnVal = fc.showOpenDialog(null);
@@ -532,12 +573,16 @@ public class MainTab extends Tab{
                         button.setText("File selected: "+file.getName());
                         
                         String path = file.getPath();
-                        // TODO - need campus Id and User for request
-                        // TODO - create upload file request and save path to bird
+                        //filePaths is explained at the top where it is created
+                        filePaths[subTab.returnButtonIndex(button)] = path;
                     }
 
                 }
                 });
             }
+        }
+
+        public String[] returnFilePaths(){
+            return filePaths;
         }
 }

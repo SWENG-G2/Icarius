@@ -34,8 +34,8 @@ import javax.swing.JTree;
 
 import java.awt.BorderLayout;
 
-// TODO - Harry - Move campus delete into campus edit
 // TODO - Harry - can't add bird with name of campus to campus - fix that
+
 
 public class Gui {
     public User user;
@@ -116,6 +116,7 @@ public class Gui {
         }    
     }
 
+    //setsup look and feel stuff, you probably don't need to change any of this when refactoring
     private void setupFlatLaf(){
         // sets the theme of the GUI
         FlatMacDarkLaf.setup();
@@ -152,7 +153,6 @@ public class Gui {
         logOutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 LoginTab.reset();
-                //TODO - Harry - remove key tab when you set it up
                 loginFrame.setVisible(true);
                 mainFrame.setVisible(false);
             }
@@ -203,12 +203,13 @@ public class Gui {
                         loginFrame.setVisible(false);
                         mainFrame.validate();
                         mainFrame.setVisible(true);
-                        //TODO - Harry - sort out the key tab
                     } else {
                         // If regular admin
                         loginFrame.setVisible(false);
+                        
                         mainFrame.validate();
                         mainFrame.setVisible(true);
+
                     }
                 } else {
                     LoginTab.invalidLogin();
@@ -311,6 +312,15 @@ public class Gui {
                                 if(doesBirdNameExist==false){
                                     // Create Bird
                                     Bird newBird = new Bird(user.getOkHttpClient());
+                                    String[] filePaths = mainTab.returnFilePaths();
+                                    if (filePaths[0]!=""){} 
+                                    if (filePaths[1]!=""){}
+                                    if (filePaths[2]!=""){}
+                                    if (filePaths[3]!=""){}
+                                    if (filePaths[4]!=""){}
+                                    if (filePaths[5]!=""){}
+                                    //TODO - Connall - use the file paths to create URLS and put them in the server
+                                    // also look at special keys
                                     newBird.setName(mainTab.nameFieldText());
                                     newBird.setCampusId(campus.getId());
                                     newBird.setAboutMe(mainTab.aboutFieldText());

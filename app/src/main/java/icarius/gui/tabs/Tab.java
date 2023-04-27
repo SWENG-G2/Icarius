@@ -16,13 +16,15 @@ public abstract class Tab {
         panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         c = new GridBagConstraints();
-        tabName = "Default";
+        tabName = "Default"; //tabName is set at the start of each tab which is displayed in the gui (not subTabMain)
     }
 
+    //returns the panel so that the "tabs" can be added to the JTabbedPane
     public JPanel returnPanel(){
         return panel;
     }
 
+    
     public String returnName(){
         return tabName;
     }
