@@ -1,7 +1,6 @@
 package icarius.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.IOException;
@@ -11,21 +10,14 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import icarius.App;
+import icarius.http.DeleteRequest;
+import icarius.http.GetRequest;
+import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
-import okhttp3.Call;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class BirdTest {
-
-    private static final String TEST_PATH = "/test";
     private static final String[] parameters = { "name", "listImageURL", "heroImageURL", "soundURL", "aboutMe",
             "abountMeVideoURL", "location", "locationImageURL", "diet", "dietImageURL" };
     private static final String[] parametersValues = { "Dalia", "listImage.png", "heroImage.png", "quack.mp3",
@@ -33,24 +25,18 @@ public class BirdTest {
             "diet.png" };
     private static final HashMap<String, String> requestParams = new HashMap<>();
 
-    private static final String RESPONSE_BODY = "id: 22";
+    private static final long id = 22;
+    private static final String RESPONSE_BODY_ID = "id: " + id;
+    private static final String RESPONSE_BODY_NAME = "name: " + parameters[0];
+    private static Bird testBird;
 
     @BeforeAll
     static void setUp() {
         IntStream.range(0, parameters.length).forEach(idx -> requestParams.put(parameters[idx], parametersValues[idx]));
-    }
-
-    @Test
-    void canCreateBird() throws IOException {
-        // Mock request
-        OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        PostRequest mockRequest = Mockito.mock(PostRequest.class);
-
-        ServerResponse response = new ServerResponse(200, RESPONSE_BODY, null);
-        doReturn(response).when(mockRequest).send();
-
+        
         // Prepare bird
-        Bird testBird = new Bird(clientMock);
+        OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
+        testBird = new Bird(clientMock);
         testBird.setName(parameters[0]);
         testBird.setListImageURL(parameters[1]);
         testBird.setHeroImageURL(parameters[2]);
@@ -61,26 +47,76 @@ public class BirdTest {
         testBird.setLocationImageURL(parameters[7]);
         testBird.setDiet(parameters[8]);
         testBird.setDietImageURL(parameters[9]);
+    }
+
+    @Test
+    void canCreateBird() throws IOException {
+        // Mock request
+        PostRequest mockRequest = Mockito.mock(PostRequest.class);
+
+        ServerResponse response = new ServerResponse(200, RESPONSE_BODY_ID, null);
+        doReturn(response).when(mockRequest).send();
 
         // Test Method
         Long generatedBirdId = testBird.create(null, mockRequest);
 
         // TODO - assert parameters where added to request
-        assertEquals(22, generatedBirdId);
+        assertEquals(id, generatedBirdId);
     }
 
     @Test
     void canReadBird() {
+        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
+        GetRequest mockGetRequest = Mockito.mock(GetRequest.class);
 
+        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
+        ServerResponse getResponse = new ServerResponse(200, RESPONSE_BODY_NAME, null);
+        doReturn(postResponse).when(mockPostRequest).send();
+        doReturn(getResponse).when(mockGetRequest).send();
+
+        testBird.create(null, mockPostRequest);
+        String generatedBirdName = testBird.read(mockGetRequest);
+
+        // TODO - assert parameters where added to request
+        assertEquals(parameters[0], generatedBirdName);
     }
 
     @Test
     void canUpdateBird() {
+        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
+        PatchRequest mockPatchRequest = Mockito.mock(PatchRequest.class);
+        GetRequest mockGetRequest = Mockito.mock(GetRequest.class);
 
+        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
+        ServerResponse getResponse = new ServerResponse(200, RESPONSE_BODY_NAME, null);
+        doReturn(postResponse).when(mockPostRequest).send();
+        doReturn(getResponse).when(mockPatchRequest).send();
+        doReturn(getResponse).when(mockGetRequest).send();
+
+        testBird.create(null, mockPostRequest);
+        String newBirdieName = "Dophelia";
+        testBird.setName(newBirdieName);
+        testBird.update(null, mockPatchRequest);
+        String generatedBirdName = testBird.read(mockGetRequest);
+
+        // TODO - assert parameters where added to request
+        assertEquals(newBirdieName, generatedBirdName);
     }
 
     @Test
     void canDeleteBird() {
+        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
+        DeleteRequest mockDeleteRequest = Mockito.mock(DeleteRequest.class);
 
+        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
+        ServerResponse deleteResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
+
+        doReturn(postResponse).when(mockPostRequest).send();
+        doReturn(deleteResponse).when(mockDeleteRequest).send();
+
+        testBird.create(null, mockPostRequest);
+        Boolean generatedBirdDeleted = testBird.delete(null, mockDeleteRequest);
+
+        assertEquals(false, generatedBirdDeleted);
     }
 }
