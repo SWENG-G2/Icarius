@@ -36,7 +36,7 @@ public class AuthenticationService {
 
             // format credentials string
             String username = user.getCredentials().getUsername();
-            String password = user.getCredentials().getUsername();
+            String password = user.getCredentials().getPassword();
             String auth = username + "=" + password + "=" + now;
 
             // Encrypt and return auth encoded to base64

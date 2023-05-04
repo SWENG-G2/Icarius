@@ -37,11 +37,11 @@ public abstract class ServerRequest {
         this.client = client;
     }
 
-    protected ServerRequest(String urlPath, User user, OkHttpClient client) {
+    protected ServerRequest(String urlPath, User user) {
         this.url = App.BASE_URL + urlPath;
         this.user = user;
         this.params = new HashMap<>();
-        this.client = client;
+        this.client = user.getOkHttpClient();
     }
 
     public void setUrl(String urlPath) {

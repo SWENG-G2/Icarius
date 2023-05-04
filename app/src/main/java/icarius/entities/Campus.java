@@ -39,7 +39,7 @@ public class Campus implements ServerActions {
 
         // Send create campus request to server
         if (request == null) {
-            request = new PostRequest("/api/campus/new", user, okHttpClient);
+            request = new PostRequest("/api/campus/new", user);
         }
         request.addParameter("name", name);
         String response =  request.send().getBody();
@@ -127,6 +127,15 @@ public class Campus implements ServerActions {
 
         System.out.println( "deletion says: " + response );
         return (response != null) ? true : false;
+    }
+
+    public Bird getBird(String birdName) {
+        for (Bird bird : birds) {
+            if (bird.getName().equals(birdName)) {
+                return bird;
+            }
+        }
+        return null;
     }
 
     @Override

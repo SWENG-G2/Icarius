@@ -33,7 +33,7 @@ public class User {
 
     public boolean validate(PostRequest request) {
         if (request == null) {
-            request = new PostRequest("/api/users/validate", this, okHttpClient);
+            request = new PostRequest("/api/users/validate", this);
         }
         ServerResponse response = request.send();
         

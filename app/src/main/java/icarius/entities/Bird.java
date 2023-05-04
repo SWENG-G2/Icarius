@@ -47,7 +47,7 @@ public class Bird implements ServerActions {
 
         // Send create bird request to server
         if (request == null) {
-            request = new PostRequest("/api/birds/" + campusId + "/new", user, okHttpClient);
+            request = new PostRequest("/api/birds/" + campusId + "/new", user);
         }
 
         HashMap<String, String> parameters = new HashMap<>();

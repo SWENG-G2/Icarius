@@ -7,7 +7,7 @@ import okhttp3.Request;
 public class DeleteRequest extends ServerRequest {
 
     public DeleteRequest(String urlPath, User user, OkHttpClient okHttpClient) {
-        super(urlPath, user, okHttpClient);
+        super(urlPath, user);
     }
 
     @Override
