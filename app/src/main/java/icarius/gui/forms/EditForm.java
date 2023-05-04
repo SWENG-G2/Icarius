@@ -17,6 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.gui.panels.FormPanel;
+import icarius.services.FileUploadService;
 
 public class EditForm extends JPanel {
     private FormPanel parent;
@@ -26,19 +27,21 @@ public class EditForm extends JPanel {
 
     // Bird Edit Page Fields
     private JTextField birdNameField;
-    private JTextField soundField;
+    //private JTextField soundField;
     private JTextField aboutField;
     private JTextField locationField;
     private JTextField diet;
 
     private JButton listImageUploadButton;
     private JButton heroImageUploadButton;
+    private JButton soundUploadButton;
     private JButton videoUploadButton;
     private JButton locationImageUploadButton;
     private JButton dietImageUploadButton;
 
     private String listImageUrlPath;
     private String heroImageUrlPath;
+    private String soundURLPath;
     private String videoUrlPath;
     private String locationImageUrlPath;
     private String dietImageUrlPath;
@@ -77,15 +80,16 @@ public class EditForm extends JPanel {
 
     private void addBirdEditFields(Bird bird, GridBagConstraints c) {
         birdNameField = addTextField("Bird Name:", bird.getName(), c);
-        listImageUploadButton = addImageUploadField("List Image:", bird.getListImageURL(), c, uploadListImage());
-        heroImageUploadButton = addImageUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
-        soundField = addTextField("Sound:", bird.getSoundURL(), c); // TODO - sound file upload
+        listImageUploadButton = addFileUploadField("List Image:", bird.getListImageURL(), c, uploadListImage());
+        heroImageUploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
+        soundUploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadSound());
+        //soundField = addTextField("Sound:", bird.getSoundURL(), c); // TODO - sound file upload
         aboutField = addTextField("About:", bird.getAboutMe(), c);
-        videoUploadButton = addImageUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
+        videoUploadButton = addFileUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
         locationField = addTextField("Location:", bird.getLocation(), c);
-        locationImageUploadButton = addImageUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
+        locationImageUploadButton = addFileUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
         diet = addTextField("Diet:", bird.getDiet(), c);
-        dietImageUploadButton = addImageUploadField("Diet Image:", bird.getDietImageURL(), c, uploadDietImage());
+        dietImageUploadButton = addFileUploadField("Diet Image:", bird.getDietImageURL(), c, uploadDietImage());
     }
 
     // Returns added textfield
@@ -108,7 +112,7 @@ public class EditForm extends JPanel {
         return textField;
     }
 
-    private JButton addImageUploadField(String labelText, String placeholderText, GridBagConstraints c, ActionListener al) {
+    private JButton addFileUploadField(String labelText, String placeholderText, GridBagConstraints c, ActionListener al) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
@@ -133,7 +137,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadListImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = fileUploader("Image");
+                File file = FileUploadService.selectLocalFile("Image");
                 if (file == null) return;
                 listImageUploadButton.setText("File selected: " + file.getName());
                 listImageUrlPath = file.getPath();
@@ -144,7 +148,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadHeroImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = fileUploader("Image");
+                File file = FileUploadService.selectLocalFile("Image");
                 if (file == null) return;
                 heroImageUploadButton.setText("File selected: " + file.getName());
                 heroImageUrlPath = file.getPath();
@@ -152,10 +156,21 @@ public class EditForm extends JPanel {
         };
     }
 
+    public ActionListener uploadSound() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                File file = FileUploadService.selectLocalFile("Audio");
+                if (file == null) return;
+                soundUploadButton.setText("File selected: " + file.getName());
+                soundURLPath = file.getPath();
+            }
+        };
+    }
+
     public ActionListener uploadVideo() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = fileUploader("Video");
+                File file = FileUploadService.selectLocalFile("Video");
                 if (file == null) return;
                 videoUploadButton.setText("File selected: " + file.getName());
                 videoUrlPath = file.getPath();
@@ -166,7 +181,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadLocationImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = fileUploader("Image");
+                File file = FileUploadService.selectLocalFile("Image");
                 if (file == null) return;
                 locationImageUploadButton.setText("File selected: " + file.getName());
                 locationImageUrlPath = file.getPath();
@@ -177,47 +192,12 @@ public class EditForm extends JPanel {
     public ActionListener uploadDietImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = fileUploader("Image");
+                File file = FileUploadService.selectLocalFile("Image");
                 if (file == null) return;
                 dietImageUploadButton.setText("File selected: " + file.getName());
                 dietImageUrlPath = file.getPath();
             }
         };
-    }
-
-    public File fileUploader(String type) {
-        final JFileChooser fc = new JFileChooser();
-
-        // Configure Filter
-        FileNameExtensionFilter filter;
-        switch (type) {
-            case "Image":
-                fc.setDialogTitle("Select an Image file");
-                filter = new FileNameExtensionFilter("PNG, JPEG, JPG and GIF images", "png", "gif", "jpeg","JPG");
-                break;
-            case "Audio":
-                fc.setDialogTitle("Select an Audio file");
-                filter = new FileNameExtensionFilter("MP3, MP4 and WAV files", "MP3", "MP4", "WAV");
-                break;
-            case "Video":
-                fc.setDialogTitle("Select a Video file");
-                filter = new FileNameExtensionFilter("MP4, MOV, WMV and AVI files", "MP4", "MOV", "WMV","AVI");
-                break;
-            default:
-                filter = null;
-                break;
-        }
-        fc.addChoosableFileFilter(filter);
-
-        // Return Chosen File
-        return (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) ? fc.getSelectedFile() : null;
-
-        // TODO - (HARRY) investigate following warning that appears when i click file upload button
-        // WARNING: An illegal reflective access operation has occurred 
-        // WARNING: Illegal reflective access by com.formdev.flatlaf.ui.FlatFileChooserUI$FlatShortcutsPanel (file:/C:/Users/Connall/.gradle/caches/modules-2/files-2.1/com.formdev/flatlaf/3.0/b5410f3f9137febc7d916ca4e0a7e9f6ddeb5b9a/flatlaf-3.0.jar) to method sun.awt.shell.ShellFolder.get(java.lang.String)
-        // WARNING: Please consider reporting this to the maintainers of com.formdev.flatlaf.ui.FlatFileChooserUI$FlatShortcutsPanel
-        // WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-        // WARNING: All illegal access operations will be denied in a future release
     }
 
     private void addCancelButton(Object o, GridBagConstraints c) {
