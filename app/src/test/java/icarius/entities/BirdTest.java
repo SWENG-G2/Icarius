@@ -33,7 +33,7 @@ public class BirdTest {
     @BeforeAll
     static void setUp() {
         IntStream.range(0, parameters.length).forEach(idx -> requestParams.put(parameters[idx], parametersValues[idx]));
-        
+
         // Prepare bird
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
         testBird = new Bird(clientMock);
@@ -66,19 +66,20 @@ public class BirdTest {
 
     @Test
     void canReadBird() {
-        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
+        // have empty bird object
+        // .read on bird
+        // does bird have parameters from mock response?
         GetRequest mockGetRequest = Mockito.mock(GetRequest.class);
-
-        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
-        ServerResponse getResponse = new ServerResponse(200, RESPONSE_BODY_NAME, null);
-        doReturn(postResponse).when(mockPostRequest).send();
+        ServerResponse getResponse = new ServerResponse(200, RESPONSE_BODY_NAME, null); // replace RESPONSE_BODY_NAME
+                                                                                        // with xml response
         doReturn(getResponse).when(mockGetRequest).send();
 
-        testBird.create(null, mockPostRequest);
-        String generatedBirdName = testBird.read(mockGetRequest);
+        testBird.read(mockGetRequest);
 
         // TODO - assert parameters where added to request
-        assertEquals(parameters[0], generatedBirdName);
+        // TODO - assert whether parameters in mock XML response are in bird object
+        // TODO - assert returns bird name from mock XML response
+        assertEquals(parameters[0], testBird.getName());
     }
 
     @Test
