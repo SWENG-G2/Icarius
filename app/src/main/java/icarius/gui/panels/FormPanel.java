@@ -8,12 +8,12 @@ import icarius.gui.forms.DetailsForm;
 import icarius.gui.forms.EditForm;
 import icarius.gui.tabs.MainTab;
 
-public class EditPanel extends JPanel {
+public class FormPanel extends JPanel {
     public Gui gui;
     public MainTab parent;
     public JPanel welcomePanel;
 
-    public EditPanel(Gui gui, MainTab parent) {
+    public FormPanel(Gui gui, MainTab parent) {
         this.gui = gui;
         this.parent = parent;
         

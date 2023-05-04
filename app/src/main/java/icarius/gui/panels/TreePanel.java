@@ -14,13 +14,13 @@ import icarius.entities.Campus;
 import icarius.entities.Database;
 import icarius.gui.tabs.MainTab;
 
-public class DatabasePanel extends JScrollPane {
+public class TreePanel extends JScrollPane {
     private MainTab mainTab;
     private JTree tree;
     public static final String ADD_BIRD_TEXT = "+[Add Bird]";
     public static final String ADD_CAMPUS_TEXT = "+[Add Campus]";
     
-    public DatabasePanel(MainTab mainTab) {
+    public TreePanel(MainTab mainTab) {
         this.mainTab = mainTab;
 
         // Configure JSrollPane

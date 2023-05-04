@@ -16,10 +16,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import icarius.entities.Bird;
 import icarius.entities.Campus;
-import icarius.gui.panels.EditPanel;
+import icarius.gui.panels.FormPanel;
 
 public class EditForm extends JPanel {
-    private EditPanel parent;
+    private FormPanel parent;
 
     // Campus Edit Page Fields
     private JTextField campusName;
@@ -45,7 +45,7 @@ public class EditForm extends JPanel {
 
 
     // Edit Page
-    public EditForm(Object o, EditPanel parent) {
+    public EditForm(Object o, FormPanel parent) {
         // Configure Layout
         GridBagConstraints c = configure(parent);
 
@@ -59,7 +59,7 @@ public class EditForm extends JPanel {
         addDeleteButton(o, c);
     }
 
-    private GridBagConstraints configure(EditPanel parent) {
+    private GridBagConstraints configure(FormPanel parent) {
         // Configure layout
         this.parent = parent;
         setLayout(new GridBagLayout());
@@ -79,7 +79,7 @@ public class EditForm extends JPanel {
         birdNameField = addTextField("Bird Name:", bird.getName(), c);
         listImageUploadButton = addImageUploadField("List Image:", bird.getListImageURL(), c, uploadListImage());
         heroImageUploadButton = addImageUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
-        soundField = addTextField("Sound:", bird.getSoundURL(), c);
+        soundField = addTextField("Sound:", bird.getSoundURL(), c); // TODO - sound file upload
         aboutField = addTextField("About:", bird.getAboutMe(), c);
         videoUploadButton = addImageUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
         locationField = addTextField("Location:", bird.getLocation(), c);
@@ -155,7 +155,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadVideo() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = fileUploader("Image");
+                File file = fileUploader("Video");
                 if (file == null) return;
                 videoUploadButton.setText("File selected: " + file.getName());
                 videoUrlPath = file.getPath();
@@ -212,7 +212,7 @@ public class EditForm extends JPanel {
         // Return Chosen File
         return (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) ? fc.getSelectedFile() : null;
 
-        // TODO - (HARRY) investigate following error that appears when i click file upload button
+        // TODO - (HARRY) investigate following warning that appears when i click file upload button
         // WARNING: An illegal reflective access operation has occurred 
         // WARNING: Illegal reflective access by com.formdev.flatlaf.ui.FlatFileChooserUI$FlatShortcutsPanel (file:/C:/Users/Connall/.gradle/caches/modules-2/files-2.1/com.formdev/flatlaf/3.0/b5410f3f9137febc7d916ca4e0a7e9f6ddeb5b9a/flatlaf-3.0.jar) to method sun.awt.shell.ShellFolder.get(java.lang.String)
         // WARNING: Please consider reporting this to the maintainers of com.formdev.flatlaf.ui.FlatFileChooserUI$FlatShortcutsPanel

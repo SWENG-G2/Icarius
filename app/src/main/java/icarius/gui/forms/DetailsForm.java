@@ -11,13 +11,13 @@ import javax.swing.JPanel;
 
 import icarius.entities.Bird;
 import icarius.entities.Campus;
-import icarius.gui.panels.EditPanel;
+import icarius.gui.panels.FormPanel;
 
 public class DetailsForm extends JPanel {
-    EditPanel parent;
+    FormPanel parent;
 
     // Campus Details Page
-    public DetailsForm(Object o, EditPanel parent) {
+    public DetailsForm(Object o, FormPanel parent) {
         // Configure Layout
         GridBagConstraints c = configure(parent);
 
@@ -29,7 +29,7 @@ public class DetailsForm extends JPanel {
         addEditButton(o, c);
     }
 
-    private GridBagConstraints configure(EditPanel parent) {
+    private GridBagConstraints configure(FormPanel parent) {
         // Configure layout
         this.parent = parent;
         setLayout(new GridBagLayout());
