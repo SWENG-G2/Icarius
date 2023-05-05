@@ -3,7 +3,9 @@ package icarius.gui.panels;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import icarius.entities.Campus;
 import icarius.gui.Gui;
+import icarius.gui.forms.AddForm;
 import icarius.gui.forms.DetailsForm;
 import icarius.gui.forms.EditForm;
 import icarius.gui.tabs.MainTab;
@@ -22,8 +24,19 @@ public class FormPanel extends JPanel {
         add(welcomePanel);
     }
 
-    public void setAddCampus() {} // TODO - needs doing
-    public void setAddBird() {} // TODO - needs doing
+    public void setAddCampus() {
+        removeAll();
+        add(new AddForm(this));
+        revalidate();
+        repaint();
+    }
+
+    public void setAddBird(Campus campus) {
+        removeAll();
+        add(new AddForm(this, campus));
+        revalidate();
+        repaint();
+    }
 
     public void setEditPage(Object o) {
         removeAll();

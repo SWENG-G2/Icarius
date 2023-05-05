@@ -84,7 +84,9 @@ public class LoginPanel extends JPanel {
 
             // Validate Credentials
             gui.user.setCredentials(credentials);
-            if (gui.user.validate(null)) {
+            boolean valid = gui.user.validate(null);
+            if (gui.user.getServerConnection() == false) return;
+            if (valid) {
                 // Valid Credentials
                 if (gui.user.getAdmin()) {
                     // If Admin

@@ -7,6 +7,7 @@ import icarius.auth.User;
 import icarius.gui.panels.FooterPanel;
 import icarius.gui.panels.LoginPanel;
 import icarius.gui.panels.MainPanel;
+import icarius.http.ConnectionFailedInterceptor;
 
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
@@ -25,8 +26,11 @@ public class Gui {
     public MainPanel mainPanel;
     public FooterPanel footerPanel;
 
-    public Gui(OkHttpClient client){
-        // Set up database configuration
+    public Gui(){
+        // Instantiate Client with connection interceptor
+        OkHttpClient client = new OkHttpClient.Builder()
+            .addInterceptor(new ConnectionFailedInterceptor(this))
+            .build();
         this.user = new User(client);
 
         // Configure gui

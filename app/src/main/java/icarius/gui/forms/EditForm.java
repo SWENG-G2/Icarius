@@ -8,29 +8,28 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
+import icarius.auth.User;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.gui.panels.FormPanel;
-import icarius.services.FileUploadService;
+import static icarius.services.FileUploadService.*;
 
 public class EditForm extends JPanel {
     private FormPanel parent;
+    private User user;
 
     // Campus Edit Page Fields
-    private JTextField campusName;
+    private JTextField campusNameField;
 
     // Bird Edit Page Fields
     private JTextField birdNameField;
-    //private JTextField soundField;
     private JTextField aboutField;
     private JTextField locationField;
-    private JTextField diet;
+    private JTextField dietField;
 
     private JButton listImageUploadButton;
     private JButton heroImageUploadButton;
@@ -45,7 +44,6 @@ public class EditForm extends JPanel {
     private String videoUrlPath;
     private String locationImageUrlPath;
     private String dietImageUrlPath;
-
 
     // Edit Page
     public EditForm(Object o, FormPanel parent) {
@@ -65,6 +63,7 @@ public class EditForm extends JPanel {
     private GridBagConstraints configure(FormPanel parent) {
         // Configure layout
         this.parent = parent;
+        this.user = parent.gui.user;
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.EAST;
@@ -75,20 +74,19 @@ public class EditForm extends JPanel {
     }
 
     private void addCampusEditFields(Campus campus, GridBagConstraints c) {
-        campusName = addTextField("Campus Name:", campus.getName(), c);
+        campusNameField = addTextField("Campus Name:", campus.getName(), c);
     }
 
     private void addBirdEditFields(Bird bird, GridBagConstraints c) {
         birdNameField = addTextField("Bird Name:", bird.getName(), c);
         listImageUploadButton = addFileUploadField("List Image:", bird.getListImageURL(), c, uploadListImage());
         heroImageUploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
-        soundUploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadSound());
-        //soundField = addTextField("Sound:", bird.getSoundURL(), c); // TODO - sound file upload
+        soundUploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadAudio());
         aboutField = addTextField("About:", bird.getAboutMe(), c);
         videoUploadButton = addFileUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
         locationField = addTextField("Location:", bird.getLocation(), c);
         locationImageUploadButton = addFileUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
-        diet = addTextField("Diet:", bird.getDiet(), c);
+        dietField = addTextField("Diet:", bird.getDiet(), c);
         dietImageUploadButton = addFileUploadField("Diet Image:", bird.getDietImageURL(), c, uploadDietImage());
     }
 
@@ -123,7 +121,7 @@ public class EditForm extends JPanel {
         // Add TextField
         c.gridx++;
         c.fill = GridBagConstraints.HORIZONTAL;
-        if (placeholderText == null) placeholderText = "Upload a file"; // TODO - figure out why this only works for first file upload button
+        if (placeholderText == null || placeholderText.equals("")) placeholderText = "Upload a file";
         JButton button = new JButton(placeholderText);
         button.addActionListener(al);
         button.setPreferredSize(new Dimension(90, 20));
@@ -137,7 +135,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadListImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = FileUploadService.selectLocalFile("Image");
+                File file = selectLocalFile("Image");
                 if (file == null) return;
                 listImageUploadButton.setText("File selected: " + file.getName());
                 listImageUrlPath = file.getPath();
@@ -148,7 +146,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadHeroImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = FileUploadService.selectLocalFile("Image");
+                File file = selectLocalFile("Image");
                 if (file == null) return;
                 heroImageUploadButton.setText("File selected: " + file.getName());
                 heroImageUrlPath = file.getPath();
@@ -156,10 +154,10 @@ public class EditForm extends JPanel {
         };
     }
 
-    public ActionListener uploadSound() {
+    public ActionListener uploadAudio() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = FileUploadService.selectLocalFile("Audio");
+                File file = selectLocalFile("Audio");
                 if (file == null) return;
                 soundUploadButton.setText("File selected: " + file.getName());
                 soundURLPath = file.getPath();
@@ -170,7 +168,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadVideo() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = FileUploadService.selectLocalFile("Video");
+                File file = selectLocalFile("Video");
                 if (file == null) return;
                 videoUploadButton.setText("File selected: " + file.getName());
                 videoUrlPath = file.getPath();
@@ -181,7 +179,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadLocationImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = FileUploadService.selectLocalFile("Image");
+                File file = selectLocalFile("Image");
                 if (file == null) return;
                 locationImageUploadButton.setText("File selected: " + file.getName());
                 locationImageUrlPath = file.getPath();
@@ -192,7 +190,7 @@ public class EditForm extends JPanel {
     public ActionListener uploadDietImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = FileUploadService.selectLocalFile("Image");
+                File file = selectLocalFile("Image");
                 if (file == null) return;
                 dietImageUploadButton.setText("File selected: " + file.getName());
                 dietImageUrlPath = file.getPath();
@@ -216,13 +214,45 @@ public class EditForm extends JPanel {
         JButton editButton = new JButton("Save Changes");
         editButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
+                // TODO - (CONNALL) make campus and bird update methods return boolean
+                // TODO - success/failure notification messages below
                 if (o instanceof Campus) {
-                    // TODO - save campus
+                    Campus campus = (Campus) o;
+                    campus.setName(campusNameField.getText());
+                    campus.update(user, null);
                 }
                 if (o instanceof Bird) {
-                    // TODO - save bird
+                    Bird bird = (Bird) o;
+                    Long cID = bird.getCampusId();
+
+                    // Update Bird with TextField Values
+                    bird.setName(birdNameField.getText());
+                    bird.setAboutMe(aboutField.getText());
+                    bird.setLocation(locationField.getText());
+                    bird.setDiet(dietField.getText());
+
+                    // Upload Files, then update Bird File Path
+                    listImageUrlPath = uploadFile(user, cID, listImageUrlPath, "image", null);
+                    bird.setListImageURL(listImageUrlPath);
+
+                    heroImageUrlPath = uploadFile(user, cID, heroImageUrlPath, "image", null);
+                    bird.setHeroImageURL(heroImageUrlPath);
+
+                    soundURLPath = uploadFile(user, cID, soundURLPath, "audio", null);
+                    bird.setSoundURL(soundURLPath);
+                    
+                    videoUrlPath = uploadFile(user, cID, videoUrlPath, "video", null);
+                    bird.setAboutMeVideoURL(videoUrlPath);
+                    
+                    locationImageUrlPath = uploadFile(user, cID, locationImageUrlPath, "image", null);
+                    bird.setLocationImageURL(locationImageUrlPath);
+                    
+                    dietImageUrlPath = uploadFile(user, cID, dietImageUrlPath, "image", null);
+                    bird.setDietImageURL(dietImageUrlPath);
+
+                    bird.update(parent.gui.user, null);
                 }
-                // TODO - notification message
+                parent.parent.refreshDatabaseTree();
             }
         });
         add(editButton, c);
@@ -234,17 +264,33 @@ public class EditForm extends JPanel {
         JButton editButton = new JButton("Delete");
         editButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                // TODO - (CONNALL) consider use of interface polymorphism?
-
-                // Remove from server
-                if (o instanceof Campus) ((Campus) o).delete(parent.gui.user, null);
-                if (o instanceof Bird) ((Bird) o).delete(parent.gui.user, null);
+                if (o instanceof Campus) {
+                    // Remove Campus from server
+                    Campus c = (Campus) o;
+                    if ( c.delete(user, null) ) {
+                        // Success
+                        parent.gui.footerPanel.setNotification("Campus: '" + c.getName() + "' has been successfully removed.", null);
+                    } else {
+                        // Failure
+                        parent.gui.footerPanel.setNotification("Campus: Failed to remove '" + c.getName() + "' from server!", null);
+                    }
+                }
+                if (o instanceof Bird) {
+                    Bird b = (Bird) o;
+                    String campusName = parent.parent.database.getCampusById(b.getCampusId()).getName();
+                    if ( b.delete(user, null) ) {
+                        // Success
+                        parent.gui.footerPanel.setNotification("Bird: '" + b.getName() + "' has been successfully removed from " + campusName, null);
+                    } else {
+                        // Failure
+                        parent.gui.footerPanel.setNotification("Bird: Failed to remove '" + b.getName() + "' from server!", null);
+                    }         
+                }
 
                 // Refresh Tree
                 parent.parent.refreshDatabaseTree();
-                // TODO - No Permission message
-                // TODO - Failed message
-                // TODO - success message
+                // TODO - (Connall) No Permission message - create in http package and set notification
+                // TODO - (Connall) No Connection message - create in http package and set notification
             }
         });
         add(editButton, c);

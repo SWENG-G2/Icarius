@@ -12,7 +12,7 @@ import okhttp3.OkHttpClient;
 public class User {
     private Credentials credentials;
     private String publicKey;
-    private Boolean admin, valid;
+    private Boolean admin, valid, serverConnection;
     private final OkHttpClient okHttpClient;
 
     public User(OkHttpClient okHttpClient) {
@@ -21,6 +21,8 @@ public class User {
     }
 
     public String getAuth() {
+        if (publicKey == null || publicKey.equals("")) refreshKey(null);
+        if (publicKey == null || publicKey.equals("")) return "";
         return AuthenticationService.getAuth(this);
     }
 
@@ -36,7 +38,13 @@ public class User {
             request = new PostRequest("/api/users/validate", this);
         }
         ServerResponse response = request.send();
+
+        if (response.getCode() == 404) {
+            this.serverConnection = false;
+            return false;
+        }
         
+        this.serverConnection = true;
         this.valid = Boolean.parseBoolean(response.getHeader("valid"));
         this.admin = Boolean.parseBoolean(response.getHeader("admin"));
         return this.valid;

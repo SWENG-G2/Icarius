@@ -96,7 +96,8 @@ public class TreePanel extends JScrollPane {
                     selectedAnimalText = path.getPathComponent(2).toString();
                     if (selectedAnimalText.equals(ADD_BIRD_TEXT)) {
                         // Add Bird Selection
-                        mainTab.editPanel.setAddBird();
+                        Campus campus = mainTab.database.getCampus(selectedLocationText);
+                        mainTab.editPanel.setAddBird(campus);
                     } else {
                         // Edit Bird Selection
                         Campus campus = mainTab.database.getCampus(selectedLocationText);

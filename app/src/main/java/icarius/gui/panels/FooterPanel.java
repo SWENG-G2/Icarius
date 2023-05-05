@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,6 +29,9 @@ public class FooterPanel extends JPanel {
         add(logOutButton, BorderLayout.LINE_START);
         add(notificationLabel, BorderLayout.LINE_END);
     }
+    public void setNotification(String text) {
+        setNotification(text, null);
+    }
 
     public void setNotification(String text, Color color) {
         if (color != null) {
@@ -37,7 +39,6 @@ public class FooterPanel extends JPanel {
         }
 
         notificationLabel.setText(text);
-        System.out.println(notificationLabel.getHeight());
     }
 
     public void resetNotification() {
@@ -58,4 +59,3 @@ public class FooterPanel extends JPanel {
         }
     };
 }
-
