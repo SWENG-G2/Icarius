@@ -1,6 +1,7 @@
 package icarius.http;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,9 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSource;
 
 public abstract class ServerRequest {
     // Request properties
@@ -38,11 +42,11 @@ public abstract class ServerRequest {
         this.client = client;
     }
 
-    protected ServerRequest(String urlPath, User user, OkHttpClient client) {
+    protected ServerRequest(String urlPath, User user) {
         this.url = App.BASE_URL + urlPath;
         this.user = user;
         this.params = new HashMap<>();
-        this.client = client;
+        this.client = user.getOkHttpClient();
     }
 
     public void setUrl(String urlPath) {
@@ -67,11 +71,7 @@ public abstract class ServerRequest {
         // Execute Call
         Call call = client.newCall(request);
         try (Response response = call.execute()) {
-            // read response (socket automatically closes after first read)
-            int code = response.code();
-            String body = response.body().string();
-            Headers headers = response.headers();
-            return new ServerResponse(code, body, headers);
+            return new ServerResponse(response);
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;

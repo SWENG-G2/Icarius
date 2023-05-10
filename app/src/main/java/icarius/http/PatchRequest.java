@@ -9,7 +9,7 @@ import okhttp3.RequestBody;
 public class PatchRequest extends ServerRequest {
 
     public PatchRequest(String urlPath, User user, OkHttpClient okHttpClient) {
-        super(urlPath, user, okHttpClient);
+        super(urlPath, user);
     }
 
     @Override

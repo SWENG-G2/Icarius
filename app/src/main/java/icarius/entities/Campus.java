@@ -39,6 +39,7 @@ public class Campus implements ServerActions {
 
         // Send create campus request to server
         if (request == null) request = new PostRequest("/api/campus/new", user, okHttpClient);
+      
         request.addParameter("name", name);
         ServerResponse response =  request.send();
 
@@ -125,6 +126,15 @@ public class Campus implements ServerActions {
 
         // Return TRUE if delete request success, else FALSE
         return response.isSuccessful();
+    }
+
+    public Bird getBird(String birdName) {
+        for (Bird bird : birds) {
+            if (bird.getName().equals(birdName)) {
+                return bird;
+            }
+        }
+        return null;
     }
 
     @Override
