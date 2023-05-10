@@ -16,7 +16,6 @@ import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
 import lombok.Data;
-import okhttp3.OkHttpClient;
 import icarius.auth.User;
 import java.util.HashMap;
 
@@ -26,10 +25,10 @@ public class Campus implements ServerActions {
     private String name;
     private List<Bird> birds;
 
-    private final OkHttpClient okHttpClient;
+    private User user;
 
-    public Campus(OkHttpClient okHttpClient) {
-        this.okHttpClient = okHttpClient;
+    public Campus(User user) {
+        this.user = user;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class Campus implements ServerActions {
         if (name == null) throw new RuntimeException("Campus name not set");
 
         // Send create campus request to server
-        if (request == null) request = new PostRequest("/api/campus/new", user, okHttpClient);
+        if (request == null) request = new PostRequest("/api/campus/new", user);
       
         request.addParameter("name", name);
         ServerResponse response =  request.send();
@@ -58,7 +57,7 @@ public class Campus implements ServerActions {
         if (id == null) throw new RuntimeException("Campus id not set");
 
         // Send read campus request to server
-        if (request == null) request = new GetRequest("/campus/" + id, okHttpClient);
+        if (request == null) request = new GetRequest("/campus/" + id, user);
 
         // send and store GET request response
         this.birds = new ArrayList<>();
@@ -81,7 +80,7 @@ public class Campus implements ServerActions {
                     String birdId = slide.attributeValue("title");
 
                     // fetch bird
-                    Bird bird = new Bird(okHttpClient);
+                    Bird bird = new Bird(user);
                     bird.setId(Long.parseLong(birdId));
                     bird.setCampusId(id);
                     bird.read(null);
@@ -100,7 +99,7 @@ public class Campus implements ServerActions {
         if (id == null) throw new RuntimeException("Campus id not set");
 
         // Send update campus request to server
-        if (request == null) request = new PatchRequest("/api/campus/edit", user, okHttpClient);
+        if (request == null) request = new PatchRequest("/api/campus/edit", user);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("newName", this.name);
@@ -117,7 +116,7 @@ public class Campus implements ServerActions {
         if (id == null) throw new RuntimeException("Campus id not set");
 
         // Send delete campus request to server
-        if (request == null) request = new DeleteRequest("/api/campus/remove", user, okHttpClient);
+        if (request == null) request = new DeleteRequest("/api/campus/remove", user);
 
         request.addParameter("id", String.valueOf(id));
         ServerResponse response = request.send();

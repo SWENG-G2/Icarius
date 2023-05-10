@@ -1,6 +1,7 @@
 package icarius.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.IOException;
@@ -10,12 +11,13 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import icarius.auth.User;
 import icarius.http.DeleteRequest;
 import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
-import okhttp3.OkHttpClient;
 
 public class BirdTest {
     private static final String[] parameters = { "name", "listImageURL", "heroImageURL", "soundURL", "aboutMe",
@@ -35,8 +37,8 @@ public class BirdTest {
         IntStream.range(0, parameters.length).forEach(idx -> requestParams.put(parameters[idx], parametersValues[idx]));
 
         // Prepare bird
-        OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        testBird = new Bird(clientMock);
+        User userMock = Mockito.mock(User.class);
+        testBird = new Bird(userMock);
         testBird.setName(parameters[0]);
         testBird.setListImageURL(parameters[1]);
         testBird.setHeroImageURL(parameters[2]);
@@ -58,10 +60,10 @@ public class BirdTest {
         doReturn(response).when(mockRequest).send();
 
         // Test Method
-        Long generatedBirdId = testBird.create(null, mockRequest);
+        assertTrue(testBird.create(null, mockRequest));
 
         // TODO - assert parameters where added to request
-        assertEquals(id, generatedBirdId);
+        assertEquals(id, testBird.getId());
     }
 
     @Test
@@ -98,10 +100,10 @@ public class BirdTest {
         String newBirdieName = "Dophelia";
         testBird.setName(newBirdieName);
         testBird.update(null, mockPatchRequest);
-        String generatedBirdName = testBird.read(mockGetRequest);
+        assertTrue(testBird.read(mockGetRequest));
 
         // TODO - assert parameters where added to request
-        assertEquals(newBirdieName, generatedBirdName);
+        assertEquals(newBirdieName, testBird.getName());
     }
 
     @Test

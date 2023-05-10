@@ -47,6 +47,7 @@ public class FileUploadService {
     public static String uploadFile(User user, Long campusId, String localFilePath, String fileType, PostRequest request) {
         // Create request
         if (request == null) request = new PostRequest("/api/file/" + campusId + "/new", user);
+        if (localFilePath == null || localFilePath.isEmpty()) return null;
         request.addFile(localFilePath, fileType);
         return request.send().getBody();
     }

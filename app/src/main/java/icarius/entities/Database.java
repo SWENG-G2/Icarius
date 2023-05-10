@@ -23,7 +23,7 @@ public class Database {
 
     public void refresh(User user) {
         // send and store GET request response
-        GetRequest request = new GetRequest("/campus/list", user.getOkHttpClient());
+        GetRequest request = new GetRequest("/campus/list", user);
         ServerResponse response = request.send();
 
         if (response.getBody() != null && response.getCode() != 404) {
@@ -36,7 +36,7 @@ public class Database {
                 // iterate through child elements of presentation with element name "slide"
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
-                    Campus newCampus = new Campus(user.getOkHttpClient());
+                    Campus newCampus = new Campus(user);
                     campusId = slide.attributeValue("title");
                     newCampus.setId(Long.parseLong(campusId));
                     newCampus.read(null);

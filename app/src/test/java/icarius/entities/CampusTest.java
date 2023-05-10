@@ -4,19 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.stream.IntStream;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import icarius.auth.User;
 import icarius.http.DeleteRequest;
 import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
-import okhttp3.OkHttpClient;
 
 public class CampusTest {
 
@@ -30,8 +27,8 @@ public class CampusTest {
     @BeforeAll
     static void setUp() {
         // Prepare bird
-        OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        testCampus = new Campus(clientMock);
+        User userMock = Mockito.mock(User.class);
+        testCampus = new Campus(userMock);
         testCampus.setName(CAMPUS_NAME);
         testCampus.setId(id);
     }
@@ -85,10 +82,10 @@ public class CampusTest {
         String newCampusName = "Hull";
         testCampus.setName(newCampusName);
         testCampus.update(null, mockPatchRequest);
-        String generatedCampusName = testCampus.read(mockGetRequest);
+        assertTrue(testCampus.read(mockGetRequest));
 
         // TODO - assert parameters where added to request
-        assertEquals(newCampusName, generatedCampusName);
+        assertEquals(newCampusName, testCampus.getName());
     }
 
     @Test

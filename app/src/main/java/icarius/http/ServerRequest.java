@@ -1,7 +1,6 @@
 package icarius.http;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,14 +9,8 @@ import icarius.auth.User;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.Call;
-import okhttp3.Headers;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
 
 public abstract class ServerRequest {
     // Request properties
@@ -29,24 +22,13 @@ public abstract class ServerRequest {
     @Getter
     private HashMap<String, String> params;
 
-    @Setter
-    protected OkHttpClient client;
-
     @Getter
     protected Request request;
-
-    protected ServerRequest(String urlPath, OkHttpClient client) {
-        this.url = App.BASE_URL + urlPath;
-        this.user = null;
-        this.params = new HashMap<>();
-        this.client = client;
-    }
 
     protected ServerRequest(String urlPath, User user) {
         this.url = App.BASE_URL + urlPath;
         this.user = user;
         this.params = new HashMap<>();
-        this.client = user.getOkHttpClient();
     }
 
     public void setUrl(String urlPath) {
@@ -69,9 +51,23 @@ public abstract class ServerRequest {
 
     protected ServerResponse execute(Request request) {
         // Execute Call
-        Call call = client.newCall(request);
-        try (Response response = call.execute()) {
-            return new ServerResponse(response);
+        Call call = user.getOkHttpClient().newCall(request);
+        try {
+            ServerResponse serverResponse = new ServerResponse(call.execute());
+            if (!serverResponse.isSuccessful() && serverResponse.getCode() != 404) {
+                // TODO - (CONNALL) once penelope modified to return decryption error, run test below
+                // Test:
+                //      Open Icarius and Log in
+                //      Restart Penelope
+                //      Log out and log back in
+                //      Check correct creds aren't denied and that server does not have decryption error twice
+
+
+                // If request fails but server is connected, try again with new key
+                user.refreshKey(null);
+                serverResponse = new ServerResponse(call.execute());
+            }
+            return serverResponse;
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;

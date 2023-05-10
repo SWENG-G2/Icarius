@@ -31,7 +31,7 @@ public class Gui {
         OkHttpClient client = new OkHttpClient.Builder()
             .addInterceptor(new ConnectionFailedInterceptor(this))
             .build();
-        this.user = new User(client);
+        user = new User(client);
 
         // Configure gui
         configureFlatLat();

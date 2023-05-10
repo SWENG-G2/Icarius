@@ -84,19 +84,16 @@ public class AddForm extends JPanel {
         JButton createButton = new JButton("Create Campus");
         createButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                Campus newCampus = new Campus(parent.gui.user.getOkHttpClient());
+                Campus newCampus = new Campus(parent.gui.user);
                 newCampus.setName(NameField.getText());
-                // TODO - (CONNALL) make create methods return boolean
-                newCampus.create(parent.gui.user, null);
 
-                // TODO - Uncomment when above todo complete
-                // if ( campus.create(parent.gui.user, null) ) {
-                //     // Success
-                //     parent.gui.footerPanel.setNotification(newCampus.getName() + " added to campus list.");
-                // } else {
-                //     // Failure
-                //     parent.gui.footerPanel.setNotification("Failed to add " + newCampus.getName() + " to campus list!");
-                // }
+                if ( newCampus.create(parent.gui.user, null) ) {
+                    // Success
+                    parent.gui.footerPanel.setNotification(newCampus.getName() + " added to campus list.");
+                } else {
+                    // Failure
+                    parent.gui.footerPanel.setNotification("Failed to add " + newCampus.getName() + " to campus list!");
+                }
 
                 // Refresh Tree
                 parent.parent.refreshDatabaseTree();
@@ -110,20 +107,17 @@ public class AddForm extends JPanel {
         JButton createButton = new JButton("Create Bird");
         createButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                Bird newBird = new Bird(parent.gui.user.getOkHttpClient());
+                Bird newBird = new Bird(parent.gui.user);
                 newBird.setName(NameField.getText());
                 newBird.setCampusId(campus.getId());
-                // TODO - (CONNALL) make create methods return boolean
-                newBird.create(parent.gui.user, null);
 
-                // TODO - Uncomment when above todo complete
-                // if ( newBird.create(parent.gui.user, null) ) {
-                //     // Success
-                //     parent.gui.footerPanel.setNotification(newBird.getName() + " added to " + campus.getName());
-                // } else {
-                //     // Failure
-                //     parent.gui.footerPanel.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!");
-                // }
+                if ( newBird.create(parent.gui.user, null) ) {
+                    // Success
+                    parent.gui.footerPanel.setNotification(newBird.getName() + " added to " + campus.getName());
+                } else {
+                    // Failure
+                    parent.gui.footerPanel.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!");
+                }
 
                 // Refresh Tree
                 parent.parent.refreshDatabaseTree();

@@ -16,7 +16,6 @@ import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
 import lombok.Data;
-import okhttp3.OkHttpClient;
 
 @Data
 public class Bird implements ServerActions {
@@ -34,10 +33,10 @@ public class Bird implements ServerActions {
     private String diet;
     private String dietImageURL;
 
-    private final OkHttpClient okHttpClient;
+    private User user;
 
-    public Bird(OkHttpClient okHttpClient) {
-        this.okHttpClient = okHttpClient;
+    public Bird(User user) {
+        this.user = user;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class Bird implements ServerActions {
         if (name == null) throw new RuntimeException("Bird name not set");
 
         // Send create bird request to server
-        if (request == null) request = new PostRequest("/api/birds/" + campusId + "/new", user, okHttpClient);
+        if (request == null) request = new PostRequest("/api/birds/" + campusId + "/new", user);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("name", name);
@@ -76,7 +75,7 @@ public class Bird implements ServerActions {
         if (id == null) throw new RuntimeException("Bird id not set");
 
         // Send read bird request to server
-        if (request == null) request = new GetRequest("/bird/" + id, okHttpClient);
+        if (request == null) request = new GetRequest("/bird/" + id, user);
 
         String slideTitle;
         String nodeTitle;
@@ -162,7 +161,7 @@ public class Bird implements ServerActions {
         if (id == null) throw new RuntimeException("Bird id not set");
 
         // Send update bird request to server
-        if (request == null) request = new PatchRequest("/api/birds/" + campusId + "/edit", user, okHttpClient);
+        if (request == null) request = new PatchRequest("/api/birds/" + campusId + "/edit", user);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("id", Long.toString(this.getId()));
@@ -187,7 +186,7 @@ public class Bird implements ServerActions {
         if (id == null) throw new RuntimeException("Bird id not set");
 
         // Send delete bird request to server
-        if (request == null) request = new DeleteRequest("/api/birds/" + campusId + "/remove", user, okHttpClient);
+        if (request == null) request = new DeleteRequest("/api/birds/" + campusId + "/remove", user);
 
         request.addParameter("id", String.valueOf(id));
         ServerResponse response = request.send();

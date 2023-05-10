@@ -69,6 +69,12 @@ public class DetailsForm extends JPanel {
         // Add TextField
         c.gridx++;
         c.fill = GridBagConstraints.HORIZONTAL;
+
+        // Cut information to length if necessary
+        if (information != null && information.length() > 40) {
+            String text = information.substring(0, 40);
+            information = "..." + text;
+        };
         add(new JLabel(information), c);
 
         // Increment y for next item

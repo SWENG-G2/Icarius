@@ -26,6 +26,7 @@ public class ConnectionFailedInterceptor implements Interceptor {
         } catch (ConnectException ce) {
             // Show failed connection message
             if (gui.footerPanel != null) {
+                ce.printStackTrace();
                 gui.footerPanel.setNotification("Server is unreachable, please try again later.", Color.RED);
             }
 

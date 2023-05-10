@@ -214,43 +214,69 @@ public class EditForm extends JPanel {
         JButton editButton = new JButton("Save Changes");
         editButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                // TODO - (CONNALL) make campus and bird update methods return boolean
                 // TODO - success/failure notification messages below
                 if (o instanceof Campus) {
-                    Campus campus = (Campus) o;
-                    campus.setName(campusNameField.getText());
-                    campus.update(user, null);
+                    Campus c = (Campus) o;
+                    c.setName(campusNameField.getText());
+
+                    // Send Update Campus Request
+                    if (c.update(user, null)) {
+                        // SUCCESS
+                        parent.gui.footerPanel.setNotification("Campus: '" + c.getName() + "' has been successfully updated.", null);
+                    } else {
+                        // FAILURE
+                        parent.gui.footerPanel.setNotification("Campus: '" + c.getName() + "' failed to update, please contact an administrator.", null);
+                    }
                 }
                 if (o instanceof Bird) {
-                    Bird bird = (Bird) o;
-                    Long cID = bird.getCampusId();
+                    Bird b = (Bird) o;
+                    Long cID = b.getCampusId();
 
-                    // Update Bird with TextField Values
-                    bird.setName(birdNameField.getText());
-                    bird.setAboutMe(aboutField.getText());
-                    bird.setLocation(locationField.getText());
-                    bird.setDiet(dietField.getText());
+                    // Update Bird entity with TextField Values
+                    b.setName(birdNameField.getText());
+                    b.setAboutMe(aboutField.getText());
+                    b.setLocation(locationField.getText());
+                    b.setDiet(dietField.getText());
 
-                    // Upload Files, then update Bird File Path
-                    listImageUrlPath = uploadFile(user, cID, listImageUrlPath, "image", null);
-                    bird.setListImageURL(listImageUrlPath);
+                    // If file uploaded, Upload Files, then update Bird entity File Path
+                    if (listImageUrlPath != null) {
+                        listImageUrlPath = uploadFile(user, cID, listImageUrlPath, "image", null);
+                        b.setListImageURL(listImageUrlPath);
+                    }
 
-                    heroImageUrlPath = uploadFile(user, cID, heroImageUrlPath, "image", null);
-                    bird.setHeroImageURL(heroImageUrlPath);
+                    if (heroImageUrlPath != null) {
+                        heroImageUrlPath = uploadFile(user, cID, heroImageUrlPath, "image", null);
+                        b.setHeroImageURL(heroImageUrlPath);
+                    }
 
-                    soundURLPath = uploadFile(user, cID, soundURLPath, "audio", null);
-                    bird.setSoundURL(soundURLPath);
+                    if (soundURLPath != null) {
+                        soundURLPath = uploadFile(user, cID, soundURLPath, "audio", null);
+                        b.setSoundURL(soundURLPath);
+                    }
                     
-                    videoUrlPath = uploadFile(user, cID, videoUrlPath, "video", null);
-                    bird.setAboutMeVideoURL(videoUrlPath);
+                    if (videoUrlPath != null) {
+                        videoUrlPath = uploadFile(user, cID, videoUrlPath, "video", null);
+                        b.setAboutMeVideoURL(videoUrlPath);
+                    }
                     
-                    locationImageUrlPath = uploadFile(user, cID, locationImageUrlPath, "image", null);
-                    bird.setLocationImageURL(locationImageUrlPath);
+                    if (locationImageUrlPath != null) {
+                        locationImageUrlPath = uploadFile(user, cID, locationImageUrlPath, "image", null);
+                        b.setLocationImageURL(locationImageUrlPath);
+                    }
                     
-                    dietImageUrlPath = uploadFile(user, cID, dietImageUrlPath, "image", null);
-                    bird.setDietImageURL(dietImageUrlPath);
+                    if (dietImageUrlPath != null) {
+                        dietImageUrlPath = uploadFile(user, cID, dietImageUrlPath, "image", null);
+                        b.setDietImageURL(dietImageUrlPath);
+                    }
 
-                    bird.update(parent.gui.user, null);
+                    // Send Update Bird Request
+                    if (b.update(parent.gui.user, null)) {
+                        // SUCCESS
+                        parent.gui.footerPanel.setNotification("Bird: '" + b.getName() + "' has been successfully updated.", null);
+                    } else {
+                        // FAILURE
+                        parent.gui.footerPanel.setNotification("Bird: '" + b.getName() + "' failed to update, please contact an administrator.", null);
+                    }
                 }
                 parent.parent.refreshDatabaseTree();
             }
@@ -290,7 +316,6 @@ public class EditForm extends JPanel {
                 // Refresh Tree
                 parent.parent.refreshDatabaseTree();
                 // TODO - (Connall) No Permission message - create in http package and set notification
-                // TODO - (Connall) No Connection message - create in http package and set notification
             }
         });
         add(editButton, c);

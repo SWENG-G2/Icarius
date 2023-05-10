@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import icarius.App;
+import icarius.auth.User;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -26,6 +27,7 @@ public class GetRequestTest {
     @Test
     void canExecuteRequest() throws IOException {
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
+        User userMock = new User(clientMock);
         Call callMock = Mockito.mock(Call.class);
 
         Request expectedRequest = new Request.Builder()
@@ -43,7 +45,7 @@ public class GetRequestTest {
         doReturn(callMock).when(clientMock).newCall(any(Request.class));
         doReturn(response).when(callMock).execute();
 
-        GetRequest getRequest = new GetRequest(TEST_PATH, clientMock);
+        GetRequest getRequest = new GetRequest(TEST_PATH, userMock);
 
         String result = getRequest.send().getBody();
 

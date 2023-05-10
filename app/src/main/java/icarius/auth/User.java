@@ -17,7 +17,6 @@ public class User {
 
     public User(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
-        refreshKey(null);
     }
 
     public String getAuth() {
@@ -26,9 +25,9 @@ public class User {
         return AuthenticationService.getAuth(this);
     }
 
-    private void refreshKey(GetRequest request) {
+    public void refreshKey(GetRequest request) {
         if (request == null) {
-            request = new GetRequest("/key", okHttpClient);
+            request = new GetRequest("/key", this);
         }
         publicKey = request.send().getHeader("key");
     }
@@ -39,14 +38,14 @@ public class User {
         }
         ServerResponse response = request.send();
 
-        if (response.getCode() == 404) {
-            this.serverConnection = false;
-            return false;
+        if (response.getCode() == 404) serverConnection = false;
+
+        if (response.isSuccessful()) {
+            serverConnection = true;
+            this.valid = Boolean.parseBoolean(response.getHeader("valid"));
+            this.admin = Boolean.parseBoolean(response.getHeader("admin"));
+            return this.valid;
         }
-        
-        this.serverConnection = true;
-        this.valid = Boolean.parseBoolean(response.getHeader("valid"));
-        this.admin = Boolean.parseBoolean(response.getHeader("admin"));
-        return this.valid;
+        return false;
     }
 }
