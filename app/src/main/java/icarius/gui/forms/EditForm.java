@@ -239,35 +239,24 @@ public class EditForm extends JPanel {
                     b.setDiet(dietField.getText());
 
                     // If file uploaded, Upload Files, then update Bird entity File Path
-                    if (listImageUrlPath != null) {
-                        listImageUrlPath = uploadFile(user, cID, listImageUrlPath, "image", null);
-                        b.setListImageURL(listImageUrlPath);
-                    }
+                    
+                    listImageUrlPath = uploadFile(user, cID, listImageUrlPath, "image", null);
+                    if (listImageUrlPath != null) b.setListImageURL(listImageUrlPath);
+                    
+                    heroImageUrlPath = uploadFile(user, cID, heroImageUrlPath, "image", null);
+                    if (heroImageUrlPath != null) b.setHeroImageURL(heroImageUrlPath);
+                    
+                    soundURLPath = uploadFile(user, cID, soundURLPath, "audio", null);
+                    if (soundURLPath != null) b.setSoundURL(soundURLPath);
+                    
+                    videoUrlPath = uploadFile(user, cID, videoUrlPath, "video", null);
+                    if (videoUrlPath != null) b.setAboutMeVideoURL(videoUrlPath);
 
-                    if (heroImageUrlPath != null) {
-                        heroImageUrlPath = uploadFile(user, cID, heroImageUrlPath, "image", null);
-                        b.setHeroImageURL(heroImageUrlPath);
-                    }
-
-                    if (soundURLPath != null) {
-                        soundURLPath = uploadFile(user, cID, soundURLPath, "audio", null);
-                        b.setSoundURL(soundURLPath);
-                    }
+                    locationImageUrlPath = uploadFile(user, cID, locationImageUrlPath, "image", null);
+                    if (locationImageUrlPath != null)b.setLocationImageURL(locationImageUrlPath);
                     
-                    if (videoUrlPath != null) {
-                        videoUrlPath = uploadFile(user, cID, videoUrlPath, "video", null);
-                        b.setAboutMeVideoURL(videoUrlPath);
-                    }
-                    
-                    if (locationImageUrlPath != null) {
-                        locationImageUrlPath = uploadFile(user, cID, locationImageUrlPath, "image", null);
-                        b.setLocationImageURL(locationImageUrlPath);
-                    }
-                    
-                    if (dietImageUrlPath != null) {
-                        dietImageUrlPath = uploadFile(user, cID, dietImageUrlPath, "image", null);
-                        b.setDietImageURL(dietImageUrlPath);
-                    }
+                    dietImageUrlPath = uploadFile(user, cID, dietImageUrlPath, "image", null);
+                    if (dietImageUrlPath != null) b.setDietImageURL(dietImageUrlPath);
 
                     // Send Update Bird Request
                     if (b.update(parent.gui.user, null)) {
