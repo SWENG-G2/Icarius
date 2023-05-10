@@ -26,6 +26,7 @@ public abstract class ServerRequest {
     @Setter
     protected User user;
     @Setter
+    @Getter
     private HashMap<String, String> params;
 
     @Setter
@@ -51,7 +52,6 @@ public abstract class ServerRequest {
     public void setUrl(String urlPath) {
         this.url = App.BASE_URL + urlPath;
     }
-
 
     public void addParameter(String key, String value) {
         params.put(key, value);

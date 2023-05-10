@@ -26,4 +26,8 @@ public class ServerResponse {
     public String getHeader(String name) {
         return headers.get(name);
     }
+
+    public Boolean isSuccessful() {
+        return this.code == 200 ? true : false;
+    }
 }
