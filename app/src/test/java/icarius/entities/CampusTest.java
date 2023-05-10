@@ -1,6 +1,7 @@
 package icarius.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.IOException;
@@ -44,10 +45,10 @@ public class CampusTest {
         doReturn(response).when(mockRequest).send();
 
         // Test Method
-        Long generatedCampusId = testCampus.create(null, mockRequest);
 
         // TODO - assert parameters where added to request
-        assertEquals(id, generatedCampusId);
+        assertTrue(testCampus.create(null, mockRequest));
+        assertEquals(id, testCampus.getId());
     }
 
     @Test
@@ -62,10 +63,10 @@ public class CampusTest {
         doReturn(getResponse).when(mockGetRequest).send();
 
         testCampus.create(null, mockPostRequest);
-        String generatedCampusName = testCampus.read(mockGetRequest);
 
         // TODO - assert parameters where added to request
-        assertEquals(CAMPUS_NAME, generatedCampusName);
+        assertTrue(testCampus.read(mockGetRequest));
+        assertEquals(CAMPUS_NAME, testCampus.getName());
     }
 
     @Test
