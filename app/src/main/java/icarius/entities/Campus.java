@@ -14,6 +14,7 @@ import icarius.http.DeleteRequest;
 import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
+import icarius.http.ServerResponse;
 import lombok.Data;
 import okhttp3.OkHttpClient;
 import icarius.auth.User;
@@ -32,45 +33,44 @@ public class Campus implements ServerActions {
     }
 
     @Override
-    public Long create(User user, PostRequest request) {
-        if (name == null) {
-            throw new RuntimeException("Campus name not set");
-        }
+    public Boolean create(User user, PostRequest request) {
+        // If required field not set, throw exception
+        if (name == null) throw new RuntimeException("Campus name not set");
 
         // Send create campus request to server
-        if (request == null) {
-            request = new PostRequest("/api/campus/new", user, okHttpClient);
-        }
+        if (request == null) request = new PostRequest("/api/campus/new", user, okHttpClient);
         request.addParameter("name", name);
-        String response =  request.send().getBody();
+        ServerResponse response =  request.send();
 
         // Print response and return created campus Id
-        System.out.println(response);
-        response = response.replaceAll("[^0-9]", "");
-        this.id = Long.valueOf(response);
-        return this.id;
+        System.out.println(response.getBody());
+        String idString = response.getBody().replaceAll("[^0-9]", "");
+        this.id = Long.valueOf(idString);
+
+        // Return TRUE if create success, else FALSE
+        return response.isSuccessful();
     }
 
     @Override
-    public String read(GetRequest request) {
-        if (id == null) {
-            throw new RuntimeException("Campus id not set");
-        }
+    public Boolean read(GetRequest request) {
+        // If required field not set, throw exception
+        if (id == null) throw new RuntimeException("Campus id not set");
 
-        if (request == null) {
-            request = new GetRequest("/campus/" + id, okHttpClient);
-        }
+        // Send read campus request to server
+        if (request == null) request = new GetRequest("/campus/" + id, okHttpClient);
 
-        this.birds = new ArrayList<>();
         // send and store GET request response
-        String response = request.send().getBody();
+        this.birds = new ArrayList<>();
+        ServerResponse response = request.send();
+        String responseBody = response.getBody();
 
-        if (response == null) {
-            return null;
+        if (responseBody == null || responseBody.isEmpty() || !response.isSuccessful()) {
+            // If no response or response failed
+            return false;
         } else {
             // Fetch name from XML response
             try {
-                Document document = DocumentHelper.parseText(response);
+                Document document = DocumentHelper.parseText(responseBody);
                 Element root = document.getRootElement();
                 Element infoSlide = root.element("info");
                 this.name = infoSlide.element("title").getData().toString();
@@ -89,44 +89,42 @@ public class Campus implements ServerActions {
             } catch (DocumentException e) {
                 e.printStackTrace();
             }
-            
-            return this.name;
+            return true;
         }
     }
     
     @Override
-    public void update(User user, PatchRequest request) {
-        if (id == null) {
-            throw new RuntimeException("Campus id not set");
-        }
+    public Boolean update(User user, PatchRequest request) {
+        // If required field not set, throw exception
+        if (id == null) throw new RuntimeException("Campus id not set");
 
-        if (request == null) {
-            request = new PatchRequest("/api/campus/edit", user, okHttpClient);
-        }
+        // Send update campus request to server
+        if (request == null) request = new PatchRequest("/api/campus/edit", user, okHttpClient);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("newName", this.name);
         params.put("id", this.getId()+"");
         request.addParameters(params);
 
-        request.send();
+        // Return TRUE if update request success, else FALSE
+        return request.send().isSuccessful();
     }
 
     @Override
     public Boolean delete(User user, DeleteRequest request) {
-        if (id == null) {
-            throw new RuntimeException("Campus id not set");
-        }
+        // If required field not set, throw exception
+        if (id == null) throw new RuntimeException("Campus id not set");
 
-        if (request == null) {
-            request = new DeleteRequest("/api/campus/remove", user, okHttpClient);
-        }
+        // Send delete campus request to server
+        if (request == null) request = new DeleteRequest("/api/campus/remove", user, okHttpClient);
 
         request.addParameter("id", String.valueOf(id));
-        String response = request.send().getBody();
+        ServerResponse response = request.send();
 
-        System.out.println( "deletion says: " + response );
-        return (response != null) ? true : false;
+        System.out.println(response.getBody());
+
+        // Return TRUE if delete request success, else FALSE
+        return response.isSuccessful();
     }
 
     @Override

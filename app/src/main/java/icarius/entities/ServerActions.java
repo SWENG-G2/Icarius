@@ -7,8 +7,9 @@ import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 
 public interface ServerActions {
-    public Long create(User user, PostRequest request);
-    public String read(GetRequest request);
-    public void update(User user, PatchRequest request);
+    // CRUD Server Operations
+    public Boolean read(GetRequest request);
+    public Boolean create(User user, PostRequest request);
+    public Boolean update(User user, PatchRequest request);
     public Boolean delete(User user, DeleteRequest request);
 }
