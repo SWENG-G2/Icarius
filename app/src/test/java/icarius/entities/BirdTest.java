@@ -97,24 +97,28 @@ public class BirdTest {
 
     @Test
     void canReadBird() {
-        Bird newBirdie = new Bird(null);
+        Bird blankBird = new Bird(null);
 
         GetRequest mockGetRequest = Mockito.mock(GetRequest.class);
         ServerResponse getResponse = new ServerResponse(200, birdReadXML, null);
         doReturn(getResponse).when(mockGetRequest).send();
 
-        // TODO - add try catch for no id set
-        newBirdie.setId(id);
-        assertTrue(newBirdie.read(mockGetRequest));
-        assertEquals(parametersValues[0], newBirdie.getName());
-        assertEquals(parametersValues[1], newBirdie.getHeroImageURL());
-        assertEquals(parametersValues[2], newBirdie.getSoundURL());
-        assertEquals(parametersValues[3], newBirdie.getAboutMe());
-        assertEquals(parametersValues[4], newBirdie.getAboutMeVideoURL());
-        assertEquals(parametersValues[5], newBirdie.getLocation());
-        assertEquals(parametersValues[6], newBirdie.getLocationImageURL());
-        assertEquals(parametersValues[7], newBirdie.getDiet());
-        assertEquals(parametersValues[8], newBirdie.getDietImageURL());
+        try {
+            blankBird.read(mockGetRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        blankBird.setId(id);
+        assertTrue(blankBird.read(mockGetRequest));
+        assertEquals(parametersValues[0], blankBird.getName());
+        assertEquals(parametersValues[1], blankBird.getHeroImageURL());
+        assertEquals(parametersValues[2], blankBird.getSoundURL());
+        assertEquals(parametersValues[3], blankBird.getAboutMe());
+        assertEquals(parametersValues[4], blankBird.getAboutMeVideoURL());
+        assertEquals(parametersValues[5], blankBird.getLocation());
+        assertEquals(parametersValues[6], blankBird.getLocationImageURL());
+        assertEquals(parametersValues[7], blankBird.getDiet());
+        assertEquals(parametersValues[8], blankBird.getDietImageURL());
     }
 
     @Test
