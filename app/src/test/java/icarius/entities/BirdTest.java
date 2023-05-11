@@ -20,9 +20,9 @@ import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
 
 public class BirdTest {
-    private static final String[] parameters = { "name", "listImageURL", "heroImageURL", "soundURL", "aboutMe",
+    private static final String[] parameters = { "name", "heroImageURL", "soundURL", "aboutMe",
             "abountMeVideoURL", "location", "locationImageURL", "diet", "dietImageURL" };
-    private static final String[] parametersValues = { "Dalia", "listImage.png", "heroImage.png", "quack.mp3",
+    private static final String[] parametersValues = { "Dalia", "heroImage.png", "quack.mp3",
             "Birthday 20 days ago.", "abountMeVideo.mp4", "3rd floor lab", "location.png", "Avocados and kikos",
             "diet.png" };
     private static final HashMap<String, String> requestParams = new HashMap<>();
@@ -32,6 +32,37 @@ public class BirdTest {
     private static final String RESPONSE_BODY_NAME = "name: " + parameters[0];
     private static Bird testBird;
 
+    private static final String birdReadXML = 
+    "<presentation xmlns=\"urn:SWENG\" xmlns:SWENG=\"https://raw.githubusercontent.com/SWENG-G2/xml_standard/proposal-1/standard.xsd\">" + 
+    "<info>" +
+    "<title>Daphne</title>" +
+    "<author>Joe</author>" +
+    "<date>2023-05-11</date>" +
+    "<numSlides>0</numSlides>" +
+    "</info>" +
+    "<slide width=\"1920\" height=\"485\" title=\"heroSlide\">" +
+    "<rectangle width=\"1920\" height=\"100\" xCoordinate=\"0\" yCoordinate=\"0\" colour=\"#E89266FF\"/>" +
+    "<text xCoordinate=\"20\" yCoordinate=\"25\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"28\" width=\"-4\" height=\"-5\">"+parametersValues[0]+"</text>" +
+    "<audio url=\""+parametersValues[2]+"\" loop=\"false\" xCoordinate=\"-3\" yCoordinate=\"0\"/>" +
+    "<image url=\""+parametersValues[1]+"\" width=\"1700\" height=\"360\" xCoordinate=\"-2\" yCoordinate=\"115\"/>" +
+    "<circle radius=\"175\" xCoordinate=\"-2\" yCoordinate=\"-120\" colour=\"#00000000\" borderWidth=\"15\" borderColour=\"#8A8178FF\"/>" +
+    "</slide>" +
+    "<slide width=\"1920\" height=\"-1\" title=\"About me\">" +
+    "<video xCoordinate=\"-2\" yCoordinate=\"0\" width=\"1820\" height=\"250\" loop=\"false\" url=\""+parametersValues[4]+"\"/>" +
+    "<text xCoordinate=\"20\" yCoordinate=\"250\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"+parametersValues[3]+"</text>" +
+    "</slide>" +
+    "<slide width=\"1920\" height=\"-1\" title=\"Diet\">" +
+    "<image url=\""+parametersValues[8]+"\" width=\"1700\" height=\"200\" xCoordinate=\"-2\" yCoordinate=\"0\"/>" +
+    "<text xCoordinate=\"20\" yCoordinate=\"210\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"+parametersValues[7]+"</text>" +
+    "</slide>" +
+    "<slide width=\"1920\" height=\"-1\" title=\"Location\">" +
+    "<image url=\""+parametersValues[6]+"\" width=\"1700\" height=\"200\" xCoordinate=\"-2\" yCoordinate=\"0\"/>" +
+    "<text xCoordinate=\"20\" yCoordinate=\"210\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"+parametersValues[5]+"</text>" +
+    "</slide>\n"+
+    "</presentation>\n";
+
+    
+
     @BeforeAll
     static void setUp() {
         IntStream.range(0, parameters.length).forEach(idx -> requestParams.put(parameters[idx], parametersValues[idx]));
@@ -39,16 +70,14 @@ public class BirdTest {
         // Prepare bird
         User userMock = Mockito.mock(User.class);
         testBird = new Bird(userMock);
-        testBird.setName(parameters[0]);
-        testBird.setListImageURL(parameters[1]);
-        testBird.setHeroImageURL(parameters[2]);
-        testBird.setSoundURL(parameters[3]);
-        testBird.setAboutMe(parameters[4]);
-        testBird.setAboutMeVideoURL(parameters[5]);
-        testBird.setLocation(parameters[6]);
-        testBird.setLocationImageURL(parameters[7]);
-        testBird.setDiet(parameters[8]);
-        testBird.setDietImageURL(parameters[9]);
+        testBird.setName(parametersValues[0]);
+        testBird.setHeroImageURL(parametersValues[1]);
+        testBird.setSoundURL(parametersValues[2]);
+        testBird.setAboutMe(parametersValues[3]);
+        testBird.setAboutMeVideoURL(parametersValues[4]);
+        testBird.setLocation(parametersValues[5]);
+        testBird.setLocationImageURL(parametersValues[6]);
+        testBird.setDiet(parametersValues[7]);
     }
 
     @Test
@@ -68,20 +97,24 @@ public class BirdTest {
 
     @Test
     void canReadBird() {
-        // have empty bird object
-        // .read on bird
-        // does bird have parameters from mock response?
+        Bird newBirdie = new Bird(null);
+
         GetRequest mockGetRequest = Mockito.mock(GetRequest.class);
-        ServerResponse getResponse = new ServerResponse(200, RESPONSE_BODY_NAME, null); // replace RESPONSE_BODY_NAME
-                                                                                        // with xml response
+        ServerResponse getResponse = new ServerResponse(200, birdReadXML, null);
         doReturn(getResponse).when(mockGetRequest).send();
 
-        testBird.read(mockGetRequest);
-
-        // TODO - assert parameters where added to request
-        // TODO - assert whether parameters in mock XML response are in bird object
-        // TODO - assert returns bird name from mock XML response
-        assertEquals(parameters[0], testBird.getName());
+        // TODO - add try catch for no id set
+        newBirdie.setId(id);
+        assertTrue(newBirdie.read(mockGetRequest));
+        assertEquals(parametersValues[0], newBirdie.getName());
+        assertEquals(parametersValues[1], newBirdie.getHeroImageURL());
+        assertEquals(parametersValues[2], newBirdie.getSoundURL());
+        assertEquals(parametersValues[3], newBirdie.getAboutMe());
+        assertEquals(parametersValues[4], newBirdie.getAboutMeVideoURL());
+        assertEquals(parametersValues[5], newBirdie.getLocation());
+        assertEquals(parametersValues[6], newBirdie.getLocationImageURL());
+        assertEquals(parametersValues[7], newBirdie.getDiet());
+        assertEquals(parametersValues[8], newBirdie.getDietImageURL());
     }
 
     @Test

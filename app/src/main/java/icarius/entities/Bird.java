@@ -42,10 +42,12 @@ public class Bird implements ServerActions {
     @Override
     public Boolean create(User user, PostRequest request) {
         // If required field not set, throw exception
-        if (name == null) throw new RuntimeException("Bird name not set");
+        if (name == null)
+            throw new RuntimeException("Bird name not set");
 
         // Send create bird request to server
-        if (request == null) request = new PostRequest("/api/birds/" + campusId + "/new", user);
+        if (request == null)
+            request = new PostRequest("/api/birds/" + campusId + "/new", user);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("name", name);
@@ -72,10 +74,13 @@ public class Bird implements ServerActions {
     @Override
     public Boolean read(GetRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Bird id not set");
+        if (id == null) {
+            throw new RuntimeException("Bird id not set");
+        }
 
         // Send read bird request to server
-        if (request == null) request = new GetRequest("/bird/" + id, user);
+        if (request == null)
+            request = new GetRequest("/bird/" + id, user);
 
         String slideTitle;
         String nodeTitle;
@@ -158,10 +163,12 @@ public class Bird implements ServerActions {
     @Override
     public Boolean update(User user, PatchRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Bird id not set");
+        if (id == null)
+            throw new RuntimeException("Bird id not set");
 
         // Send update bird request to server
-        if (request == null) request = new PatchRequest("/api/birds/" + campusId + "/edit", user);
+        if (request == null)
+            request = new PatchRequest("/api/birds/" + campusId + "/edit", user);
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("id", Long.toString(this.getId()));
@@ -183,17 +190,19 @@ public class Bird implements ServerActions {
     @Override
     public Boolean delete(User user, DeleteRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Bird id not set");
+        if (id == null)
+            throw new RuntimeException("Bird id not set");
 
         // Send delete bird request to server
-        if (request == null) request = new DeleteRequest("/api/birds/" + campusId + "/remove", user);
+        if (request == null)
+            request = new DeleteRequest("/api/birds/" + campusId + "/remove", user);
 
         request.addParameter("id", String.valueOf(id));
         ServerResponse response = request.send();
 
         // Print response
         System.out.println(response.getBody());
-        
+
         // Return TRUE if delete request success, else FALSE
         return response.isSuccessful();
     }

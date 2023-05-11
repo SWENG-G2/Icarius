@@ -1,0 +1,25 @@
+<info>
+<title>Daphne</title>
+<author>Joe</author>
+<date>2023-05-11</date>
+<numSlides>0</numSlides>
+</info>
+<slide width="1920" height="485" title="heroSlide">
+<rectangle width="1920" height="100" xCoordinate="0" yCoordinate="0" colour="#E89266FF"/>
+<text xCoordinate="20" yCoordinate="25" colour="#000000FF" fontName="mono" fontSize="28" width="-4" height="-5">Daphne</text>
+<audio url="quack.com" loop="false" xCoordinate="-3" yCoordinate="0"/>
+<image url="aHeroImageOfADuck.com" width="1700" height="360" xCoordinate="-2" yCoordinate="115"/>
+<circle radius="175" xCoordinate="-2" yCoordinate="-120" colour="#00000000" borderWidth="15" borderColour="#8A8178FF"/>
+</slide>
+<slide width="1920" height="-1" title="About me">
+<video xCoordinate="-2" yCoordinate="0" width="1820" height="250" loop="false" url="DaveysVideoCV.com"/>
+<text xCoordinate="20" yCoordinate="250" colour="#000000FF" fontName="mono" fontSize="18" width="1880" height="-5">Donald the Duck</text>
+</slide>
+<slide width="1920" height="-1" title="Diet">
+<image url="Image of werms and grapes" width="1700" height="200" xCoordinate="-2" yCoordinate="0"/>
+<text xCoordinate="20" yCoordinate="210" colour="#000000FF" fontName="mono" fontSize="18" width="1880" height="-5">Werms and Grapes</text>
+</slide>
+<slide width="1920" height="-1" title="Location">
+<image url="overThere.com" width="1700" height="200" xCoordinate="-2" yCoordinate="0"/>
+<text xCoordinate="20" yCoordinate="210" colour="#000000FF" fontName="mono" fontSize="18" width="1880" height="-5">over there</text>
+</slide>
