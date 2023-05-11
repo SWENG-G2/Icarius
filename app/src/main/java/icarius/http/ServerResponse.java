@@ -1,6 +1,7 @@
 package icarius.http;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 
 import lombok.Data;
 import okhttp3.Headers;
@@ -34,6 +35,8 @@ public class ServerResponse {
     }
 
     public Boolean isSuccessful() {
-        return (code == 200 || code == 204) ? true : false;
+        return code == HttpURLConnection.HTTP_OK 
+            || code == HttpURLConnection.HTTP_ACCEPTED
+            || code == HttpURLConnection.HTTP_NO_CONTENT;
     }
 }

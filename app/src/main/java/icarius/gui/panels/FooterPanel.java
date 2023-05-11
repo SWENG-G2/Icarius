@@ -55,7 +55,7 @@ public class FooterPanel extends JPanel {
 
     private ActionListener logOutAction = new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
-            gui.openLoginPanel();
+            gui.openLoginFrame();
         }
     };
 }

@@ -1,6 +1,7 @@
 package icarius.http;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,6 +69,8 @@ public abstract class ServerRequest {
                 serverResponse = new ServerResponse(call.execute());
             }
             return serverResponse;
+        } catch (ConnectException connectException) {
+            throw new ConnectionException("Server is unreachable, please try again later.");
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;

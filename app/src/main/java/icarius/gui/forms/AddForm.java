@@ -89,10 +89,10 @@ public class AddForm extends JPanel {
 
                 if ( newCampus.create(parent.gui.user, null) ) {
                     // Success
-                    parent.gui.footerPanel.setNotification(newCampus.getName() + " added to campus list.");
+                    parent.gui.setNotification(newCampus.getName() + " added to campus list.", null);
                 } else {
                     // Failure
-                    parent.gui.footerPanel.setNotification("Failed to add " + newCampus.getName() + " to campus list!");
+                    parent.gui.setNotification("Failed to add " + newCampus.getName() + " to campus list!", null);
                 }
 
                 // Refresh Tree
@@ -113,10 +113,10 @@ public class AddForm extends JPanel {
 
                 if ( newBird.create(parent.gui.user, null) ) {
                     // Success
-                    parent.gui.footerPanel.setNotification(newBird.getName() + " added to " + campus.getName());
+                    parent.gui.setNotification(newBird.getName() + " added to " + campus.getName(), null);
                 } else {
                     // Failure
-                    parent.gui.footerPanel.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!");
+                    parent.gui.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);
                 }
 
                 // Refresh Tree

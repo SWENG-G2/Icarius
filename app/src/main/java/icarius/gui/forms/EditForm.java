@@ -222,10 +222,10 @@ public class EditForm extends JPanel {
                     // Send Update Campus Request
                     if (c.update(user, null)) {
                         // SUCCESS
-                        parent.gui.footerPanel.setNotification("Campus: '" + c.getName() + "' has been successfully updated.", null);
+                        parent.gui.setNotification("Campus: '" + c.getName() + "' has been successfully updated.", null);
                     } else {
                         // FAILURE
-                        parent.gui.footerPanel.setNotification("Campus: '" + c.getName() + "' failed to update, please contact an administrator.", null);
+                        parent.gui.setNotification("Campus: '" + c.getName() + "' failed to update, please contact an administrator.", null);
                     }
                 }
                 if (o instanceof Bird) {
@@ -272,10 +272,10 @@ public class EditForm extends JPanel {
                     // Send Update Bird Request
                     if (b.update(parent.gui.user, null)) {
                         // SUCCESS
-                        parent.gui.footerPanel.setNotification("Bird: '" + b.getName() + "' has been successfully updated.", null);
+                        parent.gui.setNotification("Bird: '" + b.getName() + "' has been successfully updated.", null);
                     } else {
                         // FAILURE
-                        parent.gui.footerPanel.setNotification("Bird: '" + b.getName() + "' failed to update, please contact an administrator.", null);
+                        parent.gui.setNotification("Bird: '" + b.getName() + "' failed to update, please contact an administrator.", null);
                     }
                 }
                 parent.parent.refreshDatabaseTree();
@@ -295,10 +295,10 @@ public class EditForm extends JPanel {
                     Campus c = (Campus) o;
                     if ( c.delete(user, null) ) {
                         // Success
-                        parent.gui.footerPanel.setNotification("Campus: '" + c.getName() + "' has been successfully removed.", null);
+                        parent.gui.setNotification("Campus: '" + c.getName() + "' has been successfully removed.", null);
                     } else {
                         // Failure
-                        parent.gui.footerPanel.setNotification("Campus: Failed to remove '" + c.getName() + "' from server!", null);
+                        parent.gui.setNotification("Campus: Failed to remove '" + c.getName() + "' from server!", null);
                     }
                 }
                 if (o instanceof Bird) {
@@ -306,10 +306,10 @@ public class EditForm extends JPanel {
                     String campusName = parent.parent.database.getCampusById(b.getCampusId()).getName();
                     if ( b.delete(user, null) ) {
                         // Success
-                        parent.gui.footerPanel.setNotification("Bird: '" + b.getName() + "' has been successfully removed from " + campusName, null);
+                        parent.gui.setNotification("Bird: '" + b.getName() + "' has been successfully removed from " + campusName, null);
                     } else {
                         // Failure
-                        parent.gui.footerPanel.setNotification("Bird: Failed to remove '" + b.getName() + "' from server!", null);
+                        parent.gui.setNotification("Bird: Failed to remove '" + b.getName() + "' from server!", null);
                     }         
                 }
 
