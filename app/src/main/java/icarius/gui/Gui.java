@@ -6,8 +6,6 @@ import okhttp3.OkHttpClient;
 import icarius.auth.User;
 import icarius.gui.frames.LoginFrame;
 
-import java.awt.Color;
-
 import javax.swing.UIManager;
 
 public class Gui {
@@ -21,30 +19,7 @@ public class Gui {
         // Instantiate Client with connection interceptor
         user = new User(new OkHttpClient());
 
-        // Configure gui
-        configureFlatLat();
-    }
-
-    public void init() {
-        // Initialise Main Frame
-
-        // Open Login Screen
-        openLoginFrame();
-    }
-
-    public void openMainFrame() {
-        // TODO (CONNALL) - open main frame
-    }
-
-    public void openLoginFrame() {
-        new LoginFrame(this);
-    }
-
-    public void setNotification(String text, Color color) {
-        // TODO (CONNALL)
-    }
-
-    private void configureFlatLat() {
+        // Configure GUI
         // GUI Theme
         FlatMacDarkLaf.setup();
 
@@ -59,6 +34,9 @@ public class Gui {
         UIManager.put("Tree.showsRootHandles", true);
         UIManager.put("Tree.wideSelection",false);
         UIManager.put("Tree.paintLines", true);
+
+        // Open Login Frame
+        new LoginFrame(null, user);
     }
 }
 

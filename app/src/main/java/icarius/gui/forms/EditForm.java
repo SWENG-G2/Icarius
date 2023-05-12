@@ -1,5 +1,6 @@
 package icarius.gui.forms;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -15,13 +16,14 @@ import javax.swing.JTextField;
 import icarius.auth.User;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
+import icarius.gui.frames.MainFrame;
 import icarius.gui.panels.FormPanel;
+import icarius.gui.tabs.MainTab;
+import icarius.http.ConnectionException;
+
 import static icarius.services.FileUploadService.*;
 
 public class EditForm extends JPanel {
-    private FormPanel parent;
-    private User user;
-
     // Campus Edit Page Fields
     private JTextField campusNameField;
 
@@ -46,9 +48,9 @@ public class EditForm extends JPanel {
     private String dietImageUrlPath;
 
     // Edit Page
-    public EditForm(Object o, FormPanel parent) {
+    public EditForm(Object o) {
         // Configure Layout
-        GridBagConstraints c = configure(parent);
+        GridBagConstraints c = configure();
 
         // Add Details
         if (o instanceof Campus) addCampusEditFields((Campus) o, c);
@@ -60,10 +62,8 @@ public class EditForm extends JPanel {
         addDeleteButton(o, c);
     }
 
-    private GridBagConstraints configure(FormPanel parent) {
+    private GridBagConstraints configure() {
         // Configure layout
-        this.parent = parent;
-        this.user = parent.gui.user;
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.EAST;
@@ -203,7 +203,7 @@ public class EditForm extends JPanel {
         JButton editButton = new JButton("Cancel");
         editButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                parent.setDetailsPage(o);
+                ((FormPanel) getParent()).setDetailsPage(o);
             }
         });
         add(editButton, c);
@@ -214,71 +214,78 @@ public class EditForm extends JPanel {
         JButton editButton = new JButton("Save Changes");
         editButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                // TODO - success/failure notification messages below
-                if (o instanceof Campus) {
-                    Campus c = (Campus) o;
-                    c.setName(campusNameField.getText());
+                MainFrame frame = (MainFrame) getTopLevelAncestor();
+                MainTab mainTab = frame.getMainTab();
+                User user = frame.getUser();
+                try {
+                    if (o instanceof Campus) {
+                        Campus c = (Campus) o;
+                        c.setName(campusNameField.getText());
 
-                    // Send Update Campus Request
-                    if (c.update(user, null)) {
-                        // SUCCESS
-                        parent.gui.setNotification("Campus: '" + c.getName() + "' has been successfully updated.", null);
-                    } else {
-                        // FAILURE
-                        parent.gui.setNotification("Campus: '" + c.getName() + "' failed to update, please contact an administrator.", null);
+                        // Send Update Campus Request
+                        if (c.update(user, null)) {
+                            // SUCCESS
+                            frame.setNotification("Campus: '" + c.getName() + "' has been successfully updated.", null);
+                        } else {
+                            // FAILURE
+                            frame.setNotification("Campus: '" + c.getName() + "' failed to update, please contact an administrator.", null);
+                        }
                     }
+                    if (o instanceof Bird) {
+                        Bird b = (Bird) o;
+                        Long cID = b.getCampusId();
+
+                        // Update Bird entity with TextField Values
+                        b.setName(birdNameField.getText());
+                        b.setAboutMe(aboutField.getText());
+                        b.setLocation(locationField.getText());
+                        b.setDiet(dietField.getText());
+
+                        // If file uploaded, Upload Files, then update Bird entity File Path
+                        if (listImageUrlPath != null) {
+                            listImageUrlPath = uploadFile(user, cID, listImageUrlPath, "image", null);
+                            b.setListImageURL(listImageUrlPath);
+                        }
+
+                        if (heroImageUrlPath != null) {
+                            heroImageUrlPath = uploadFile(user, cID, heroImageUrlPath, "image", null);
+                            b.setHeroImageURL(heroImageUrlPath);
+                        }
+
+                        if (soundURLPath != null) {
+                            soundURLPath = uploadFile(user, cID, soundURLPath, "audio", null);
+                            b.setSoundURL(soundURLPath);
+                        }
+                        
+                        if (videoUrlPath != null) {
+                            videoUrlPath = uploadFile(user, cID, videoUrlPath, "video", null);
+                            b.setAboutMeVideoURL(videoUrlPath);
+                        }
+                        
+                        if (locationImageUrlPath != null) {
+                            locationImageUrlPath = uploadFile(user, cID, locationImageUrlPath, "image", null);
+                            b.setLocationImageURL(locationImageUrlPath);
+                        }
+                        
+                        if (dietImageUrlPath != null) {
+                            dietImageUrlPath = uploadFile(user, cID, dietImageUrlPath, "image", null);
+                            b.setDietImageURL(dietImageUrlPath);
+                        }
+
+                        // Send Update Bird Request
+                        if (b.update(user, null)) {
+                            // SUCCESS
+                            frame.setNotification("Bird: '" + b.getName() + "' has been successfully updated.", null);
+                        } else {
+                            // FAILURE
+                            frame.setNotification("Bird: '" + b.getName() + "' failed to update, please contact an administrator.", null);
+                        }
+                    }
+                    mainTab.refreshDatabaseTree();
+                } catch (ConnectionException ce) {
+                    frame.setNotification(ce.getMessage(), Color.RED);
                 }
-                if (o instanceof Bird) {
-                    Bird b = (Bird) o;
-                    Long cID = b.getCampusId();
-
-                    // Update Bird entity with TextField Values
-                    b.setName(birdNameField.getText());
-                    b.setAboutMe(aboutField.getText());
-                    b.setLocation(locationField.getText());
-                    b.setDiet(dietField.getText());
-
-                    // If file uploaded, Upload Files, then update Bird entity File Path
-                    if (listImageUrlPath != null) {
-                        listImageUrlPath = uploadFile(user, cID, listImageUrlPath, "image", null);
-                        b.setListImageURL(listImageUrlPath);
-                    }
-
-                    if (heroImageUrlPath != null) {
-                        heroImageUrlPath = uploadFile(user, cID, heroImageUrlPath, "image", null);
-                        b.setHeroImageURL(heroImageUrlPath);
-                    }
-
-                    if (soundURLPath != null) {
-                        soundURLPath = uploadFile(user, cID, soundURLPath, "audio", null);
-                        b.setSoundURL(soundURLPath);
-                    }
-                    
-                    if (videoUrlPath != null) {
-                        videoUrlPath = uploadFile(user, cID, videoUrlPath, "video", null);
-                        b.setAboutMeVideoURL(videoUrlPath);
-                    }
-                    
-                    if (locationImageUrlPath != null) {
-                        locationImageUrlPath = uploadFile(user, cID, locationImageUrlPath, "image", null);
-                        b.setLocationImageURL(locationImageUrlPath);
-                    }
-                    
-                    if (dietImageUrlPath != null) {
-                        dietImageUrlPath = uploadFile(user, cID, dietImageUrlPath, "image", null);
-                        b.setDietImageURL(dietImageUrlPath);
-                    }
-
-                    // Send Update Bird Request
-                    if (b.update(parent.gui.user, null)) {
-                        // SUCCESS
-                        parent.gui.setNotification("Bird: '" + b.getName() + "' has been successfully updated.", null);
-                    } else {
-                        // FAILURE
-                        parent.gui.setNotification("Bird: '" + b.getName() + "' failed to update, please contact an administrator.", null);
-                    }
-                }
-                parent.parent.refreshDatabaseTree();
+                // TODO - (Connall) No Permission excemption
             }
         });
         add(editButton, c);
@@ -288,36 +295,46 @@ public class EditForm extends JPanel {
         c.gridx = 1;
         c.gridy++;
         JButton editButton = new JButton("Delete");
+
         editButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                if (o instanceof Campus) {
-                    // Remove Campus from server
-                    Campus c = (Campus) o;
-                    if ( c.delete(user, null) ) {
-                        // Success
-                        parent.gui.setNotification("Campus: '" + c.getName() + "' has been successfully removed.", null);
-                    } else {
-                        // Failure
-                        parent.gui.setNotification("Campus: Failed to remove '" + c.getName() + "' from server!", null);
-                    }
-                }
-                if (o instanceof Bird) {
-                    Bird b = (Bird) o;
-                    String campusName = parent.parent.database.getCampusById(b.getCampusId()).getName();
-                    if ( b.delete(user, null) ) {
-                        // Success
-                        parent.gui.setNotification("Bird: '" + b.getName() + "' has been successfully removed from " + campusName, null);
-                    } else {
-                        // Failure
-                        parent.gui.setNotification("Bird: Failed to remove '" + b.getName() + "' from server!", null);
-                    }         
-                }
+                MainFrame frame = (MainFrame) getTopLevelAncestor();
+                MainTab mainTab = frame.getMainTab();
+                User user = frame.getUser();
 
-                // Refresh Tree
-                parent.parent.refreshDatabaseTree();
-                // TODO - (Connall) No Permission message - create in http package and set notification
+                try {
+                    if (o instanceof Campus) {
+                        // Remove Campus from server
+                        Campus c = (Campus) o;
+                        if ( c.delete(user, null) ) {
+                            // Success
+                            frame.setNotification("Campus: '" + c.getName() + "' has been successfully removed.", null);
+                        } else {
+                            // Failure
+                            frame.setNotification("Campus: Failed to remove '" + c.getName() + "' from server!", null);
+                        }
+                    }
+
+                    if (o instanceof Bird) {
+                        Bird b = (Bird) o;
+                        if ( b.delete(user, null) ) {
+                            // Success
+                            frame.setNotification("Bird: '" + b.getName() + "' has been successfully removed.", null);
+                        } else {
+                            // Failure
+                            frame.setNotification("Bird: Failed to remove '" + b.getName() + "' from server!", null);
+                        }         
+                    }
+
+                    // Refresh Tree
+                    mainTab.refreshDatabaseTree();
+                } catch (ConnectionException ce) {
+                    frame.setNotification(ce.getMessage(), Color.RED);
+                }
+                // TODO - (Connall) No Permission excemption
             }
         });
+
         add(editButton, c);
     }
 }

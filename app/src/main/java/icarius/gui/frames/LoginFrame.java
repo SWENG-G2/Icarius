@@ -2,6 +2,7 @@ package icarius.gui.frames;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,23 +12,24 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import icarius.auth.Credentials;
+import icarius.auth.User;
 import icarius.gui.Gui;
 import icarius.gui.panels.LoginPanel;
 import icarius.http.ConnectionException;
 
 public class LoginFrame extends JFrame {
-    private Gui gui;
+    private User user;
     private LoginPanel loginPanel;
     public JLabel notificationLabel = new JLabel(" ", SwingConstants.CENTER);
 
-    public LoginFrame(Gui gui) {
-        // TODO - (CONNALL) setting position of frame
-        this.gui = gui;
+    public LoginFrame(Point pos, User user) {
+        this.user = user;
         setTitle("Icarius Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Gui.MAIN_FRAME_X_SIZE, Gui.MAIN_FRAME_Y_SIZE);
         setLocationRelativeTo(null);
         setResizable(false);
+        if (pos != null) setLocation(pos);
         setVisible(true);
 
         loginPanel = new LoginPanel(logInAction);
@@ -49,12 +51,13 @@ public class LoginFrame extends JFrame {
             Credentials credentials = new Credentials(username, password);
 
             // Validate Credentials
-            gui.user.setCredentials(credentials);
+            user.setCredentials(credentials);
             try {
-                gui.user.validate(null);
+                user.validate(null);
     
-                if (gui.user.isAdmin()) {
-                    gui.openMainFrame();
+                if (user.getValid()) {
+                    new MainFrame(getLocation(), user);
+                    dispose(); // Close the login frame
                 } else {
                     // Invalid Credentials
                     notificationLabel.setText("Username or key incorrect");

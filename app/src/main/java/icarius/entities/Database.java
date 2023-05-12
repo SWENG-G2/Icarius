@@ -16,12 +16,8 @@ import lombok.Getter;
 
 public class Database {
     private @Getter List<Campus> database = new ArrayList<>();
-
+    
     public Database(User user) {
-        refresh(user);
-    }
-
-    public void refresh(User user) {
         // send and store GET request response
         GetRequest request = new GetRequest("/campus/list", user);
         ServerResponse response = request.send();

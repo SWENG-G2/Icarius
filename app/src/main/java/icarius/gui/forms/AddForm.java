@@ -1,5 +1,6 @@
 package icarius.gui.forms;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -10,20 +11,21 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import icarius.auth.User;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
-import icarius.gui.panels.FormPanel;
+import icarius.gui.frames.MainFrame;
+import icarius.gui.tabs.MainTab;
+import icarius.http.ConnectionException;
 
 public class AddForm extends JPanel {
-    private FormPanel parent;
     private Campus campus;
-
     private JTextField NameField;
 
     // Add Campus Form
-    public AddForm(FormPanel parent) {
+    public AddForm() {
         // Configure Layout
-        GridBagConstraints c = configure(parent);
+        GridBagConstraints c = configure();
 
         // Add Inputs
         NameField = addTextField("Campus Name:", c);
@@ -33,9 +35,9 @@ public class AddForm extends JPanel {
     }
 
     // Add Bird Form
-    public AddForm(FormPanel parent, Campus campus) {
+    public AddForm(Campus campus) {
         // Configure Layout
-        GridBagConstraints c = configure(parent);
+        GridBagConstraints c = configure();
         this.campus = campus;
 
         // Add Inputs
@@ -47,9 +49,8 @@ public class AddForm extends JPanel {
 
     // Add Bird Form
 
-    private GridBagConstraints configure(FormPanel parent) {
+    private GridBagConstraints configure() {
         // Configure layout
-        this.parent = parent;
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = GridBagConstraints.EAST;
@@ -84,19 +85,27 @@ public class AddForm extends JPanel {
         JButton createButton = new JButton("Create Campus");
         createButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                Campus newCampus = new Campus(parent.gui.user);
+                MainFrame frame = (MainFrame) getTopLevelAncestor();
+                MainTab mainTab = frame.getMainTab();
+                User user = frame.getUser();
+            
+                Campus newCampus = new Campus(user);
                 newCampus.setName(NameField.getText());
+                try {
+                    if ( newCampus.create(user, null) ) {
+                        // Success
+                        frame.setNotification(newCampus.getName() + " added to campus list.", null);
+                    } else {
+                        // Failure
+                        frame.setNotification("Failed to add " + newCampus.getName() + " to campus list!", null);
+                    }
 
-                if ( newCampus.create(parent.gui.user, null) ) {
-                    // Success
-                    parent.gui.setNotification(newCampus.getName() + " added to campus list.", null);
-                } else {
-                    // Failure
-                    parent.gui.setNotification("Failed to add " + newCampus.getName() + " to campus list!", null);
+                    // Refresh Tree
+                    mainTab.refreshDatabaseTree();
+                } catch (ConnectionException ce) {
+                    frame.setNotification(ce.getMessage(), Color.RED);
                 }
-
-                // Refresh Tree
-                parent.parent.refreshDatabaseTree();
+                // TODO - (Connall) No Permission excemption
             }
         });
         add(createButton, c);
@@ -107,20 +116,28 @@ public class AddForm extends JPanel {
         JButton createButton = new JButton("Create Bird");
         createButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                Bird newBird = new Bird(parent.gui.user);
+                MainFrame frame = (MainFrame) getTopLevelAncestor();
+                MainTab mainTab = frame.getMainTab();
+                User user = frame.getUser();
+                
+                Bird newBird = new Bird(user);
                 newBird.setName(NameField.getText());
                 newBird.setCampusId(campus.getId());
-
-                if ( newBird.create(parent.gui.user, null) ) {
-                    // Success
-                    parent.gui.setNotification(newBird.getName() + " added to " + campus.getName(), null);
-                } else {
-                    // Failure
-                    parent.gui.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);
+                try {
+                    if ( newBird.create(user, null) ) {
+                        // Success
+                        frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
+                    } else {
+                        // Failure
+                        frame.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);
+                    }
+                } catch (ConnectionException ce) {
+                    frame.setNotification(ce.getMessage(), Color.RED);
                 }
+                // TODO - (Connall) No Permission excemption
 
                 // Refresh Tree
-                parent.parent.refreshDatabaseTree();
+                mainTab.refreshDatabaseTree();
             }
         });
         add(createButton, c);

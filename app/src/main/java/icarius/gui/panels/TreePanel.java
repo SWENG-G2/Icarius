@@ -12,16 +12,15 @@ import javax.swing.tree.TreeSelectionModel;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.entities.Database;
-import icarius.gui.tabs.MainTab;
 
 public class TreePanel extends JScrollPane {
-    private MainTab mainTab;
+    private Database db;
     private JTree tree;
     public static final String ADD_BIRD_TEXT = "+[Add Bird]";
     public static final String ADD_CAMPUS_TEXT = "+[Add Campus]";
     
-    public TreePanel(MainTab mainTab) {
-        this.mainTab = mainTab;
+    public TreePanel(Database db) {
+        this.db = db;
 
         // Configure JSrollPane
         setLayout(new ScrollPaneLayout.UIResource());
@@ -32,7 +31,7 @@ public class TreePanel extends JScrollPane {
         setBorder(null);
 
         // Create and Add Tree Panel to DatabasePanel JScrollPane
-        tree = new JTree(createTreeModel(mainTab.database));
+        tree = new JTree(createTreeModel(db));
         tree.setRootVisible(false);
         setViewportView(tree);
 
@@ -74,6 +73,9 @@ public class TreePanel extends JScrollPane {
             // Get path to selected object
             TreePath path = tree.getSelectionPath();
             if (path == null) return;
+
+            // Get Form JPanel
+            FormPanel formPanel = (FormPanel) getParent().getComponent(1);
             
             String selectedLocationText, selectedAnimalText;
             switch (path.getPathCount()) {
@@ -82,11 +84,11 @@ public class TreePanel extends JScrollPane {
                     selectedLocationText = path.getPathComponent(1).toString();
                     if (selectedLocationText.equals(ADD_CAMPUS_TEXT)) {
                         // Add Campus Selection
-                        mainTab.editPanel.setAddCampus();
+                        formPanel.setAddCampus();
                     } else {
                         // Edit Campus Selection
-                        Campus campus = mainTab.database.getCampus(selectedLocationText);
-                        mainTab.editPanel.setDetailsPage(campus);
+                        Campus campus = db.getCampus(selectedLocationText);
+                        formPanel.setDetailsPage(campus);
                     }
                     break;
 
@@ -96,13 +98,14 @@ public class TreePanel extends JScrollPane {
                     selectedAnimalText = path.getPathComponent(2).toString();
                     if (selectedAnimalText.equals(ADD_BIRD_TEXT)) {
                         // Add Bird Selection
-                        Campus campus = mainTab.database.getCampus(selectedLocationText);
-                        mainTab.editPanel.setAddBird(campus);
+                        Campus campus = db.getCampus(selectedLocationText);
+                        formPanel.setAddBird(campus);
+                        getParent().getComponent(1);
                     } else {
                         // Edit Bird Selection
-                        Campus campus = mainTab.database.getCampus(selectedLocationText);
+                        Campus campus = db.getCampus(selectedLocationText);
                         Bird bird = campus.getBird(selectedAnimalText);
-                        mainTab.editPanel.setDetailsPage(bird);
+                        formPanel.setDetailsPage(bird);
                     }
                     break;
 
