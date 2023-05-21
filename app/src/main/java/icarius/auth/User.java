@@ -36,9 +36,8 @@ public class User {
         if (request == null) {
             request = new PostRequest("/api/users/validate", this);
         }
+        
         ServerResponse response = request.send();
-
-        if (response.getCode() == 404) serverConnection = false;
 
         if (response.isSuccessful()) {
             serverConnection = true;
@@ -47,5 +46,9 @@ public class User {
             return this.valid;
         }
         return false;
+    }
+
+    public boolean isAdmin() {
+        return this.admin;
     }
 }
