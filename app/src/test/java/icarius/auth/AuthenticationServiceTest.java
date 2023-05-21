@@ -1,12 +1,10 @@
-package auth;
+package icarius.auth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import icarius.auth.AuthenticationService;
-import icarius.auth.User;
 import okhttp3.OkHttpClient;
 
 public class AuthenticationServiceTest {

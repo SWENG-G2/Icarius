@@ -124,7 +124,7 @@ public class Campus implements ServerActions {
         System.out.println(response.getBody());
 
         // Return TRUE if delete request success, else FALSE
-        return response.isSuccessful();
+        return response != null ? response.isSuccessful() : false;
     }
 
     public Bird getBird(String birdName) {

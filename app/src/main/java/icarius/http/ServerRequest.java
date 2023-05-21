@@ -1,6 +1,7 @@
 package icarius.http;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,20 +55,16 @@ public abstract class ServerRequest {
         Call call = user.getOkHttpClient().newCall(request);
         try {
             ServerResponse serverResponse = new ServerResponse(call.execute());
-            if (!serverResponse.isSuccessful() && serverResponse.getCode() != 404) {
-                // TODO - (CONNALL) once penelope modified to return decryption error, run test below
-                // Test:
-                //      Open Icarius and Log in
-                //      Restart Penelope
-                //      Log out and log back in
-                //      Check correct creds aren't denied and that server does not have decryption error twice
-
-
-                // If request fails but server is connected, try again with new key
-                user.refreshKey(null);
-                serverResponse = new ServerResponse(call.execute());
-            }
+            // TODO - (CONNALL) once penelope modified to return decryption error, run test below
+            // Test:
+            //      Open Icarius and Log in
+            //      Restart Penelope
+            //      Log out and log back in
+            //      Check correct creds aren't denied and that server does not have decryption error twice
             return serverResponse;
+        } catch (ConnectException connectException) {
+            throw new ConnectionException("Server is unreachable, please try again later.");
+            //TODO - (CONNALL) - permission excemption
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;

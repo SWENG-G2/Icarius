@@ -14,12 +14,10 @@ import icarius.entities.Campus;
 import icarius.gui.panels.FormPanel;
 
 public class DetailsForm extends JPanel {
-    FormPanel parent;
-
     // Campus Details Page
-    public DetailsForm(Object o, FormPanel parent) {
+    public DetailsForm(Object o) {
         // Configure Layout
-        GridBagConstraints c = configure(parent);
+        GridBagConstraints c = configure();
 
         // Add Details
         if (o instanceof Campus) addCampusDetails((Campus) o, c);
@@ -29,9 +27,8 @@ public class DetailsForm extends JPanel {
         addEditButton(o, c);
     }
 
-    private GridBagConstraints configure(FormPanel parent) {
+    private GridBagConstraints configure() {
         // Configure layout
-        this.parent = parent;
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
@@ -86,7 +83,7 @@ public class DetailsForm extends JPanel {
         JButton editButton = new JButton("Edit");
         editButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent ae) {
-                parent.setEditPage(o);
+                ((FormPanel) getParent()).setEditPage(o);
             }
         });
         add(editButton, c);
