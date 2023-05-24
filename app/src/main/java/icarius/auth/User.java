@@ -22,7 +22,8 @@ public class User {
     public String getAuth() {
         if (publicKey == null || publicKey.equals("")) refreshKey(null);
         if (publicKey == null || publicKey.equals("")) return "";
-        return AuthenticationService.getAuth(this);
+
+        return AuthenticationService.getAuth(this, null);
     }
 
     public void refreshKey(GetRequest request) {
