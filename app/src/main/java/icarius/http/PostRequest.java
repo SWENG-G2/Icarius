@@ -14,17 +14,18 @@ import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class PostRequest extends ServerRequest{
+public class PostRequest extends ServerRequest {
     protected String filePath, fileType;
-    
+
     // valid file types
     private static final List<String> validFileTypes = Collections.unmodifiableList(
-        new ArrayList<String>() {{
-            add("image");
-            add("audio");
-            add("video");
-        }}
-    );
+            new ArrayList<String>() {
+                {
+                    add("image");
+                    add("audio");
+                    add("video");
+                }
+            });
 
     public PostRequest(String urlPath, User user) {
         super(urlPath, user);
@@ -33,21 +34,21 @@ public class PostRequest extends ServerRequest{
     @Override
     public ServerResponse send() {
         RequestBody requestBody;
-        if ( containsFile() ) {
+        if (containsFile()) {
             requestBody = buildFileUpload();
         } else {
             requestBody = new FormBody.Builder().build();
         }
-        
-        Request request = new Request.Builder()
-        .url(getUrl())
-        .addHeader("credentials", user.getAuth())
-        .post(requestBody)
-        .build();
 
-        return execute(request); 
+        request = new Request.Builder()
+                .url(getUrl())
+                .addHeader("credentials", user.getAuth())
+                .post(requestBody)
+                .build();
+
+        return execute(request);
     }
-    
+
     public void addFile(String filePath, String fileType) {
         validateFileType(fileType);
         this.filePath = filePath;
@@ -70,9 +71,9 @@ public class PostRequest extends ServerRequest{
 
         // Build Form Body
         return new MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("file", file.getName(), RequestBody.create(file, MEDIA_TYPE))
-            .addFormDataPart("type", fileType)
-            .build();
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(), RequestBody.create(file, MEDIA_TYPE))
+                .addFormDataPart("type", fileType)
+                .build();
     }
 }

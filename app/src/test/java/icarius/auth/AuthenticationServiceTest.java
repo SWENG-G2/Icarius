@@ -23,8 +23,11 @@ public class AuthenticationServiceTest {
     private String MOCK_USERNAME = "testUsername";
     private String MOCK_PASSWORD = "testPassword";
     private String MOCK_TIME = "2023-05-21T20:52:24.193223100+01:00[Europe/London]";
+
     @Test
-    public void canEncryptDecrypt() throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException {
+    public void canEncryptDecrypt()
+            throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
+            BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException {
         // Generate Key Pair
         KeyPair keyPair = AuthenticationService.generateKeys();
         String base64EncodedPublicKey = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
@@ -43,5 +46,5 @@ public class AuthenticationServiceTest {
         String expectedKeyword = MOCK_USERNAME + "=" + MOCK_PASSWORD + "=" + MOCK_TIME;
         assertEquals(expectedKeyword, decryptedKeyWord);
     }
-    
+
 }

@@ -1,7 +1,7 @@
 package icarius.services;
 
 public class UtilService {
-    
+
     public static String removeLastCharacter(String s) {
         if (s == null || s.length() == 0) {
             return null;
@@ -9,5 +9,5 @@ public class UtilService {
             return s.substring(0, s.length() - 1);
         }
     }
-    
+
 }

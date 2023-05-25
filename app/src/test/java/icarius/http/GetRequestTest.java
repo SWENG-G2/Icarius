@@ -1,13 +1,13 @@
-    package icarius.http;
+package icarius.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import icarius.App;
 import icarius.auth.User;
@@ -25,16 +25,16 @@ public class GetRequestTest {
     private static final String RESPONSE_BODY = "https://www.youtube.com/shorts/VLkvr4XDTII";
 
     @Test
-    void canExecuteRequest() throws IOException {
-        OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
+    public void canExecuteRequest() throws IOException {
+        OkHttpClient clientMock = mock(OkHttpClient.class);
         User userMock = new User(clientMock);
-        Call callMock = Mockito.mock(Call.class);
+        Call callMock = mock(Call.class);
 
         Request expectedRequest = new Request.Builder()
                 .url(App.BASE_URL + TEST_PATH)
                 .build();
 
-        Response response = new Response.Builder()
+        Response mockResponse = new Response.Builder()
                 .request(expectedRequest)
                 .body(ResponseBody.create(RESPONSE_BODY, MediaType.get("text/plain; charset=UTF-8")))
                 .code(200)
@@ -43,17 +43,16 @@ public class GetRequestTest {
                 .build();
 
         doReturn(callMock).when(clientMock).newCall(any(Request.class));
-        doReturn(response).when(callMock).execute();
+        doReturn(mockResponse).when(callMock).execute();
 
         GetRequest getRequest = new GetRequest(TEST_PATH, userMock);
-
-        String result = getRequest.send().getBody();
-
+        ServerResponse response = getRequest.send();
         Request request = getRequest.getRequest();
 
         assertEquals("GET", request.method());
         assertEquals(App.BASE_URL + TEST_PATH, request.url().toString());
 
-        assertEquals(RESPONSE_BODY, result);
+        assertEquals(200, response.getCode());
+        assertEquals(RESPONSE_BODY, response.getBody());
     }
 }

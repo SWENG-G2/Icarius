@@ -11,13 +11,13 @@ public class DeleteRequest extends ServerRequest {
 
     @Override
     public ServerResponse send() {
-        Request request = new Request.Builder()
-        .url(getUrl())
-        .addHeader("credentials", user.getAuth())
-        .delete()
-        .build();
+        request = new Request.Builder()
+                .url(getUrl())
+                .addHeader("credentials", user.getAuth())
+                .delete()
+                .build();
 
         return execute(request);
     }
-    
+
 }
