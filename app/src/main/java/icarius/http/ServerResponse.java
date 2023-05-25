@@ -34,9 +34,18 @@ public class ServerResponse {
         return headers.get(name);
     }
 
+    public void addHeader(String key, String value) {
+        if (headers == null) {
+            Headers.Builder b = new Headers.Builder();
+            headers = b.add(key, value).build();
+        } else {
+            headers = headers.newBuilder().add(key, value).build();
+        }
+    }
+
     public Boolean isSuccessful() {
-        return code == HttpURLConnection.HTTP_OK 
-            || code == HttpURLConnection.HTTP_ACCEPTED
-            || code == HttpURLConnection.HTTP_NO_CONTENT;
+        return code == HttpURLConnection.HTTP_OK
+                || code == HttpURLConnection.HTTP_ACCEPTED
+                || code == HttpURLConnection.HTTP_NO_CONTENT;
     }
 }

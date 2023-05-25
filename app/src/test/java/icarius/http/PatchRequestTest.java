@@ -2,8 +2,8 @@ package icarius.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -12,26 +12,33 @@ import org.junit.jupiter.api.Test;
 import icarius.App;
 import icarius.auth.User;
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class GetRequestTest {
+public class PatchRequestTest {
     private static final String TEST_PATH = "/test";
 
     private static final String RESPONSE_BODY = "https://www.youtube.com/shorts/VLkvr4XDTII";
 
+    private static final String AUTH = "1234";
+
     @Test
     public void canExecuteRequest() throws IOException {
         OkHttpClient clientMock = mock(OkHttpClient.class);
-        User userMock = new User(clientMock);
+        User userMock = mock(User.class);
         Call callMock = mock(Call.class);
 
+        RequestBody requestBody = new FormBody.Builder().build();
         Request expectedRequest = new Request.Builder()
                 .url(App.BASE_URL + TEST_PATH)
+                .addHeader("credentials", AUTH)
+                .patch(requestBody)
                 .build();
 
         Response mockResponse = new Response.Builder()
@@ -42,14 +49,18 @@ public class GetRequestTest {
                 .message("")
                 .build();
 
-        doReturn(callMock).when(clientMock).newCall(any(Request.class));
-        doReturn(mockResponse).when(callMock).execute();
+        when(userMock.getOkHttpClient()).thenReturn(clientMock);
+        when(clientMock.newCall(any(Request.class))).thenReturn(callMock);
+        when(callMock.execute()).thenReturn(mockResponse);
+        when(userMock.getAuth()).thenReturn(AUTH);
 
-        GetRequest getRequest = new GetRequest(TEST_PATH, userMock);
-        ServerResponse response = getRequest.send();
-        Request request = getRequest.getRequest();
+        // Conduct Test
+        PatchRequest patchRequest = new PatchRequest(TEST_PATH, userMock);
+        ServerResponse response = patchRequest.send();
+        Request request = patchRequest.getRequest();
 
-        assertEquals("GET", request.method());
+        assertEquals("PATCH", request.method());
+        assertEquals(AUTH, request.header("credentials"));
         assertEquals(App.BASE_URL + TEST_PATH, request.url().toString());
 
         assertEquals(200, response.getCode());

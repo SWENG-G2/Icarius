@@ -2,8 +2,8 @@ package icarius.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -19,19 +19,23 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class GetRequestTest {
+public class DeleteRequestTest {
     private static final String TEST_PATH = "/test";
 
     private static final String RESPONSE_BODY = "https://www.youtube.com/shorts/VLkvr4XDTII";
 
+    private static final String AUTH = "1234";
+
     @Test
     public void canExecuteRequest() throws IOException {
         OkHttpClient clientMock = mock(OkHttpClient.class);
-        User userMock = new User(clientMock);
+        User userMock = mock(User.class);
         Call callMock = mock(Call.class);
 
         Request expectedRequest = new Request.Builder()
                 .url(App.BASE_URL + TEST_PATH)
+                .addHeader("credentials", AUTH)
+                .delete()
                 .build();
 
         Response mockResponse = new Response.Builder()
@@ -42,14 +46,17 @@ public class GetRequestTest {
                 .message("")
                 .build();
 
-        doReturn(callMock).when(clientMock).newCall(any(Request.class));
-        doReturn(mockResponse).when(callMock).execute();
+        when(userMock.getOkHttpClient()).thenReturn(clientMock);
+        when(clientMock.newCall(any(Request.class))).thenReturn(callMock);
+        when(callMock.execute()).thenReturn(mockResponse);
+        when(userMock.getAuth()).thenReturn(AUTH);
 
-        GetRequest getRequest = new GetRequest(TEST_PATH, userMock);
-        ServerResponse response = getRequest.send();
-        Request request = getRequest.getRequest();
+        DeleteRequest deleteRequest = new DeleteRequest(TEST_PATH, userMock);
+        ServerResponse response = deleteRequest.send();
+        Request request = deleteRequest.getRequest();
 
-        assertEquals("GET", request.method());
+        assertEquals("DELETE", request.method());
+        assertEquals(AUTH, request.header("credentials"));
         assertEquals(App.BASE_URL + TEST_PATH, request.url().toString());
 
         assertEquals(200, response.getCode());

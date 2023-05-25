@@ -14,14 +14,14 @@ public class PatchRequest extends ServerRequest {
     @Override
     public ServerResponse send() {
         RequestBody requestBody = new FormBody.Builder().build();
-    
-        Request request = new Request.Builder()
-        .url(getUrl())
-        .addHeader("credentials", user.getAuth())
-        .patch(requestBody)
-        .build();
 
-        return execute(request); 
+        request = new Request.Builder()
+                .url(getUrl())
+                .addHeader("credentials", user.getAuth())
+                .patch(requestBody)
+                .build();
+
+        return execute(request);
     }
-    
+
 }
