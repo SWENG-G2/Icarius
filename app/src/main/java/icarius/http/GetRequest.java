@@ -11,9 +11,16 @@ public class GetRequest extends ServerRequest {
 
     @Override
     public ServerResponse send() {
-        request = new Request.Builder()
-                .url(getUrl())
-                .build();
+        if (user.isAdmin()) {
+            request = new Request.Builder()
+                    .url(getUrl())
+                    .addHeader("credentials", user.getAuth())
+                    .build();
+        } else {
+            request = new Request.Builder()
+                    .url(getUrl())
+                    .build();
+        }
         return execute(request);
     }
 }

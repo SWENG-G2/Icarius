@@ -23,6 +23,7 @@ import lombok.Getter;
 public class MainFrame extends JFrame {
     public @Getter UserClient user;
     public @Getter MainTab mainTab;
+    public @Getter UsersTab usersTab;
     private JLabel notificationLabel = new JLabel(" ");
 
     public MainFrame(Point pos, UserClient user) {
@@ -56,7 +57,8 @@ public class MainFrame extends JFrame {
         mainTab = new MainTab(user);
         mainPanel.addTab("Main", mainTab);
         if (user.isAdmin()) {
-            mainPanel.addTab("Users", new UsersTab());
+            usersTab = new UsersTab(user);
+            mainPanel.addTab("Users", usersTab);
             mainPanel.addTab("Create User+", new CreateUserTab());
         }
         return mainPanel;

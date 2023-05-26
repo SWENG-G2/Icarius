@@ -12,9 +12,9 @@ import lombok.Setter;
 
 public class User {
     private UserClient userClient;
-    private String username;
+    private @Getter String username;
     private @Setter @Getter Boolean admin = false;
-    private List<Campus> campusPermissions = new ArrayList<>();
+    private @Getter List<Campus> campusPermissions = new ArrayList<>();
 
     public User(UserClient userClient, String username) {
         this.userClient = userClient;

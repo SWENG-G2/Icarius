@@ -22,7 +22,7 @@ public class CreateUserTab extends JPanel {
     private JTextField passField;
     private JComboBox<String> roleBox;
 
-    private String[] roles = {"Admin", "User"};
+    private String[] roles = {"User", "Admin"};
 
     public CreateUserTab() {
         // Configure Layout
@@ -107,8 +107,10 @@ public class CreateUserTab extends JPanel {
                     if (user.create(passField.getText(), null)) {
                         // User created successfully
                         frame.setNotification("User: "+nameField.getText()+" Created", null);
-                        // TODO - refresh user list
+                        frame.getUsersTab().userListPanel.updateUserList();
                         // TODO - set text fields to blank / reset create user form
+                        nameField.setText("");
+                        passField.setText("");
                     } else {
                         // Failed to create user
                         frame.setNotification("Failed to create User: "+nameField.getText(), Color.RED);

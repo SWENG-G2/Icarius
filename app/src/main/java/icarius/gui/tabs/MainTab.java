@@ -10,9 +10,12 @@ import icarius.entities.Database;
 import icarius.gui.Gui;
 import icarius.gui.frames.MainFrame;
 import icarius.gui.panels.TreePanel;
+import lombok.Getter;
 import icarius.gui.panels.FormPanel;
 
 public class MainTab extends JPanel {
+    private @Getter Database db;
+
     public MainTab(UserClient user) {
         // Configure Tab
         setLayout(new BorderLayout());
@@ -26,7 +29,7 @@ public class MainTab extends JPanel {
 
     public TreePanel getTreePanel(UserClient user) {
         // Fetch Database
-        Database db = new Database(user);
+        db = new Database(user);
         TreePanel dbTreePanel = new TreePanel(db);
 
         // Set tree panel width to 1/3 of frame

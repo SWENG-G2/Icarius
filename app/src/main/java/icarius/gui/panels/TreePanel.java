@@ -45,6 +45,8 @@ public class TreePanel extends JScrollPane {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         if (database != null) {
             for (Campus campus : database.getDatabase()) {
+                // TODO - only add campus to tree if user has permissions for it
+                // TODO - if user has no permissions show zero permissions message
                 // Add each Campus node to tree
                 DefaultMutableTreeNode campusNode = new DefaultMutableTreeNode(campus.getName());
 

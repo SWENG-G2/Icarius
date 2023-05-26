@@ -15,10 +15,10 @@ import okhttp3.OkHttpClient;
 public class UserClient {
     private Credentials credentials;
     private String publicKey;
-    private Boolean admin, valid;
+    private Boolean admin = false;
+    private Boolean valid = false;
     private List<Integer> campusPermissions;
     private final OkHttpClient okHttpClient;
-
 
     public UserClient(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
@@ -28,8 +28,7 @@ public class UserClient {
         if (publicKey == null || publicKey.equals(""))
             refreshKey(null);
         if (publicKey == null || publicKey.equals(""))
-            return "";
-
+            return " ";
         return AuthenticationService.getAuth(this, null);
     }
 
@@ -55,7 +54,7 @@ public class UserClient {
                 // reset list
                 campusPermissions = new ArrayList<>();
                 String campusPermissionHeader = response.getHeader("Campuses");
-                System.out.println("TEST: "+campusPermissionHeader);
+                System.out.println("TEST: " + campusPermissionHeader); // TODO - remove
 
                 // If permissions header doesn't exist or is empty return
                 if (campusPermissionHeader.equals("") || campusPermissionHeader == null) {
@@ -68,7 +67,6 @@ public class UserClient {
                 }
 
                 // Convert string of numbers into list of ints
-                //campusPermissionHeader = campusPermissionHeader.substring(1, campusPermissionHeader.length() - 1); // TODO - remove if reply has brackets
                 String[] campusIdsAsStrings = campusPermissionHeader.split(",");
                 for (String id : campusIdsAsStrings) {
                     campusPermissions.add(Integer.parseInt(id));
