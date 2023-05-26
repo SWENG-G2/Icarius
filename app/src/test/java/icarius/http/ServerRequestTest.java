@@ -18,7 +18,7 @@ import org.mockito.Answers;
 import org.mockito.Mockito;
 
 import icarius.App;
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -66,7 +66,7 @@ public class ServerRequestTest {
         ServerRequest classUnderTest = Mockito.mock(ServerRequest.class, Answers.CALLS_REAL_METHODS);
 
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        User userMock = new User(clientMock);
+        UserClient userMock = new UserClient(clientMock);
         Call callMock = Mockito.mock(Call.class);
 
         doReturn(callMock).when(userMock).getOkHttpClient().newCall(any(Request.class));

@@ -3,13 +3,13 @@ package icarius.gui;
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 import okhttp3.OkHttpClient;
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.gui.frames.LoginFrame;
 
 import javax.swing.UIManager;
 
 public class Gui {
-    public User user;
+    public UserClient user;
 
     // Main Frame Properties
     public static final int MAIN_FRAME_X_SIZE=600;
@@ -17,7 +17,7 @@ public class Gui {
 
     public Gui(){
         // Instantiate Client with connection interceptor
-        user = new User(new OkHttpClient());
+        user = new UserClient(new OkHttpClient());
 
         // Configure GUI
         // GUI Theme

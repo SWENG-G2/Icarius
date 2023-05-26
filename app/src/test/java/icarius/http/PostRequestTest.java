@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import icarius.App;
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -32,7 +32,7 @@ public class PostRequestTest {
     @Test
     void canExecuteRequest() throws IOException {
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        User userMock = Mockito.mock(User.class);
+        UserClient userMock = Mockito.mock(UserClient.class);
         Call callMock = Mockito.mock(Call.class);
 
         RequestBody requestBody = new FormBody.Builder().build();
@@ -71,7 +71,7 @@ public class PostRequestTest {
     @Test
     public void canExecuteRequestWithFile() throws IOException {
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        User userMock = Mockito.mock(User.class);
+        UserClient userMock = Mockito.mock(UserClient.class);
         Call callMock = Mockito.mock(Call.class);
 
         File file = new File(TEST_FILE_PATH);

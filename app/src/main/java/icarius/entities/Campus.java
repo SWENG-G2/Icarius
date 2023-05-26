@@ -16,7 +16,7 @@ import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
 import lombok.Data;
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import java.util.HashMap;
 
 @Data
@@ -25,14 +25,14 @@ public class Campus implements ServerActions {
     private String name;
     private List<Bird> birds;
 
-    private User user;
+    private UserClient user;
 
-    public Campus(User user) {
+    public Campus(UserClient user) {
         this.user = user;
     }
 
     @Override
-    public Boolean create(User user, PostRequest request) {
+    public Boolean create(UserClient user, PostRequest request) {
         // If required field not set, throw exception
         if (name == null) throw new RuntimeException("Campus name not set");
 
@@ -94,7 +94,7 @@ public class Campus implements ServerActions {
     }
     
     @Override
-    public Boolean update(User user, PatchRequest request) {
+    public Boolean update(UserClient user, PatchRequest request) {
         // If required field not set, throw exception
         if (id == null) throw new RuntimeException("Campus id not set");
 
@@ -111,7 +111,7 @@ public class Campus implements ServerActions {
     }
 
     @Override
-    public Boolean delete(User user, DeleteRequest request) {
+    public Boolean delete(UserClient user, DeleteRequest request) {
         // If required field not set, throw exception
         if (id == null) throw new RuntimeException("Campus id not set");
 

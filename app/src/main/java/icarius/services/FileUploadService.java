@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.http.PostRequest;
 
 public class FileUploadService {
@@ -44,7 +44,7 @@ public class FileUploadService {
         // WARNING: All illegal access operations will be denied in a future release
     }
 
-    public static String uploadFile(User user, Long campusId, String localFilePath, String fileType, PostRequest request) {
+    public static String uploadFile(UserClient user, Long campusId, String localFilePath, String fileType, PostRequest request) {
         // Create request
         if (request == null) request = new PostRequest("/api/file/" + campusId + "/new", user);
         if (localFilePath == null || localFilePath.isEmpty()) return null;

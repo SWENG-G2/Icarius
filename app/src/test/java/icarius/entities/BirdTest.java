@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.http.DeleteRequest;
 import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
@@ -37,7 +37,7 @@ public class BirdTest {
         IntStream.range(0, parameters.length).forEach(idx -> requestParams.put(parameters[idx], parametersValues[idx]));
 
         // Prepare bird
-        User userMock = Mockito.mock(User.class);
+        UserClient userMock = Mockito.mock(UserClient.class);
         testBird = new Bird(userMock);
         testBird.setName(parameters[0]);
         testBird.setListImageURL(parameters[1]);

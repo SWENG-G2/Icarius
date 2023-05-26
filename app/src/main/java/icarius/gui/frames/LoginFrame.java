@@ -12,17 +12,17 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import icarius.auth.Credentials;
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.gui.Gui;
 import icarius.gui.panels.LoginPanel;
 import icarius.http.ConnectionException;
 
 public class LoginFrame extends JFrame {
-    private User user;
+    private UserClient user;
     private LoginPanel loginPanel;
     public JLabel notificationLabel = new JLabel(" ", SwingConstants.CENTER);
 
-    public LoginFrame(Point pos, User user) {
+    public LoginFrame(Point pos, UserClient user) {
         this.user = user;
         setTitle("Icarius Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

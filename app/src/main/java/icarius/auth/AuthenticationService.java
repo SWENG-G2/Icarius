@@ -28,7 +28,7 @@ public class AuthenticationService {
     private static final String ALGORITHM = "RSA";
     private static final String CYPHER = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
 
-    public static String getAuth(User user, ZonedDateTime time) {
+    public static String getAuth(UserClient user, ZonedDateTime time) {
         try {
             if (time == null || time.equals(null)) {
                 // Get time

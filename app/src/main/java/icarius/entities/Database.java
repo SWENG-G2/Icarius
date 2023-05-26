@@ -9,7 +9,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.http.GetRequest;
 import icarius.http.ServerResponse;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import lombok.Getter;
 public class Database {
     private @Getter List<Campus> database = new ArrayList<>();
     
-    public Database(User user) {
+    public Database(UserClient user) {
         // send and store GET request response
         GetRequest request = new GetRequest("/campus/list", user);
         ServerResponse response = request.send();

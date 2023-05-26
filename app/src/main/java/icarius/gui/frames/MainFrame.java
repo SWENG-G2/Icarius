@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.gui.Gui;
 import icarius.gui.tabs.CreateUserTab;
 import icarius.gui.tabs.MainTab;
@@ -21,11 +21,11 @@ import icarius.gui.tabs.UsersTab;
 import lombok.Getter;
 
 public class MainFrame extends JFrame {
-    public @Getter User user;
+    public @Getter UserClient user;
     public @Getter MainTab mainTab;
     private JLabel notificationLabel = new JLabel(" ");
 
-    public MainFrame(Point pos, User user) {
+    public MainFrame(Point pos, UserClient user) {
         this.user = user;
 
         setTitle("Icarius");

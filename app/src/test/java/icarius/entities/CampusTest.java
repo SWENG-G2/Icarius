@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.http.DeleteRequest;
 import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
@@ -27,7 +27,7 @@ public class CampusTest {
     @BeforeAll
     static void setUp() {
         // Prepare bird
-        User userMock = Mockito.mock(User.class);
+        UserClient userMock = Mockito.mock(UserClient.class);
         testCampus = new Campus(userMock);
         testCampus.setName(CAMPUS_NAME);
         testCampus.setId(id);

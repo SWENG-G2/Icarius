@@ -9,7 +9,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.http.DeleteRequest;
 import icarius.http.GetRequest;
 import icarius.http.PatchRequest;
@@ -33,14 +33,14 @@ public class Bird implements ServerActions {
     private String diet;
     private String dietImageURL;
 
-    private User user;
+    private UserClient user;
 
-    public Bird(User user) {
+    public Bird(UserClient user) {
         this.user = user;
     }
 
     @Override
-    public Boolean create(User user, PostRequest request) {
+    public Boolean create(UserClient user, PostRequest request) {
         // If required field not set, throw exception
         if (name == null) throw new RuntimeException("Bird name not set");
 
@@ -156,7 +156,7 @@ public class Bird implements ServerActions {
     }
 
     @Override
-    public Boolean update(User user, PatchRequest request) {
+    public Boolean update(UserClient user, PatchRequest request) {
         // If required field not set, throw exception
         if (id == null) throw new RuntimeException("Bird id not set");
 
@@ -181,7 +181,7 @@ public class Bird implements ServerActions {
     }
 
     @Override
-    public Boolean delete(User user, DeleteRequest request) {
+    public Boolean delete(UserClient user, DeleteRequest request) {
         // If required field not set, throw exception
         if (id == null) throw new RuntimeException("Bird id not set");
 

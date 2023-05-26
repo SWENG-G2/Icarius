@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import icarius.App;
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import lombok.Getter;
 import lombok.Setter;
 import okhttp3.Call;
@@ -18,7 +18,7 @@ public abstract class ServerRequest {
     private String url;
 
     @Setter
-    protected User user;
+    protected UserClient user;
     @Setter
     @Getter
     private HashMap<String, String> params;
@@ -26,7 +26,7 @@ public abstract class ServerRequest {
     @Getter
     protected Request request;
 
-    protected ServerRequest(String urlPath, User user) {
+    protected ServerRequest(String urlPath, UserClient user) {
         this.url = App.BASE_URL + urlPath;
         this.user = user;
         this.params = new HashMap<>();

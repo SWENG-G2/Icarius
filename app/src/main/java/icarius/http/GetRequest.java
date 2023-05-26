@@ -1,11 +1,11 @@
 package icarius.http;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import okhttp3.Request;
 
 public class GetRequest extends ServerRequest {
 
-    public GetRequest(String urlPath, User user) {
+    public GetRequest(String urlPath, UserClient user) {
         super(urlPath, user);
     }
 

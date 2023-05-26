@@ -25,7 +25,7 @@ public class UserTest {
 
         // Mock user
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        User userMock = new User(clientMock);
+        UserClient userMock = new UserClient(clientMock);
 
         userMock.refreshKey(mockRequest);
 
@@ -44,7 +44,7 @@ public class UserTest {
 
         // Mock user
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        User userMock = new User(clientMock);
+        UserClient userMock = new UserClient(clientMock);
 
         assertTrue(userMock.validate(mockRequest));
         assertTrue(userMock.getValid());

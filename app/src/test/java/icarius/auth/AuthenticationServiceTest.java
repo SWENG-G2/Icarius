@@ -34,7 +34,7 @@ public class AuthenticationServiceTest {
 
         // Create mock user
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
-        User userMock = new User(clientMock);
+        UserClient userMock = new UserClient(clientMock);
         userMock.setCredentials(new Credentials(MOCK_USERNAME, MOCK_PASSWORD));
         userMock.setPublicKey(base64EncodedPublicKey);
 

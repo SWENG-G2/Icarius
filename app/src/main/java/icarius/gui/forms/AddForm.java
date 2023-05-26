@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.gui.frames.MainFrame;
@@ -20,7 +20,7 @@ import icarius.http.ConnectionException;
 
 public class AddForm extends JPanel {
     private Campus campus;
-    private JTextField NameField;
+    private JTextField nameField;
 
     // Add Campus Form
     public AddForm() {
@@ -28,7 +28,7 @@ public class AddForm extends JPanel {
         GridBagConstraints c = configure();
 
         // Add Inputs
-        NameField = addTextField("Campus Name:", c);
+        nameField = addTextField("Campus Name:", c);
 
         // Add Buttons
         addCreateCampusButton(c);
@@ -41,13 +41,11 @@ public class AddForm extends JPanel {
         this.campus = campus;
 
         // Add Inputs
-        NameField = addTextField("Bird Name:", c);
+        nameField = addTextField("Bird Name:", c);
 
         // Add Buttons
         addCreateBirdButton(c);
     }
-
-    // Add Bird Form
 
     private GridBagConstraints configure() {
         // Configure layout
@@ -87,25 +85,27 @@ public class AddForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                User user = frame.getUser();
-            
-                Campus newCampus = new Campus(user);
-                newCampus.setName(NameField.getText());
-                try {
-                    if ( newCampus.create(user, null) ) {
-                        // Success
-                        frame.setNotification(newCampus.getName() + " added to campus list.", null);
-                    } else {
-                        // Failure
-                        frame.setNotification("Failed to add " + newCampus.getName() + " to campus list!", null);
-                    }
+                UserClient user = frame.getUser();
+                
+                if (!nameField.getText().isBlank()) {
+                    Campus newCampus = new Campus(user);
+                    newCampus.setName(nameField.getText());
+                    try {
+                        if ( newCampus.create(user, null) ) {
+                            // Success
+                            frame.setNotification(newCampus.getName() + " added to campus list.", null);
+                        } else {
+                            // Failure
+                            frame.setNotification("Failed to add " + newCampus.getName() + " to campus list!", null);
+                        }
 
-                    // Refresh Tree
-                    mainTab.refreshDatabaseTree();
-                } catch (ConnectionException ce) {
-                    frame.setNotification(ce.getMessage(), Color.RED);
+                        // Refresh Tree
+                        mainTab.refreshDatabaseTree();
+                    } catch (ConnectionException ce) {
+                        frame.setNotification(ce.getMessage(), Color.RED);
+                    }
+                    // TODO - (Connall) No Permission excemption
                 }
-                // TODO - (Connall) No Permission excemption
             }
         });
         add(createButton, c);
@@ -118,26 +118,28 @@ public class AddForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                User user = frame.getUser();
+                UserClient user = frame.getUser();
                 
-                Bird newBird = new Bird(user);
-                newBird.setName(NameField.getText());
-                newBird.setCampusId(campus.getId());
-                try {
-                    if ( newBird.create(user, null) ) {
-                        // Success
-                        frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
-                    } else {
-                        // Failure
-                        frame.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);
+                if (!nameField.getText().isBlank()) {
+                    Bird newBird = new Bird(user);
+                    newBird.setName(nameField.getText());
+                    newBird.setCampusId(campus.getId());
+                    try {
+                        if ( newBird.create(user, null) ) {
+                            // Success
+                            frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
+                        } else {
+                            // Failure
+                            frame.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);
+                        }
+                    } catch (ConnectionException ce) {
+                        frame.setNotification(ce.getMessage(), Color.RED);
                     }
-                } catch (ConnectionException ce) {
-                    frame.setNotification(ce.getMessage(), Color.RED);
-                }
-                // TODO - (Connall) No Permission excemption
+                    // TODO - (Connall) No Permission excemption
 
-                // Refresh Tree
-                mainTab.refreshDatabaseTree();
+                    // Refresh Tree
+                    mainTab.refreshDatabaseTree();
+                }
             }
         });
         add(createButton, c);

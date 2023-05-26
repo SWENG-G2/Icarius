@@ -3,7 +3,7 @@ package icarius.http;
 import java.io.File;
 import java.util.List;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class PostRequest extends ServerRequest {
                 }
             });
 
-    public PostRequest(String urlPath, User user) {
+    public PostRequest(String urlPath, UserClient user) {
         super(urlPath, user);
     }
 

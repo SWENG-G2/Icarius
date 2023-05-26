@@ -1,5 +1,8 @@
 package icarius.auth;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import icarius.http.GetRequest;
 import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
@@ -9,13 +12,15 @@ import okhttp3.OkHttpClient;
 
 @Getter
 @Setter
-public class User {
+public class UserClient {
     private Credentials credentials;
     private String publicKey;
     private Boolean admin, valid;
+    private List<Integer> campusPermissions;
     private final OkHttpClient okHttpClient;
 
-    public User(OkHttpClient okHttpClient) {
+
+    public UserClient(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
     }
 
@@ -45,6 +50,31 @@ public class User {
         if (response.isSuccessful()) {
             this.valid = Boolean.parseBoolean(response.getHeader("valid"));
             this.admin = Boolean.parseBoolean(response.getHeader("admin"));
+
+            if (this.valid) {
+                // reset list
+                campusPermissions = new ArrayList<>();
+                String campusPermissionHeader = response.getHeader("Campuses");
+                System.out.println("TEST: "+campusPermissionHeader);
+
+                // If permissions header doesn't exist or is empty return
+                if (campusPermissionHeader.equals("") || campusPermissionHeader == null) {
+                    return this.valid;
+                }
+
+                // If sysadmin
+                if (campusPermissionHeader.equals("-1")) {
+                    return this.valid;
+                }
+
+                // Convert string of numbers into list of ints
+                //campusPermissionHeader = campusPermissionHeader.substring(1, campusPermissionHeader.length() - 1); // TODO - remove if reply has brackets
+                String[] campusIdsAsStrings = campusPermissionHeader.split(",");
+                for (String id : campusIdsAsStrings) {
+                    campusPermissions.add(Integer.parseInt(id));
+                }
+            }
+
             return this.valid;
         }
         return false;

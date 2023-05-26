@@ -5,7 +5,7 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.entities.Database;
 import icarius.gui.Gui;
 import icarius.gui.frames.MainFrame;
@@ -13,7 +13,7 @@ import icarius.gui.panels.TreePanel;
 import icarius.gui.panels.FormPanel;
 
 public class MainTab extends JPanel {
-    public MainTab(User user) {
+    public MainTab(UserClient user) {
         // Configure Tab
         setLayout(new BorderLayout());
         
@@ -24,7 +24,7 @@ public class MainTab extends JPanel {
         add(new FormPanel(), BorderLayout.CENTER);
     }
 
-    public TreePanel getTreePanel(User user) {
+    public TreePanel getTreePanel(UserClient user) {
         // Fetch Database
         Database db = new Database(user);
         TreePanel dbTreePanel = new TreePanel(db);
@@ -39,7 +39,7 @@ public class MainTab extends JPanel {
         removeAll();
 
         // Create and Add Panel containing database tree
-        User user = ((MainFrame) getTopLevelAncestor()).getUser();
+        UserClient user = ((MainFrame) getTopLevelAncestor()).getUser();
         add(getTreePanel(user), BorderLayout.WEST);
 
         // Create and Add Panel to edit selected entity

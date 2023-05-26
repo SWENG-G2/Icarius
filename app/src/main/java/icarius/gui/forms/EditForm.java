@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.gui.frames.MainFrame;
@@ -216,7 +216,7 @@ public class EditForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                User user = frame.getUser();
+                UserClient user = frame.getUser();
                 try {
                     if (o instanceof Campus) {
                         Campus c = (Campus) o;
@@ -300,8 +300,8 @@ public class EditForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                User user = frame.getUser();
-
+                UserClient user = frame.getUser();
+                
                 try {
                     if (o instanceof Campus) {
                         // Remove Campus from server

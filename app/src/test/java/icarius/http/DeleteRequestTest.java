@@ -10,7 +10,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import icarius.App;
-import icarius.auth.User;
+import icarius.auth.UserClient;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -29,7 +29,7 @@ public class DeleteRequestTest {
     @Test
     public void canExecuteRequest() throws IOException {
         OkHttpClient clientMock = mock(OkHttpClient.class);
-        User userMock = mock(User.class);
+        UserClient userMock = mock(UserClient.class);
         Call callMock = mock(Call.class);
 
         Request expectedRequest = new Request.Builder()
