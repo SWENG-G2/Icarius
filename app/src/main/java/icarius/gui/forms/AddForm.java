@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import icarius.auth.UserClient;
+import icarius.App;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.gui.frames.MainFrame;
@@ -85,13 +85,12 @@ public class AddForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                UserClient user = frame.getUser();
                 
                 if (!nameField.getText().isBlank()) {
-                    Campus newCampus = new Campus(user);
+                    Campus newCampus = new Campus(App.userClient);
                     newCampus.setName(nameField.getText());
                     try {
-                        if ( newCampus.create(user, null) ) {
+                        if ( newCampus.create(App.userClient, null) ) {
                             // Success
                             frame.setNotification(newCampus.getName() + " added to campus list.", null);
                         } else {
@@ -118,14 +117,13 @@ public class AddForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                UserClient user = frame.getUser();
                 
                 if (!nameField.getText().isBlank()) {
-                    Bird newBird = new Bird(user);
+                    Bird newBird = new Bird(App.userClient);
                     newBird.setName(nameField.getText());
                     newBird.setCampusId(campus.getId());
                     try {
-                        if ( newBird.create(user, null) ) {
+                        if ( newBird.create(App.userClient, null) ) {
                             // Success
                             frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
                         } else {

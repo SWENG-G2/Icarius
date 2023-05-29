@@ -121,8 +121,6 @@ public class Campus implements ServerActions {
         request.addParameter("id", String.valueOf(id));
         ServerResponse response = request.send();
 
-        System.out.println(response.getBody());
-
         // Return TRUE if delete request success, else FALSE
         return response != null ? response.isSuccessful() : false;
     }
@@ -138,6 +136,6 @@ public class Campus implements ServerActions {
 
     @Override
     public String toString() {
-        return "\nId: " + id + "\t\tCampus: " + name;
+        return name;
     }
 }

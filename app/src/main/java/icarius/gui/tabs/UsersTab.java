@@ -5,20 +5,20 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
-import icarius.auth.UserClient;
 import icarius.gui.Gui;
+import icarius.gui.frames.MainFrame;
 import icarius.gui.panels.UserInfoPanel;
 import icarius.gui.panels.UserListPanel;
 
 public class UsersTab extends JPanel {
     public UserListPanel userListPanel;
 
-    public UsersTab(UserClient user) {
+    public UsersTab(MainFrame frame) {
         // Configure Tab
         setLayout(new BorderLayout());
 
         // Create and Add Panel containing a list of created users displayed as buttons
-        userListPanel = new UserListPanel(user);
+        userListPanel = new UserListPanel(frame);
         // Set user list panel width to 1/3 of frame
         int width = Gui.MAIN_FRAME_X_SIZE / 3;
         userListPanel.setPreferredSize(new Dimension(width, this.getHeight()));

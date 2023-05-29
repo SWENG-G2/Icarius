@@ -9,19 +9,16 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import icarius.App;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
-import icarius.entities.Database;
 
 public class TreePanel extends JScrollPane {
-    private Database db;
     private JTree tree;
     public static final String ADD_BIRD_TEXT = "+[Add Bird]";
     public static final String ADD_CAMPUS_TEXT = "+[Add Campus]";
     
-    public TreePanel(Database db) {
-        this.db = db;
-
+    public TreePanel() {
         // Configure JSrollPane
         setLayout(new ScrollPaneLayout.UIResource());
         setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
@@ -31,7 +28,7 @@ public class TreePanel extends JScrollPane {
         setBorder(null);
 
         // Create and Add Tree Panel to DatabasePanel JScrollPane
-        tree = new JTree(createTreeModel(db));
+        tree = new JTree(createTreeModel());
         tree.setRootVisible(false);
         setViewportView(tree);
 
@@ -40,33 +37,43 @@ public class TreePanel extends JScrollPane {
         tree.addTreeSelectionListener(treeSelectionListener);
     }
 
-    public DefaultMutableTreeNode createTreeModel(Database database) {
+    public DefaultMutableTreeNode createTreeModel() {
         // Create the Tree using Database
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        if (database != null) {
-            for (Campus campus : database.getDatabase()) {
-                // TODO - only add campus to tree if user has permissions for it
-                // TODO - if user has no permissions show zero permissions message
-                // Add each Campus node to tree
-                DefaultMutableTreeNode campusNode = new DefaultMutableTreeNode(campus.getName());
 
-                for (Bird bird : campus.getBirds()) {
-                    // Add each Bird as a child node to Campus node
-                    DefaultMutableTreeNode birdNode = new DefaultMutableTreeNode(bird.getName());
-                    campusNode.add(birdNode);
+        if (App.db != null) {
+            for (Campus campus : App.db.getDatabase()) {
+                // If User has permissions for this campus or is Admin, add to tree
+                if (App.userClient.getAdmin() || App.userClient.getCampusPermissions().contains(campus.getId())) {
+                    root.add(constructCampusNode(campus));
                 }
-
-                // Add "Add Bird to Campus" button as last child node to each campus node
-                DefaultMutableTreeNode addBirdSelection = new DefaultMutableTreeNode(ADD_BIRD_TEXT);
-                campusNode.add(addBirdSelection);
-                root.add(campusNode);
+                // TODO - if user has no permissions show zero permissions message
             }
         }
 
-        // Add "Add Campus" button as last node
-        DefaultMutableTreeNode addCampusSelection = new DefaultMutableTreeNode(ADD_CAMPUS_TEXT);
-        root.add(addCampusSelection);
+        // Add "Add Campus" button as last node if admin
+        if (App.userClient.getAdmin()) {
+            DefaultMutableTreeNode addCampusSelection = new DefaultMutableTreeNode(ADD_CAMPUS_TEXT);
+            root.add(addCampusSelection);
+        }
         return root;
+    }
+
+    private DefaultMutableTreeNode constructCampusNode(Campus campus) {
+        // Create campus node
+        DefaultMutableTreeNode campusNode = new DefaultMutableTreeNode(campus.getName());
+
+        for (Bird bird : campus.getBirds()) {
+            // Add each Bird as a child node to Campus node
+            DefaultMutableTreeNode birdNode = new DefaultMutableTreeNode(bird.getName());
+            campusNode.add(birdNode);
+        }
+
+        // Add "Add Bird to Campus" button as last child node to each campus node
+        DefaultMutableTreeNode addBirdSelection = new DefaultMutableTreeNode(ADD_BIRD_TEXT);
+        campusNode.add(addBirdSelection);
+
+        return campusNode;
     }
 
     // Actions
@@ -89,7 +96,7 @@ public class TreePanel extends JScrollPane {
                         formPanel.setAddCampus();
                     } else {
                         // Edit Campus Selection
-                        Campus campus = db.getCampus(selectedLocationText);
+                        Campus campus = App.db.getCampus(selectedLocationText);
                         formPanel.setDetailsPage(campus);
                     }
                     break;
@@ -100,12 +107,12 @@ public class TreePanel extends JScrollPane {
                     selectedAnimalText = path.getPathComponent(2).toString();
                     if (selectedAnimalText.equals(ADD_BIRD_TEXT)) {
                         // Add Bird Selection
-                        Campus campus = db.getCampus(selectedLocationText);
+                        Campus campus = App.db.getCampus(selectedLocationText);
                         formPanel.setAddBird(campus);
                         getParent().getComponent(1);
                     } else {
                         // Edit Bird Selection
-                        Campus campus = db.getCampus(selectedLocationText);
+                        Campus campus = App.db.getCampus(selectedLocationText);
                         Bird bird = campus.getBird(selectedAnimalText);
                         formPanel.setDetailsPage(bird);
                     }

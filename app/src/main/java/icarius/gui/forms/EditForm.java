@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import icarius.auth.UserClient;
+import icarius.App;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.gui.frames.MainFrame;
@@ -216,14 +216,13 @@ public class EditForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                UserClient user = frame.getUser();
                 try {
                     if (o instanceof Campus) {
                         Campus c = (Campus) o;
                         c.setName(campusNameField.getText());
 
                         // Send Update Campus Request
-                        if (c.update(user, null)) {
+                        if (c.update(App.userClient, null)) {
                             // SUCCESS
                             frame.setNotification("Campus: '" + c.getName() + "' has been successfully updated.", null);
                         } else {
@@ -243,37 +242,37 @@ public class EditForm extends JPanel {
 
                         // If file uploaded, Upload Files, then update Bird entity File Path
                         if (listImageUrlPath != null) {
-                            listImageUrlPath = uploadFile(user, cID, listImageUrlPath, "image", null);
+                            listImageUrlPath = uploadFile(App.userClient, cID, listImageUrlPath, "image", null);
                             b.setListImageURL(listImageUrlPath);
                         }
 
                         if (heroImageUrlPath != null) {
-                            heroImageUrlPath = uploadFile(user, cID, heroImageUrlPath, "image", null);
+                            heroImageUrlPath = uploadFile(App.userClient, cID, heroImageUrlPath, "image", null);
                             b.setHeroImageURL(heroImageUrlPath);
                         }
 
                         if (soundURLPath != null) {
-                            soundURLPath = uploadFile(user, cID, soundURLPath, "audio", null);
+                            soundURLPath = uploadFile(App.userClient, cID, soundURLPath, "audio", null);
                             b.setSoundURL(soundURLPath);
                         }
                         
                         if (videoUrlPath != null) {
-                            videoUrlPath = uploadFile(user, cID, videoUrlPath, "video", null);
+                            videoUrlPath = uploadFile(App.userClient, cID, videoUrlPath, "video", null);
                             b.setAboutMeVideoURL(videoUrlPath);
                         }
                         
                         if (locationImageUrlPath != null) {
-                            locationImageUrlPath = uploadFile(user, cID, locationImageUrlPath, "image", null);
+                            locationImageUrlPath = uploadFile(App.userClient, cID, locationImageUrlPath, "image", null);
                             b.setLocationImageURL(locationImageUrlPath);
                         }
                         
                         if (dietImageUrlPath != null) {
-                            dietImageUrlPath = uploadFile(user, cID, dietImageUrlPath, "image", null);
+                            dietImageUrlPath = uploadFile(App.userClient, cID, dietImageUrlPath, "image", null);
                             b.setDietImageURL(dietImageUrlPath);
                         }
 
                         // Send Update Bird Request
-                        if (b.update(user, null)) {
+                        if (b.update(App.userClient, null)) {
                             // SUCCESS
                             frame.setNotification("Bird: '" + b.getName() + "' has been successfully updated.", null);
                         } else {
@@ -300,13 +299,12 @@ public class EditForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                UserClient user = frame.getUser();
                 
                 try {
                     if (o instanceof Campus) {
                         // Remove Campus from server
                         Campus c = (Campus) o;
-                        if ( c.delete(user, null) ) {
+                        if ( c.delete(App.userClient, null) ) {
                             // Success
                             frame.setNotification("Campus: '" + c.getName() + "' has been successfully removed.", null);
                         } else {
@@ -317,7 +315,7 @@ public class EditForm extends JPanel {
 
                     if (o instanceof Bird) {
                         Bird b = (Bird) o;
-                        if ( b.delete(user, null) ) {
+                        if ( b.delete(App.userClient, null) ) {
                             // Success
                             frame.setNotification("Bird: '" + b.getName() + "' has been successfully removed.", null);
                         } else {

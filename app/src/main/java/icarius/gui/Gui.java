@@ -2,23 +2,16 @@ package icarius.gui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
-import okhttp3.OkHttpClient;
-import icarius.auth.UserClient;
 import icarius.gui.frames.LoginFrame;
 
 import javax.swing.UIManager;
 
 public class Gui {
-    public UserClient user;
-
     // Main Frame Properties
     public static final int MAIN_FRAME_X_SIZE=600;
     public static final int MAIN_FRAME_Y_SIZE=500;
 
     public Gui(){
-        // Instantiate Client with connection interceptor
-        user = new UserClient(new OkHttpClient());
-
         // Configure GUI
         // GUI Theme
         FlatMacDarkLaf.setup();
@@ -36,7 +29,7 @@ public class Gui {
         UIManager.put("Tree.paintLines", true);
 
         // Open Login Frame
-        new LoginFrame(null, user);
+        new LoginFrame(null);
     }
 }
 

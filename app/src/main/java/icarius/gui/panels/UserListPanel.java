@@ -17,7 +17,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import icarius.auth.UserClient;
+import icarius.App;
+import icarius.entities.Campus;
 import icarius.entities.User;
 import icarius.gui.frames.MainFrame;
 import icarius.http.ConnectionException;
@@ -25,11 +26,12 @@ import icarius.http.GetRequest;
 import icarius.http.ServerResponse;
 
 public class UserListPanel extends JPanel{
-    private UserClient userClient;
+    private MainFrame frame;
     private GridBagConstraints c;
 
-    public UserListPanel(UserClient userClient){
-        this.userClient = userClient;
+    public UserListPanel(MainFrame frame){
+        this.frame = frame;
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -63,12 +65,9 @@ public class UserListPanel extends JPanel{
     }
 
     private List<User> fetchUserList() {
-        MainFrame frame = (MainFrame) getTopLevelAncestor();
-
         List<User> userList = new ArrayList<>();
-        System.out.println("USERTEST:"+userClient.toString());
         
-        GetRequest request = new GetRequest("/api/users/list", userClient);
+        GetRequest request = new GetRequest("/api/users/list", App.userClient);
         try {
             ServerResponse response = request.send();
 
@@ -79,9 +78,36 @@ public class UserListPanel extends JPanel{
             // iterate through child elements of presentation with element name "slide"
             for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                 Element slide = it.next();
-                User user = new User(userClient, slide.attributeValue("title"));
+                User user = new User(App.userClient, slide.attributeValue("title"));
 
                 // TODO - parse campus permissions
+                for (Iterator<Element> it2 = slide.elementIterator(); it2.hasNext();) {
+                    Element node = it2.next();
+                    // picks out the text from 'text' nodes
+                    if (node.getName().equals("text")) {
+                        String permissionsString = node.getData().toString();
+                        switch (permissionsString) {
+                            case "":
+                                // If no permissions
+                                break;
+                            case "All":
+                                // If admin user
+                                user.setAdmin(true);
+                                break;
+                            default:
+                                // Convert string of numbers into list of ints
+                                String[] campusIdsAsStrings = permissionsString.split(",");
+                                for (String id : campusIdsAsStrings) {
+                                    // Get campus
+                                    Long campusId = Long.parseLong(id);
+                                    Campus campus = App.db.getCampusById(campusId);
+                                    user.addPermission(campus);
+                                }
+                                break;
+                        }
+                    }
+                }
+
                 userList.add(user);
             }
         } catch (ConnectionException ce) {

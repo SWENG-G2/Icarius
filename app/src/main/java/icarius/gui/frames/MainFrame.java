@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import icarius.auth.UserClient;
+import icarius.App;
 import icarius.gui.Gui;
 import icarius.gui.tabs.CreateUserTab;
 import icarius.gui.tabs.MainTab;
@@ -21,14 +21,11 @@ import icarius.gui.tabs.UsersTab;
 import lombok.Getter;
 
 public class MainFrame extends JFrame {
-    public @Getter UserClient user;
-    public @Getter MainTab mainTab;
-    public @Getter UsersTab usersTab;
+    private @Getter MainTab mainTab;
+    private @Getter UsersTab usersTab;
     private JLabel notificationLabel = new JLabel(" ");
 
-    public MainFrame(Point pos, UserClient user) {
-        this.user = user;
-
+    public MainFrame(Point pos) {
         setTitle("Icarius");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Gui.MAIN_FRAME_X_SIZE, Gui.MAIN_FRAME_Y_SIZE);
@@ -54,10 +51,10 @@ public class MainFrame extends JFrame {
 
     private JTabbedPane getMainPanel() {
         JTabbedPane mainPanel = new JTabbedPane();
-        mainTab = new MainTab(user);
+        mainTab = new MainTab();
         mainPanel.addTab("Main", mainTab);
-        if (user.isAdmin()) {
-            usersTab = new UsersTab(user);
+        if (App.userClient.isAdmin()) {
+            usersTab = new UsersTab(this);
             mainPanel.addTab("Users", usersTab);
             mainPanel.addTab("Create User+", new CreateUserTab());
         }
@@ -71,7 +68,7 @@ public class MainFrame extends JFrame {
         JButton logoutButton = new JButton("Log Out");
         logoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                new LoginFrame(getLocation(), user);
+                new LoginFrame(getLocation());
                 dispose(); // Close Main Frame
             }
         });

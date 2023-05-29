@@ -17,7 +17,7 @@ public class UserClient {
     private String publicKey;
     private Boolean admin = false;
     private Boolean valid = false;
-    private List<Integer> campusPermissions;
+    private List<Long> campusPermissions;
     private final OkHttpClient okHttpClient;
 
     public UserClient(OkHttpClient okHttpClient) {
@@ -54,7 +54,6 @@ public class UserClient {
                 // reset list
                 campusPermissions = new ArrayList<>();
                 String campusPermissionHeader = response.getHeader("Campuses");
-                System.out.println("TEST: " + campusPermissionHeader); // TODO - remove
 
                 // If permissions header doesn't exist or is empty return
                 if (campusPermissionHeader.equals("") || campusPermissionHeader == null) {
@@ -69,7 +68,7 @@ public class UserClient {
                 // Convert string of numbers into list of ints
                 String[] campusIdsAsStrings = campusPermissionHeader.split(",");
                 for (String id : campusIdsAsStrings) {
-                    campusPermissions.add(Integer.parseInt(id));
+                    campusPermissions.add(Long.parseLong(id));
                 }
             }
 

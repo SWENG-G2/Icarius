@@ -11,19 +11,17 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import icarius.App;
 import icarius.auth.Credentials;
-import icarius.auth.UserClient;
 import icarius.gui.Gui;
 import icarius.gui.panels.LoginPanel;
 import icarius.http.ConnectionException;
 
 public class LoginFrame extends JFrame {
-    private UserClient user;
     private LoginPanel loginPanel;
     public JLabel notificationLabel = new JLabel(" ", SwingConstants.CENTER);
 
-    public LoginFrame(Point pos, UserClient user) {
-        this.user = user;
+    public LoginFrame(Point pos) {
         setTitle("Icarius Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Gui.MAIN_FRAME_X_SIZE, Gui.MAIN_FRAME_Y_SIZE);
@@ -51,12 +49,12 @@ public class LoginFrame extends JFrame {
             Credentials credentials = new Credentials(username, password);
 
             // Validate Credentials
-            user.setCredentials(credentials);
+            App.userClient.setCredentials(credentials);
             try {
-                user.validate(null);
+                App.userClient.validate(null);
     
-                if (user.getValid()) {
-                    new MainFrame(getLocation(), user);
+                if (App.userClient.getValid()) {
+                    new MainFrame(getLocation());
                     dispose(); // Close the login frame
                 } else {
                     // Invalid Credentials

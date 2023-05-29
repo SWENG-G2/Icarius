@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import icarius.auth.UserClient;
+import icarius.http.PatchRequest;
 import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
 import lombok.Getter;
@@ -46,22 +47,23 @@ public class User {
         return response.isSuccessful();
     }
 
-    public Boolean addCampus(int campusId, PostRequest request) {
+    public Boolean addCampus(Long campusId, PatchRequest request) {
         // Send create user request to server
         if (request == null)
-            request = new PostRequest("/api/users/addCampus", userClient);
+            request = new PatchRequest("/api/users/addCampus", userClient);
 
         request.addParameter("username", username);
         request.addParameter("campusID", "" + campusId);
 
         ServerResponse response = request.send();
+
         return response.isSuccessful();
     }
 
-    public Boolean removeCampus(int campusId, PostRequest request) {
+    public Boolean removeCampus(Long campusId, PatchRequest request) {
         // Send create user request to server
         if (request == null)
-            request = new PostRequest("/api/users/removeCampus", userClient);
+            request = new PatchRequest("/api/users/removeCampus", userClient);
 
         request.addParameter("username", username);
         request.addParameter("campusID", "" + campusId);
@@ -72,5 +74,9 @@ public class User {
 
     public void addPermission(Campus campus) {
         campusPermissions.add(campus);
+    }
+
+    public void removePermission(Campus campus) {
+        campusPermissions.remove(campus);
     }
 }

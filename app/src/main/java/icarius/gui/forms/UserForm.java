@@ -3,17 +3,19 @@ package icarius.gui.forms;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComboBox;
 
+import icarius.App;
 import icarius.entities.Campus;
 import icarius.entities.User;
+import icarius.gui.frames.MainFrame;
 import icarius.gui.panels.UserInfoPanel;
 
 
@@ -21,6 +23,7 @@ public class UserForm extends JPanel{
     private User user;
     private GridBagConstraints c;
     public UserForm(User user){
+        this.user = user;
         // Configure Layout
         c = configure();
         
@@ -29,7 +32,8 @@ public class UserForm extends JPanel{
         if(user.getAdmin()){
             addInfoField("Accessible Campuses:", "All", c);
         } else{
-            //addComboBox(user, c);
+            addRemoveCampus(c);
+            addAddCampus(c);
             accessableCampuses("Accessible Campuses:", user.getCampusPermissions(), c);
         }
     }
@@ -38,6 +42,8 @@ public class UserForm extends JPanel{
         // Configure layout
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
+        c.ipadx = 8;
+        c.ipady = 8;
         c.gridy = 0;
         return c;
     }
@@ -69,10 +75,6 @@ public class UserForm extends JPanel{
     }
 
     private void accessableCampuses(String labelText, List<Campus> campuses, GridBagConstraints c) {
-        //TODO - Connall - you said I didn't need to put this in a scroll pane as each non admin
-        //       user would only have access to so many campuses. If you've changed your mind
-        //       let me know and I'll add one in (or you can, or just make the whole thing extend scroll pane)
-        
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
@@ -100,12 +102,10 @@ public class UserForm extends JPanel{
         }
     }
 
-    private void addComboBox(User user, GridBagConstraints c){
+    private void addAddCampus(GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
-        c.ipadx = 8;
-        c.ipady = 8;
         c.gridx = 0;
         
         // Add Label
@@ -115,33 +115,77 @@ public class UserForm extends JPanel{
         c.gridx++;
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        String[] unaccessedCampuses = {};
-        //TODO - unaccessedCampuses array should be all of the campuses which the user does not have access to
-        JComboBox addComboBox = new JComboBox<>(unaccessedCampuses);
-        addComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae){
-                String selectedCampus = (String)addComboBox.getSelectedItem();
-                //TODO - add the selected campus to the users list of accessable campuses
-                refresh();
-            }
-        });
-        c.gridy++;
-        c.gridx = 0;
-        add(new JLabel("Remove campus"), c);
-        c.gridx++;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        List<Campus> unaccessedCampuses = getUnaccesibleCampuses();
+        Object[] array = unaccessedCampuses.toArray();
 
-        String[] accessableCampuses = {};
-        //TODO - campuses array should be all of the campuses which the user does not have access to
-        JComboBox removeComboBox = new JComboBox<>(accessableCampuses);
-        removeComboBox.addActionListener(new ActionListener() {
+        JComboBox<Object> comboBox = new JComboBox<>(array);
+        comboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae){
-                String selectedCampus = (String)removeComboBox.getSelectedItem();
-                //TODO - remove the selected campus from the users list of accessable campuses
+                Campus selectedCampus = (Campus) comboBox.getSelectedItem();
+                MainFrame frame = (MainFrame) getTopLevelAncestor();
+                if (user.addCampus(selectedCampus.getId(), null)) {
+                    // If added
+                    frame.setNotification("Added Campus " + selectedCampus + " to user " + user.getUsername() + "'s permissions", null);
+                    user.addPermission(selectedCampus);
+                } else {
+                    // If failed to add
+                    frame.setNotification("Failed to add Campus " + selectedCampus + " to user " + user.getUsername() + "'s permissions", null);
+                }
+
                 refresh();
             }
         });
+        add(comboBox, c);
         c.gridy++;
+    }
+
+    private void addRemoveCampus(GridBagConstraints c){
+        c.gridx = 0;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.EAST;
+
+        // Add Campus ComboBox
+        add(new JLabel("Remove campus"), c);
+
+        // Add combo box
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx++;
+
+        List<Campus> unaccessedCampuses = user.getCampusPermissions();
+        Object[] array = unaccessedCampuses.toArray();
+
+        JComboBox<Object> comboBox = new JComboBox<>(array);
+        comboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae){
+                Campus selectedCampus = (Campus) comboBox.getSelectedItem();
+                MainFrame frame = (MainFrame) getTopLevelAncestor();
+                if (user.removeCampus(selectedCampus.getId(), null)) {
+                    // If removed
+                    frame.setNotification("Removed Campus " + selectedCampus + " from user " + user.getUsername() + "'s permissions", null);
+                    user.removePermission(selectedCampus);
+                } else {
+                    // If failed to remove
+                    frame.setNotification("Failed to remove Campus " + selectedCampus + " from user " + user.getUsername() + "'s permissions", null);
+                }
+
+                refresh();
+            }
+        });
+        add(comboBox, c);
+        c.gridy++;
+    }
+
+    private List<Campus> getUnaccesibleCampuses() {
+        List<Campus> unaccessibleCampuses = new ArrayList<>();
+
+        for (Campus campus : App.db.getDatabase()) {
+            // If campus not in user campus permissions
+            if (!user.getCampusPermissions().contains(campus)) {
+                unaccessibleCampuses.add(campus);
+            }
+        }
+
+        return unaccessibleCampuses;
     }
 
     private void refresh(){

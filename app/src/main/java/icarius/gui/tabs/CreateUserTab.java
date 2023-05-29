@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import icarius.App;
 import icarius.auth.UserClient;
 import icarius.entities.User;
 import icarius.gui.frames.MainFrame;
@@ -92,10 +93,9 @@ public class CreateUserTab extends JPanel {
     private ActionListener buttonAction = new ActionListener() {
         public void actionPerformed(ActionEvent ae){
             MainFrame frame = (MainFrame) getTopLevelAncestor();
-            UserClient userClient = frame.getUser();
             if (!nameField.getText().isBlank() && !passField.getText().isBlank()){
                 // Create user with entered username
-                User user = new User(userClient, nameField.getText());
+                User user = new User(App.userClient, nameField.getText());
                 
                 // If admin role selected set user to admin
                 if (roleBox.getSelectedItem().equals("Admin")) {
@@ -115,7 +115,9 @@ public class CreateUserTab extends JPanel {
                         // Failed to create user
                         frame.setNotification("Failed to create User: "+nameField.getText(), Color.RED);
                     }
-                    //gui.mainPanel.updateUserList(null);
+                    
+                    // Refresh user list
+                    frame.getUsersTab().userListPanel.updateUserList();
                 } catch (ConnectionException ce) {
                     frame.setNotification(ce.getMessage(), Color.RED);
                 }
