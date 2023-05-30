@@ -185,18 +185,16 @@ public class BirdTest {
 
     @Test
     void canDeleteBird() {
-        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
+
         DeleteRequest mockDeleteRequest = Mockito.mock(DeleteRequest.class);
-
-        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
         ServerResponse deleteResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
-
-        doReturn(postResponse).when(mockPostRequest).send();
         doReturn(deleteResponse).when(mockDeleteRequest).send();
-
-        testBird.create(null, mockPostRequest);
-        Boolean generatedBirdDeleted = testBird.delete(null, mockDeleteRequest);
-
-        assertEquals(false, generatedBirdDeleted);
+        
+        testBird.setId(id);
+        assertTrue(testBird.delete(null, mockDeleteRequest));
+        
+        // HashMap<String, String> sentRequestParams = mockDeleteRequest.getParams();
+        // assertNull(sentRequestParams);
+        // assertEquals(id, sentRequestParams.get("id"));
     }
 }
