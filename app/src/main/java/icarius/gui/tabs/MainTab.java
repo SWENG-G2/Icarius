@@ -2,12 +2,8 @@ package icarius.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JPanel;
 import javax.swing.JTree;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import icarius.App;

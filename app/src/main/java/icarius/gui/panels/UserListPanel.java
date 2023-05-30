@@ -80,7 +80,6 @@ public class UserListPanel extends JPanel{
                 Element slide = it.next();
                 User user = new User(App.userClient, slide.attributeValue("title"));
 
-                // TODO - parse campus permissions
                 for (Iterator<Element> it2 = slide.elementIterator(); it2.hasNext();) {
                     Element node = it2.next();
                     // picks out the text from 'text' nodes
