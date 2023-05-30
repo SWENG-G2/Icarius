@@ -1,11 +1,15 @@
 package icarius.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -32,36 +36,43 @@ public class BirdTest {
     private static final String RESPONSE_BODY_NAME = "name: " + parameters[0];
     private static Bird testBird;
 
-    private static final String birdReadXML = 
-    "<presentation xmlns=\"urn:SWENG\" xmlns:SWENG=\"https://raw.githubusercontent.com/SWENG-G2/xml_standard/proposal-1/standard.xsd\">" + 
-    "<info>" +
-    "<title>Daphne</title>" +
-    "<author>Joe</author>" +
-    "<date>2023-05-11</date>" +
-    "<numSlides>0</numSlides>" +
-    "</info>" +
-    "<slide width=\"1920\" height=\"485\" title=\"heroSlide\">" +
-    "<rectangle width=\"1920\" height=\"100\" xCoordinate=\"0\" yCoordinate=\"0\" colour=\"#E89266FF\"/>" +
-    "<text xCoordinate=\"20\" yCoordinate=\"25\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"28\" width=\"-4\" height=\"-5\">"+parametersValues[0]+"</text>" +
-    "<audio url=\""+parametersValues[2]+"\" loop=\"false\" xCoordinate=\"-3\" yCoordinate=\"0\"/>" +
-    "<image url=\""+parametersValues[1]+"\" width=\"1700\" height=\"360\" xCoordinate=\"-2\" yCoordinate=\"115\"/>" +
-    "<circle radius=\"175\" xCoordinate=\"-2\" yCoordinate=\"-120\" colour=\"#00000000\" borderWidth=\"15\" borderColour=\"#8A8178FF\"/>" +
-    "</slide>" +
-    "<slide width=\"1920\" height=\"-1\" title=\"About me\">" +
-    "<video xCoordinate=\"-2\" yCoordinate=\"0\" width=\"1820\" height=\"250\" loop=\"false\" url=\""+parametersValues[4]+"\"/>" +
-    "<text xCoordinate=\"20\" yCoordinate=\"250\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"+parametersValues[3]+"</text>" +
-    "</slide>" +
-    "<slide width=\"1920\" height=\"-1\" title=\"Diet\">" +
-    "<image url=\""+parametersValues[8]+"\" width=\"1700\" height=\"200\" xCoordinate=\"-2\" yCoordinate=\"0\"/>" +
-    "<text xCoordinate=\"20\" yCoordinate=\"210\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"+parametersValues[7]+"</text>" +
-    "</slide>" +
-    "<slide width=\"1920\" height=\"-1\" title=\"Location\">" +
-    "<image url=\""+parametersValues[6]+"\" width=\"1700\" height=\"200\" xCoordinate=\"-2\" yCoordinate=\"0\"/>" +
-    "<text xCoordinate=\"20\" yCoordinate=\"210\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"+parametersValues[5]+"</text>" +
-    "</slide>\n"+
-    "</presentation>\n";
-
-    
+    private static final String birdReadXML = "<presentation xmlns=\"urn:SWENG\" xmlns:SWENG=\"https://raw.githubusercontent.com/SWENG-G2/xml_standard/proposal-1/standard.xsd\">"
+            +
+            "<info>" +
+            "<title>Daphne</title>" +
+            "<author>Joe</author>" +
+            "<date>2023-05-11</date>" +
+            "<numSlides>0</numSlides>" +
+            "</info>" +
+            "<slide width=\"1920\" height=\"485\" title=\"heroSlide\">" +
+            "<rectangle width=\"1920\" height=\"100\" xCoordinate=\"0\" yCoordinate=\"0\" colour=\"#E89266FF\"/>" +
+            "<text xCoordinate=\"20\" yCoordinate=\"25\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"28\" width=\"-4\" height=\"-5\">"
+            + parametersValues[0] + "</text>" +
+            "<audio url=\"" + parametersValues[2] + "\" loop=\"false\" xCoordinate=\"-3\" yCoordinate=\"0\"/>" +
+            "<image url=\"" + parametersValues[1]
+            + "\" width=\"1700\" height=\"360\" xCoordinate=\"-2\" yCoordinate=\"115\"/>" +
+            "<circle radius=\"175\" xCoordinate=\"-2\" yCoordinate=\"-120\" colour=\"#00000000\" borderWidth=\"15\" borderColour=\"#8A8178FF\"/>"
+            +
+            "</slide>" +
+            "<slide width=\"1920\" height=\"-1\" title=\"About me\">" +
+            "<video xCoordinate=\"-2\" yCoordinate=\"0\" width=\"1820\" height=\"250\" loop=\"false\" url=\""
+            + parametersValues[4] + "\"/>" +
+            "<text xCoordinate=\"20\" yCoordinate=\"250\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"
+            + parametersValues[3] + "</text>" +
+            "</slide>" +
+            "<slide width=\"1920\" height=\"-1\" title=\"Diet\">" +
+            "<image url=\"" + parametersValues[8]
+            + "\" width=\"1700\" height=\"200\" xCoordinate=\"-2\" yCoordinate=\"0\"/>" +
+            "<text xCoordinate=\"20\" yCoordinate=\"210\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"
+            + parametersValues[7] + "</text>" +
+            "</slide>" +
+            "<slide width=\"1920\" height=\"-1\" title=\"Location\">" +
+            "<image url=\"" + parametersValues[6]
+            + "\" width=\"1700\" height=\"200\" xCoordinate=\"-2\" yCoordinate=\"0\"/>" +
+            "<text xCoordinate=\"20\" yCoordinate=\"210\" colour=\"#000000FF\" fontName=\"mono\" fontSize=\"18\" width=\"1880\" height=\"-5\">"
+            + parametersValues[5] + "</text>" +
+            "</slide>\n" +
+            "</presentation>\n";
 
     @BeforeAll
     static void setUp() {
@@ -123,24 +134,53 @@ public class BirdTest {
 
     @Test
     void canUpdateBird() {
-        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
+
         PatchRequest mockPatchRequest = Mockito.mock(PatchRequest.class);
-        GetRequest mockGetRequest = Mockito.mock(GetRequest.class);
+        ServerResponse patchResponse = new ServerResponse(200, "", null);
+        doReturn(patchResponse).when(mockPatchRequest).send();
 
-        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
-        ServerResponse getResponse = new ServerResponse(200, RESPONSE_BODY_NAME, null);
-        doReturn(postResponse).when(mockPostRequest).send();
-        doReturn(getResponse).when(mockPatchRequest).send();
-        doReturn(getResponse).when(mockGetRequest).send();
-
-        testBird.create(null, mockPostRequest);
         String newBirdieName = "Dophelia";
-        testBird.setName(newBirdieName);
-        testBird.update(null, mockPatchRequest);
-        assertTrue(testBird.read(mockGetRequest));
+        String newBirdieHeroImageURL = "quack.png";
+        String newBirdieSoundURL = "squaaaaaark.mp3";
+        String newBirdieAboutMe = "tall and beautiful";
+        String newBirdieAboutMeVideoURL = "strollAroundTheLake.mp4";
+        String newBirdieLocation = "lake";
+        String newBirdieLocationImageURL = "pond.png";
+        String newBirdieDiet = "squeaky cheese and cheeky squeeze";
+        String newBirdieDietImageURL = "halloumi.png";
 
-        // TODO - assert parameters where added to request
-        assertEquals(newBirdieName, testBird.getName());
+        testBird.setName(newBirdieName);
+        testBird.setHeroImageURL(newBirdieHeroImageURL);
+        testBird.setSoundURL(newBirdieSoundURL);
+        testBird.setAboutMe(newBirdieAboutMe);
+        testBird.setAboutMeVideoURL(newBirdieAboutMeVideoURL);
+        testBird.setLocation(newBirdieLocation);
+        testBird.setListImageURL(newBirdieLocationImageURL);
+        testBird.setDiet(newBirdieDiet);
+        testBird.setDietImageURL(newBirdieDietImageURL);
+
+        try {
+            testBird.update(null, mockPatchRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        testBird.setId(id);
+        assertTrue(testBird.update(null, mockPatchRequest));
+
+        // Confirm information added to request
+        // HashMap<String, String> sentRequestParams = mockPatchRequest.getParams();
+        // assertNull(sentRequestParams);
+        // assertEquals(newBirdieName, sentRequestParams.get("name"));
+        // assertEquals(newBirdieHeroImageURL, sentRequestParams.get("heroImageURL"));
+        // assertEquals(newBirdieSoundURL, sentRequestParams.get("soundURL"));
+        // assertEquals(newBirdieAboutMe, sentRequestParams.get("aboutMe"));
+        // assertEquals(newBirdieAboutMeVideoURL,
+        // sentRequestParams.get("abountMeVideoURL"));
+        // assertEquals(newBirdieLocation, sentRequestParams.get("location"));
+        // assertEquals(newBirdieLocationImageURL,
+        // sentRequestParams.get("locationImageURL"));
+        // assertEquals(newBirdieDiet, sentRequestParams.get("diet"));
+        // assertEquals(newBirdieDietImageURL, sentRequestParams.get("dietImageURL"));
     }
 
     @Test
