@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import icarius.App;
-import icarius.auth.UserClient;
 import icarius.entities.User;
 import icarius.gui.frames.MainFrame;
 import icarius.http.ConnectionException;
@@ -24,6 +23,8 @@ public class CreateUserTab extends JPanel {
     private JComboBox<String> roleBox;
 
     private String[] roles = {"User", "Admin"};
+    
+    // TODO - Confirm password field
 
     public CreateUserTab() {
         // Configure Layout
@@ -108,7 +109,6 @@ public class CreateUserTab extends JPanel {
                         // User created successfully
                         frame.setNotification("User: "+nameField.getText()+" Created", null);
                         frame.getUsersTab().userListPanel.updateUserList();
-                        // TODO - set text fields to blank / reset create user form
                         nameField.setText("");
                         passField.setText("");
                     } else {
