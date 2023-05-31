@@ -13,7 +13,8 @@ public class HeroImageForm extends BirdFieldForm{
     public HeroImageForm(Bird bird){
         // Configure Layout
         GridBagConstraints c = configure();
-        
+
+        //TODO - Ethan - Display the image here, possibly in a JScrollPane if you think the images might take up too much space but preferrably not
         UploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
     }
 

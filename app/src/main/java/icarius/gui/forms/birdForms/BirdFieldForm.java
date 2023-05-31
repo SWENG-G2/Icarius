@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+//Class to be inherited by the other bird forms, contrains functions which they all use
 public abstract class BirdFieldForm extends JPanel{
 
     public JTextField textField;

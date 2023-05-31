@@ -14,6 +14,8 @@ public class LocationImageForm extends BirdFieldForm{
             // Configure Layout
             GridBagConstraints c = configure();
 
+            //TODO - Ethan - Display the image here, possibly in a JScrollPane if you think the images might take up too much space but preferrably not
+
             UploadButton = addFileUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
     }
 

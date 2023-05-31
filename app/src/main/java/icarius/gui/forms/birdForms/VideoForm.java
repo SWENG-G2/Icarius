@@ -14,6 +14,8 @@ public class VideoForm extends BirdFieldForm{
         // Configure Layout
         GridBagConstraints c = configure();
 
+        //TODO - Ethan - add a video player here 
+
         UploadButton = addFileUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
     }
 

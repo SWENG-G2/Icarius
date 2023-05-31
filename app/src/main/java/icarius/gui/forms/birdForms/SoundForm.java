@@ -14,6 +14,8 @@ public class SoundForm extends BirdFieldForm{
         // Configure Layout
         GridBagConstraints c = configure();
 
+        //TODO - Ethan - add an audio player here
+
         UploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadAudio());
     }
 

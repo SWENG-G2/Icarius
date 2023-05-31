@@ -1,6 +1,7 @@
 package icarius.gui.panels;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,8 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneLayout;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -25,21 +28,31 @@ import icarius.http.ConnectionException;
 import icarius.http.GetRequest;
 import icarius.http.ServerResponse;
 
-public class UserListPanel extends JPanel{
+public class UserListPanel extends JScrollPane{
     private MainFrame frame;
     private GridBagConstraints c;
+    private JPanel panel;
 
     public UserListPanel(MainFrame frame){
         this.frame = frame;
+        
+        // Configure JSrollPane
+        setLayout(new ScrollPaneLayout.UIResource());
+        setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
+        setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        setViewport(createViewport());
+        setVerticalScrollBar(createVerticalScrollBar());
+        setBorder(null);
 
+        
         c = new GridBagConstraints();
         c.gridx = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.PAGE_START;
 
-        setLayout(new GridBagLayout());
+        panel = new JPanel(new GridBagLayout());
+        setViewportView(panel);
         updateUserList();
-        setBackground(Color.PINK); // TODO - remove after buttons span full page and is in JSCROLLPANE
     }
 
     public void updateUserList(){
@@ -47,19 +60,26 @@ public class UserListPanel extends JPanel{
         List<User> userList = fetchUserList();
 
         // Reset list panel
-        removeAll();
-
+        panel.removeAll();
+        
         // Add List of Users as buttons
         c.gridy=0;
+        c.gridx=0;
+        
         for (User user : userList){
             JButton button = new JButton();
             button.setText(user.getUsername());
+
+            button.setPreferredSize(new Dimension(frame.getWidth()/3 -11, 30));
+            c.anchor = GridBagConstraints.ABOVE_BASELINE;
+            
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae){
                     ((UserInfoPanel) getParent().getComponent(1)).setUserInfoPage(user);
                 }
             });
-            add(button, c);
+            panel.add(button, c);
+            
             c.gridy++;
         }
     }

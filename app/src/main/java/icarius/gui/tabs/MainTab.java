@@ -69,5 +69,7 @@ public class MainTab extends JPanel {
         // adding/removing birds
         // adding a campus
         // doing so with multiple campuses open
+
+        //TODO - Connall - reminder for the edit bird thing I sent you
     }
 }
