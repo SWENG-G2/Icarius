@@ -24,6 +24,11 @@ public class UserClient {
         this.okHttpClient = okHttpClient;
     }
 
+    /**
+     * Get encrypted authorisation for server access related to this user
+     * 
+     * @return server authorisation
+     */
     public String getAuth() {
         if (publicKey == null || publicKey.equals(""))
             refreshKey(null);
@@ -32,6 +37,11 @@ public class UserClient {
         return AuthenticationService.getAuth(this, null);
     }
 
+    /**
+     * Fetch server public key
+     * 
+     * @param request
+     */
     public void refreshKey(GetRequest request) {
         if (request == null) {
             request = new GetRequest("/key", this);
@@ -39,6 +49,12 @@ public class UserClient {
         publicKey = request.send().getHeader("key");
     }
 
+    /**
+     * Validate user credentials and fetch user campus permissions from server
+     * 
+     * @param request
+     * @return True if credentials valid, else false
+     */
     public boolean validate(PostRequest request) {
         if (request == null) {
             request = new PostRequest("/api/users/validate", this);
@@ -77,6 +93,9 @@ public class UserClient {
         return false;
     }
 
+    /**
+     * @return True is user is system admin, else false;
+     */
     public boolean isAdmin() {
         return this.admin;
     }

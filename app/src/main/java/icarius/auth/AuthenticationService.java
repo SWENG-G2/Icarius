@@ -28,7 +28,14 @@ public class AuthenticationService {
     private static final String ALGORITHM = "RSA";
     private static final String CYPHER = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
 
-    public static String getAuth(UserClient user, ZonedDateTime time) {
+    /**
+     * Creates an authorisation keyword encrypted with the public key contained in the userClient
+     * 
+     * @param userClient
+     * @param time
+     * @return Encrypted keyword
+     */
+    public static String getAuth(UserClient userClient, ZonedDateTime time) {
         try {
             if (time == null || time.equals(null)) {
                 // Get time
@@ -36,12 +43,12 @@ public class AuthenticationService {
             }
 
             // format credentials string
-            String username = user.getCredentials().getUsername();
-            String password = user.getCredentials().getPassword();
+            String username = userClient.getCredentials().getUsername();
+            String password = userClient.getCredentials().getPassword();
             String keyWord = username + "=" + password + "=" + time;
 
             // load and generate RSA public key
-            byte[] Base64publicKey = user.getPublicKey().getBytes(StandardCharsets.UTF_8);
+            byte[] Base64publicKey = userClient.getPublicKey().getBytes(StandardCharsets.UTF_8);
             PublicKey RSAPublicKey = generatePublicKey(Base64publicKey);
 
             // Encrypt and return auth encoded to base64
@@ -54,6 +61,20 @@ public class AuthenticationService {
 
     }
 
+    /**
+     * Encrypts input string using input public key
+     * 
+     * @param publicKey
+     * @param input
+     * @return Encrypted input
+     * @throws InvalidKeyException
+     * @throws InvalidAlgorithmParameterException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeySpecException
+     */
     public static String encrypt(PublicKey publicKey, String input)
             throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException {
@@ -68,6 +89,14 @@ public class AuthenticationService {
         return Base64.getEncoder().encodeToString(encryptedString);
     }
 
+    /**
+     * Generate RSA Public Key object from base64 encoded Key
+     * 
+     * @param base64EncodedKey
+     * @return  PublicKey key
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
     private static PublicKey generatePublicKey(byte[] base64EncodedKey)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         // Decode from Base 64
@@ -79,6 +108,20 @@ public class AuthenticationService {
         return keyFactory.generatePublic(X509publicKey);
     }
 
+    /**
+     * Decrypts input string using input private key
+     * 
+     * @param privateKey
+     * @param encryptedInput
+     * @return Decrypted input string
+     * @throws InvalidKeyException
+     * @throws InvalidAlgorithmParameterException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeySpecException
+     */
     public static String decrypt(PrivateKey privateKey, String encryptedInput)
             throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException,
             BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException {
@@ -96,6 +139,12 @@ public class AuthenticationService {
         return new String(decryptedString, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Generates a Public/Private Key Pair
+     * 
+     * @return Public, Private key pair
+     * @throws NoSuchAlgorithmException
+     */
     public static KeyPair generateKeys() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
         keyPairGenerator.initialize(KEY_SIZE);
