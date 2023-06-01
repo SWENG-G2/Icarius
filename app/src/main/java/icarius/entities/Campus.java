@@ -34,13 +34,15 @@ public class Campus implements ServerActions {
     @Override
     public Boolean create(UserClient user, PostRequest request) {
         // If required field not set, throw exception
-        if (name == null) throw new RuntimeException("Campus name not set");
+        if (name == null)
+            throw new RuntimeException("Campus name not set");
 
         // Send create campus request to server
-        if (request == null) request = new PostRequest("/api/campus/new", user);
-      
+        if (request == null)
+            request = new PostRequest("/api/campus/new", user);
+
         request.addParameter("name", name);
-        ServerResponse response =  request.send();
+        ServerResponse response = request.send();
 
         // Print response and return created campus Id
         System.out.println(response.getBody());
@@ -54,10 +56,12 @@ public class Campus implements ServerActions {
     @Override
     public Boolean read(GetRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Campus id not set");
+        if (id == null)
+            throw new RuntimeException("Campus id not set");
 
         // Send read campus request to server
-        if (request == null) request = new GetRequest("/campus/" + id, user);
+        if (request == null)
+            request = new GetRequest("/campus/" + id, user);
 
         // send and store GET request response
         this.birds = new ArrayList<>();
@@ -70,6 +74,7 @@ public class Campus implements ServerActions {
         } else {
             // Fetch name from XML response
             try {
+                // TODO - birdListImage
                 Document document = DocumentHelper.parseText(responseBody);
                 Element root = document.getRootElement();
                 Element infoSlide = root.element("info");
@@ -84,7 +89,7 @@ public class Campus implements ServerActions {
                     bird.setId(Long.parseLong(birdId));
                     bird.setCampusId(id);
                     bird.read(null);
-                    birds.add( bird );
+                    birds.add(bird);
                 }
             } catch (DocumentException e) {
                 e.printStackTrace();
@@ -92,18 +97,20 @@ public class Campus implements ServerActions {
             return true;
         }
     }
-    
+
     @Override
     public Boolean update(UserClient user, PatchRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Campus id not set");
+        if (id == null)
+            throw new RuntimeException("Campus id not set");
 
         // Send update campus request to server
-        if (request == null) request = new PatchRequest("/api/campus/edit", user);
+        if (request == null)
+            request = new PatchRequest("/api/campus/edit", user);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("newName", this.name);
-        params.put("id", this.getId()+"");
+        params.put("id", this.getId() + "");
         request.addParameters(params);
 
         // Return TRUE if update request success, else FALSE
@@ -113,10 +120,12 @@ public class Campus implements ServerActions {
     @Override
     public Boolean delete(UserClient user, DeleteRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Campus id not set");
+        if (id == null)
+            throw new RuntimeException("Campus id not set");
 
         // Send delete campus request to server
-        if (request == null) request = new DeleteRequest("/api/campus/remove", user);
+        if (request == null)
+            request = new DeleteRequest("/api/campus/remove", user);
 
         request.addParameter("id", String.valueOf(id));
         ServerResponse response = request.send();

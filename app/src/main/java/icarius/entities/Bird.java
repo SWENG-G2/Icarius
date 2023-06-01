@@ -65,7 +65,6 @@ public class Bird implements ServerActions {
         ServerResponse response = request.send();
 
         // Print response and return created bird Id
-        System.out.println(response.getBody());
         String responseBody = response.getBody().replaceAll("[^0-9]", "");
         this.id = Long.valueOf(responseBody);
         return response.isSuccessful();
@@ -171,9 +170,9 @@ public class Bird implements ServerActions {
             request = new PatchRequest("/api/birds/" + campusId + "/edit", user);
 
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("id", Long.toString(this.getId()));
         parameters.put("name", this.name);
         parameters.put("heroImageURL", heroImageURL);
+        parameters.put("listImageURL", listImageURL);
         parameters.put("soundURL", soundURL);
         parameters.put("aboutMe", aboutMe);
         parameters.put("aboutMeVideoURL", aboutMeVideoURL);
@@ -199,9 +198,6 @@ public class Bird implements ServerActions {
 
         request.addParameter("id", String.valueOf(id));
         ServerResponse response = request.send();
-
-        // Print response
-        System.out.println(response.getBody());
 
         // Return TRUE if delete request success, else FALSE
         return response.isSuccessful();

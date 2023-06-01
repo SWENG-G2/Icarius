@@ -36,9 +36,8 @@ public class CampusTest {
     @Test
     void canCreateCampus() {
         // Mock request
-        PostRequest mockRequest = Mockito.mock(PostRequest.class);
-
-        ServerResponse response = new ServerResponse(200, RESPONSE_BODY_ID, null);
+        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
+        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
         doReturn(response).when(mockRequest).send();
 
         // Test Method
