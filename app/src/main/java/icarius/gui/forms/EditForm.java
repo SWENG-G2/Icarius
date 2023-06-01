@@ -40,7 +40,7 @@ public class EditForm extends JPanel{
         private String[] birdFields = {"List Image", "Hero Image", "Sound", "About", "Video",
                                         "Location", "Location Image", "Diet", "Diet Image"};
 
-        private JComboBox formSelect;
+        private JComboBox<String> formSelect;
     
         private MainBirdForm birdForm;
 
@@ -122,7 +122,7 @@ public class EditForm extends JPanel{
         }
 
 
-        private JComboBox addComboBox(String labelText, String[] options, Bird bird, GridBagConstraints c) {
+        private JComboBox<String> addComboBox(String labelText, String[] options, Bird bird, GridBagConstraints c) {
 
             // Configure Layout
             c.fill = GridBagConstraints.NONE;
@@ -134,7 +134,7 @@ public class EditForm extends JPanel{
             c.gridx++;
             c.fill = GridBagConstraints.HORIZONTAL;
             
-            JComboBox comboBox = new JComboBox<>(options);
+            JComboBox<String> comboBox = new JComboBox<>(options);
             comboBox.addActionListener(formSelect(bird, comboBox));
 
             add(comboBox, c);
@@ -144,7 +144,7 @@ public class EditForm extends JPanel{
             return comboBox;
         }
 
-        private ActionListener formSelect(Bird bird, JComboBox comboBox){
+        private ActionListener formSelect(Bird bird, JComboBox<String> comboBox){
             return new ActionListener() {
                 public void actionPerformed(ActionEvent ae){
                     birdForm.setForm(bird, (String)comboBox.getSelectedItem());
@@ -171,13 +171,6 @@ public class EditForm extends JPanel{
                     MainFrame frame = (MainFrame) getTopLevelAncestor();
                     MainTab mainTab = frame.getMainTab();
 
-                    listImageUrlPath = birdForm.listImageUrlPath;
-                    heroImageUrlPath = birdForm.heroImageUrlPath;
-                    soundURLPath = birdForm.soundURLPath;
-                    videoUrlPath = birdForm.videoUrlPath;
-                    locationImageUrlPath = birdForm.locationImageUrlPath;
-                    dietImageUrlPath = birdForm.dietImageUrlPath;
-
                     
                     try {
                         if (o instanceof Campus) {
@@ -196,6 +189,13 @@ public class EditForm extends JPanel{
                         if (o instanceof Bird) {
                             Bird b = (Bird) o;
                             Long cID = b.getCampusId();
+
+                            listImageUrlPath = birdForm.listImageUrlPath;
+                            heroImageUrlPath = birdForm.heroImageUrlPath;
+                            soundURLPath = birdForm.soundURLPath;
+                            videoUrlPath = birdForm.videoUrlPath;
+                            locationImageUrlPath = birdForm.locationImageUrlPath;
+                            dietImageUrlPath = birdForm.dietImageUrlPath;
     
                             // Update Bird entity with TextField Values
                             b.setName(birdNameField.getText());
@@ -243,7 +243,7 @@ public class EditForm extends JPanel{
                                 frame.setNotification("Bird: '" + b.getName() + "' failed to update, please contact an administrator.", null);
                             }
                         }
-                        mainTab.refreshDatabaseTree();
+                        mainTab.refreshDatabaseTree(o);
                     } catch (ConnectionException ce) {
                         frame.setNotification(ce.getMessage(), Color.RED);
                     }
@@ -294,7 +294,7 @@ public class EditForm extends JPanel{
                         }
     
                         // Refresh Tree
-                        mainTab.refreshDatabaseTree();
+                        mainTab.refreshDatabaseTree(o);
                     } catch (ConnectionException ce) {
                         frame.setNotification(ce.getMessage(), Color.RED);
                     }

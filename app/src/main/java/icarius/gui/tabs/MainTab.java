@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import javax.swing.JTree;
-import javax.swing.tree.TreePath;
-
 import icarius.App;
 import icarius.entities.Database;
 import icarius.gui.Gui;
@@ -40,9 +38,8 @@ public class MainTab extends JPanel {
         return dbTreePanel;
     }
     
-    public void refreshDatabaseTree() {
+    public void refreshDatabaseTree(Object campusOrBird) {
         // Save current status
-        TreePath selectionPath = dbTreePanel.getTree().getSelectionPath();
         JTree oldTree = dbTreePanel.getTree();
 
         // refresh tree
@@ -53,23 +50,50 @@ public class MainTab extends JPanel {
 
         // Expand tree to previous state
         JTree newTree = dbTreePanel.getTree();
-        dbTreePanel.getTree().setSelectionPath(selectionPath);
         expandTree(oldTree, newTree);
 
-        // Create and Add Panel to edit selected entity
-        //add(new FormPanel(), BorderLayout.CENTER);
+
+        // Update form panel
+        if (campusOrBird != null) {
+            formPanel.setDetailsPage(campusOrBird);
+        }
+        add(formPanel, BorderLayout.CENTER);
+
 
         revalidate();
         repaint();
     }
 
     private void expandTree(JTree oldTree, JTree newTree) {
-        // compare trees and open new tree according to old
-        // make sure to take note of:
-        // adding/removing birds
-        // adding a campus
-        // doing so with multiple campuses open
+        // Get Tree Roots
+        Object oldTreeRoot = oldTree.getModel().getRoot();
+        Object newTreeRoot = newTree.getModel().getRoot();
 
-        //TODO - Connall - reminder for the edit bird thing I sent you
+        // Row number of campus in each tree
+        int newRowNum = 0;
+        int oldRowNum = 0;
+        
+        // For each campus
+        for(int campusNum = 0; campusNum < oldTree.getModel().getChildCount(oldTreeRoot); campusNum++){
+            if( oldTree.isExpanded(oldRowNum) ){
+                // If campus expanded in old tree, expand in new tree
+                newTree.expandRow(newRowNum);
+
+                // Get Row number of next campus in old tree
+                Object oldTreeCampus = newTree.getModel().getChild(oldTreeRoot, campusNum);
+                int oldTreeCampusChildNum = newTree.getModel().getChildCount(oldTreeCampus);
+                oldRowNum += oldTreeCampusChildNum + 1;
+
+                // Get Row number of next campus in new tree
+                Object newTreeCampus = newTree.getModel().getChild(newTreeRoot, campusNum);
+                int newTreeCampusChildNum = newTree.getModel().getChildCount(newTreeCampus);
+                newRowNum += newTreeCampusChildNum + 1;
+            } else {
+                // If campus not expanded, go to next tree
+                oldRowNum++;
+                newRowNum++;
+            }
+        }
+
     }
 }

@@ -93,13 +93,13 @@ public class AddForm extends JPanel {
                         if ( newCampus.create(App.userClient, null) ) {
                             // Success
                             frame.setNotification(newCampus.getName() + " added to campus list.", null);
+                            // Refresh Tree
+                            mainTab.refreshDatabaseTree(newCampus);
                         } else {
                             // Failure
                             frame.setNotification("Failed to add " + newCampus.getName() + " to campus list!", null);
                         }
 
-                        // Refresh Tree
-                        mainTab.refreshDatabaseTree();
                     } catch (ConnectionException ce) {
                         frame.setNotification(ce.getMessage(), Color.RED);
                     }
@@ -126,6 +126,8 @@ public class AddForm extends JPanel {
                         if ( newBird.create(App.userClient, null) ) {
                             // Success
                             frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
+                            // Refresh Tree
+                            mainTab.refreshDatabaseTree(newBird);
                         } else {
                             // Failure
                             frame.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);
@@ -135,8 +137,6 @@ public class AddForm extends JPanel {
                     }
                     // TODO - (Connall) No Permission excemption
 
-                    // Refresh Tree
-                    mainTab.refreshDatabaseTree();
                 }
             }
         });
