@@ -5,6 +5,7 @@ import java.util.List;
 
 import java.util.Iterator;
 
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -79,13 +80,28 @@ public class Campus implements ServerActions {
                 Element root = document.getRootElement();
                 Element infoSlide = root.element("info");
                 this.name = infoSlide.element("title").getData().toString();
+
                 // iterate through child elements of presentation with element name "slide"
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
                     String birdId = slide.attributeValue("title");
+                    Bird bird = new Bird(user);
+
+                    for (Iterator<Element> it2 = slide.elementIterator(); it2.hasNext();) {
+                        Element node = it2.next();
+
+                        if (node.getName().equals("image")) {
+                            for (Iterator<Attribute> it3 = node.attributeIterator(); it3.hasNext();) {
+                                Attribute attribute = it3.next();
+
+                                if (attribute.getName().equals("url")) {
+                                    bird.setListImageURL(attribute.getData().toString());
+                                }
+                            }
+                        }
+                    }
 
                     // fetch bird
-                    Bird bird = new Bird(user);
                     bird.setId(Long.parseLong(birdId));
                     bird.setCampusId(id);
                     bird.read(null);

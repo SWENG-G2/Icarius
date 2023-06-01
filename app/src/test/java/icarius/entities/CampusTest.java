@@ -3,6 +3,10 @@ package icarius.entities;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,7 +34,7 @@ public class CampusTest {
         UserClient userMock = Mockito.mock(UserClient.class);
         testCampus = new Campus(userMock);
         testCampus.setName(CAMPUS_NAME);
-        testCampus.setId(id);
+        // testCampus.setId(id);
     }
 
     @Test
@@ -38,13 +42,21 @@ public class CampusTest {
         // Mock request
         PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
         ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
-        doReturn(response).when(mockRequest).send();
+        doReturn(postResponse).when(mockPostRequest).send();
 
         // Test Method
 
         // TODO - assert parameters where added to request
-        assertTrue(testCampus.create(null, mockRequest));
-        assertEquals(id, testCampus.getId());
+        // assertTrue(testCampus.create(null, mockPostRequest));
+        // assertEquals(id, testCampus.getId());
+
+        
+        // Test Method
+        assertTrue(testCampus.create(null, mockPostRequest));
+
+        verify(mockPostRequest, times(1)).addParameter("name", "newCampus");
+        assertEquals(testCampus.getId(), id);
+
     }
 
     @Test
@@ -67,41 +79,39 @@ public class CampusTest {
 
     @Test
     void canUpdateCampus() {
-        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
         PatchRequest mockPatchRequest = Mockito.mock(PatchRequest.class);
-        GetRequest mockGetRequest = Mockito.mock(GetRequest.class);
+        ServerResponse patchResponse = new ServerResponse(200, "", null);
+        doReturn(patchResponse).when(mockPatchRequest).send();
 
-        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
-        ServerResponse getResponse = new ServerResponse(200, CAMPUS_NAME, null);
-        doReturn(postResponse).when(mockPostRequest).send();
-        doReturn(getResponse).when(mockPatchRequest).send();
-        doReturn(getResponse).when(mockGetRequest).send();
+        String newCampusName = "Kroy";
 
-        testCampus.create(null, mockPostRequest);
-        String newCampusName = "Hull";
         testCampus.setName(newCampusName);
-        testCampus.update(null, mockPatchRequest);
-        assertTrue(testCampus.read(mockGetRequest));
 
-        // TODO - assert parameters where added to request
-        assertEquals(newCampusName, testCampus.getName());
+        try {
+            testCampus.update(null, mockPatchRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        testCampus.setId(id);
+        testCampus.update(null, mockPatchRequest);
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("newName", newCampusName);
+        parameters.put("id", Long.toString(id));
+
+        verify(mockPatchRequest, times(1)).addParameters(parameters);
+        assertEquals(testCampus.getId(), id);
     }
 
     @Test
     void canDeleteCampus() {
-        /// PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
         DeleteRequest mockDeleteRequest = Mockito.mock(DeleteRequest.class);
+        ServerResponse postResponse = new ServerResponse(200, Long.toString(id), null);
+        doReturn(postResponse).when(mockDeleteRequest).send();
 
-        // ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID,
-        // null);
-        ServerResponse deleteResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
+        testCampus.setId(id);
+        testCampus.delete(null, mockDeleteRequest);
 
-        // doReturn(postResponse).when(mockPostRequest).send();
-        doReturn(deleteResponse).when(mockDeleteRequest).send();
-
-        // testCampus.create(null, mockPostRequest);
-        Boolean generatedCampusDeleted = testCampus.delete(null, mockDeleteRequest);
-
-        assertEquals(false, generatedCampusDeleted);
+        verify(mockDeleteRequest, times(1)).addParameter("id", Long.toString(id));
     }
 }
