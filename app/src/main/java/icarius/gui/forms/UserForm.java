@@ -18,20 +18,20 @@ import icarius.entities.User;
 import icarius.gui.frames.MainFrame;
 import icarius.gui.panels.UserInfoPanel;
 
-
-public class UserForm extends JPanel{
+public class UserForm extends JPanel {
     private User user;
     private GridBagConstraints c;
-    public UserForm(User user){
+
+    public UserForm(User user) {
         this.user = user;
         // Configure Layout
         c = configure();
-        
+
         addInfoField("Username:", user.getUsername(), c);
         addInfoField("Admin:", user.getAdmin() ? "Yes" : "No", c);
-        if(user.getAdmin()){
+        if (user.getAdmin()) {
             addInfoField("Accessible Campuses:", "All", c);
-        } else{
+        } else {
             addRemoveCampus(c);
             addAddCampus(c);
             accessableCampuses("Accessible Campuses:", user.getCampusPermissions(), c);
@@ -55,7 +55,7 @@ public class UserForm extends JPanel{
         c.ipadx = 8;
         c.ipady = 8;
         c.gridx = 0;
-        
+
         // Add Label
         add(new JLabel(labelText), c);
 
@@ -67,7 +67,8 @@ public class UserForm extends JPanel{
         if (information != null && information.length() > 40) {
             String text = information.substring(0, 40);
             information = "..." + text;
-        };
+        }
+        ;
         add(new JLabel(information), c);
 
         // Increment y for next item
@@ -79,9 +80,9 @@ public class UserForm extends JPanel{
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         c.ipadx = 8;
-        c.ipady = 8;
+        c.ipady = 0;
         c.gridx = 0;
-        
+
         // Add Label
         add(new JLabel(labelText), c);
 
@@ -89,13 +90,14 @@ public class UserForm extends JPanel{
         c.gridx++;
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        for (Campus campus : campuses){
+        for (Campus campus : campuses) {
             String campusName = campus.getName();
             // Cut information to length if necessary
             if (campusName != null && campusName.length() > 40) {
                 String text = campusName.substring(0, 40);
                 campusName = "..." + text;
-            };
+            }
+            ;
             add(new JLabel(campusName), c);
             // Increment y for next item
             c.gridy++;
@@ -107,7 +109,7 @@ public class UserForm extends JPanel{
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         c.gridx = 0;
-        
+
         // Add Label
         add(new JLabel("Add campus"), c);
 
@@ -120,16 +122,19 @@ public class UserForm extends JPanel{
 
         JComboBox<Object> comboBox = new JComboBox<>(array);
         comboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae){
+            public void actionPerformed(ActionEvent ae) {
                 Campus selectedCampus = (Campus) comboBox.getSelectedItem();
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 if (user.addCampus(selectedCampus.getId(), null)) {
                     // If added
-                    frame.setNotification("Added Campus " + selectedCampus + " to user " + user.getUsername() + "'s permissions", null);
+                    frame.setNotification(
+                            "Added Campus " + selectedCampus + " to user " + user.getUsername() + "'s permissions",
+                            null);
                     user.addPermission(selectedCampus);
                 } else {
                     // If failed to add
-                    frame.setNotification("Failed to add Campus " + selectedCampus + " to user " + user.getUsername() + "'s permissions", null);
+                    frame.setNotification("Failed to add Campus " + selectedCampus + " to user " + user.getUsername()
+                            + "'s permissions", null);
                 }
 
                 refresh();
@@ -139,7 +144,7 @@ public class UserForm extends JPanel{
         c.gridy++;
     }
 
-    private void addRemoveCampus(GridBagConstraints c){
+    private void addRemoveCampus(GridBagConstraints c) {
         c.gridx = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
@@ -156,16 +161,19 @@ public class UserForm extends JPanel{
 
         JComboBox<Object> comboBox = new JComboBox<>(array);
         comboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae){
+            public void actionPerformed(ActionEvent ae) {
                 Campus selectedCampus = (Campus) comboBox.getSelectedItem();
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 if (user.removeCampus(selectedCampus.getId(), null)) {
                     // If removed
-                    frame.setNotification("Removed Campus " + selectedCampus + " from user " + user.getUsername() + "'s permissions", null);
+                    frame.setNotification(
+                            "Removed Campus " + selectedCampus + " from user " + user.getUsername() + "'s permissions",
+                            null);
                     user.removePermission(selectedCampus);
                 } else {
                     // If failed to remove
-                    frame.setNotification("Failed to remove Campus " + selectedCampus + " from user " + user.getUsername() + "'s permissions", null);
+                    frame.setNotification("Failed to remove Campus " + selectedCampus + " from user "
+                            + user.getUsername() + "'s permissions", null);
                 }
 
                 refresh();
@@ -188,7 +196,7 @@ public class UserForm extends JPanel{
         return unaccessibleCampuses;
     }
 
-    private void refresh(){
+    private void refresh() {
         UserInfoPanel parent = (UserInfoPanel) getParent();
         parent.setUserInfoPage(user);
     }

@@ -28,14 +28,15 @@ import icarius.http.ConnectionException;
 import icarius.http.GetRequest;
 import icarius.http.ServerResponse;
 
-public class UserListPanel extends JScrollPane{
+public class UserListPanel extends JScrollPane {
+    public List<User> userList;
     private MainFrame frame;
     private GridBagConstraints c;
     private JPanel panel;
 
-    public UserListPanel(MainFrame frame){
+    public UserListPanel(MainFrame frame) {
         this.frame = frame;
-        
+
         // Configure JSrollPane
         setLayout(new ScrollPaneLayout.UIResource());
         setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
@@ -44,49 +45,45 @@ public class UserListPanel extends JScrollPane{
         setVerticalScrollBar(createVerticalScrollBar());
         setBorder(null);
 
-        
         c = new GridBagConstraints();
-        c.gridx = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.PAGE_START;
 
         panel = new JPanel(new GridBagLayout());
         setViewportView(panel);
         updateUserList();
     }
 
-    public void updateUserList(){
+    public void updateUserList() {
         // Get User List
-        List<User> userList = fetchUserList();
+        userList = fetchUserList();
 
         // Reset list panel
         panel.removeAll();
-        
+
         // Add List of Users as buttons
-        c.gridy=0;
-        c.gridx=0;
-        
-        for (User user : userList){
+        c.gridy = 0;
+        c.gridx = 0;
+
+        for (User user : userList) {
             JButton button = new JButton();
             button.setText(user.getUsername());
 
-            button.setPreferredSize(new Dimension(frame.getWidth()/3 -11, 30));
-            c.anchor = GridBagConstraints.ABOVE_BASELINE;
-            
+            button.setPreferredSize(new Dimension(frame.getWidth() / 3 - 14, 30));
+
             button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae){
+                public void actionPerformed(ActionEvent ae) {
                     ((UserInfoPanel) getParent().getComponent(1)).setUserInfoPage(user);
                 }
             });
             panel.add(button, c);
-            
+
             c.gridy++;
         }
     }
 
     private List<User> fetchUserList() {
         List<User> userList = new ArrayList<>();
-        
+
         GetRequest request = new GetRequest("/api/users/list", App.userClient);
         try {
             ServerResponse response = request.send();
@@ -94,7 +91,7 @@ public class UserListPanel extends JScrollPane{
             // Parse XML response
             Document document = DocumentHelper.parseText(response.getBody());
             Element root = document.getRootElement();
-            
+
             // iterate through child elements of presentation with element name "slide"
             for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                 Element slide = it.next();
@@ -131,8 +128,7 @@ public class UserListPanel extends JScrollPane{
             }
         } catch (ConnectionException ce) {
             frame.setNotification(ce.getMessage(), Color.RED);
-        } 
-        catch (DocumentException e) {
+        } catch (DocumentException e) {
             e.printStackTrace();
         }
         return userList;

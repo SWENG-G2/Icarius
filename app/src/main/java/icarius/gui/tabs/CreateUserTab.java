@@ -25,8 +25,6 @@ public class CreateUserTab extends JPanel {
     private JComboBox<String> roleBox;
 
     private String[] roles = {"User", "Admin"};
-    
-    // TODO - Confirm password field
 
     public CreateUserTab() {
         // Configure Layout
@@ -118,40 +116,57 @@ public class CreateUserTab extends JPanel {
     private ActionListener buttonAction = new ActionListener() {
         public void actionPerformed(ActionEvent ae){
             MainFrame frame = (MainFrame) getTopLevelAncestor();
-            if (!nameField.getText().isBlank() && !String.valueOf(passField.getPassword()).isBlank()){
-                if (String.valueOf(passField.getPassword()).equals(String.valueOf(confirmPassField.getPassword()))){
-                    // Create user with entered username
-                    User user = new User(App.userClient, nameField.getText());
-                    
-                    // If admin role selected set user to admin
-                    if (roleBox.getSelectedItem().equals("Admin")) {
-                        user.setAdmin(true);
-                    }
-                    
-                    // Create user in server
-                    try {
-                        if (user.create(String.valueOf(passField.getPassword()), null)) {
-                            // User created successfully
-                            frame.setNotification("User: "+nameField.getText()+" Created", null);
-                            frame.getUsersTab().userListPanel.updateUserList();
-                            nameField.setText("");
-                            passField.setText("");
-                            confirmPassField.setText("");
-                        } else {
-                            // Failed to create user
-                            frame.setNotification("Failed to create User: "+nameField.getText(), Color.RED);
-                        }
-                        
-                        // Refresh user list
-                        frame.getUsersTab().userListPanel.updateUserList();
-                    } catch (ConnectionException ce) {
-                        frame.setNotification(ce.getMessage(), Color.RED);
-                    }
-                }else{
-                    frame.setNotification("Password and confirm password field must match", null);
-                }
-            }else{
+            String username = nameField.getText();
+            String password = String.valueOf(passField.getPassword());
+            String passwordConfirm = String.valueOf(confirmPassField.getPassword());
+
+            // Confirm Fields are not blank
+            if (username.isBlank() || String.valueOf(passField.getPassword()).isBlank()) {
                 frame.setNotification("Username and password fields cannot be left blank", null);
+                return;
+            }
+
+            // Confirm username does not already exist
+            for (User user : frame.getUsersTab().userListPanel.userList) {
+                if (user.getUsername().equals(username)) {
+                    frame.setNotification("This username already exists!", null);
+                    return;
+                }
+            }
+
+            // Confirm password fields match
+            if (!password.equals(passwordConfirm)) {
+                frame.setNotification("Password and confirm password field must match", null);
+                return;
+            }
+
+            // Create user with entered username
+            User user = new User(App.userClient, username);
+            
+            // If admin role selected set user to admin
+            if (roleBox.getSelectedItem().equals("Admin")) {
+                user.setAdmin(true);
+            }
+            
+            // Create user in server
+            try {
+                if (user.create(password, null)) {
+                    // User created successfully
+                    frame.setNotification("User: " + username + " Created", null);
+
+                    // Reset fields
+                    nameField.setText("");
+                    passField.setText("");
+                    confirmPassField.setText("");
+
+                    // Refresh user list
+                    frame.getUsersTab().userListPanel.updateUserList();
+                } else {
+                    // Failed to create user
+                    frame.setNotification("Failed to create User: " + username, Color.RED);
+                }
+            } catch (ConnectionException ce) {
+                frame.setNotification(ce.getMessage(), Color.RED);
             }
         }
     };

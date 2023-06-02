@@ -85,26 +85,38 @@ public class AddForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
+                String textFieldValue = nameField.getText();
                 
-                if (!nameField.getText().isBlank()) {
-                    Campus newCampus = new Campus(App.userClient);
-                    newCampus.setName(nameField.getText());
-                    try {
-                        if ( newCampus.create(App.userClient, null) ) {
-                            // Success
-                            frame.setNotification(newCampus.getName() + " added to campus list.", null);
-                            // Refresh Tree
-                            mainTab.refreshDatabaseTree(newCampus);
-                        } else {
-                            // Failure
-                            frame.setNotification("Failed to add " + newCampus.getName() + " to campus list!", null);
-                        }
-
-                    } catch (ConnectionException ce) {
-                        frame.setNotification(ce.getMessage(), Color.RED);
-                    }
-                    // TODO - (Connall) No Permission excemption
+                // Confirm campus name textfield is not blank
+                if (textFieldValue.isBlank()) {
+                    frame.setNotification("Campus name field can not be blank!", Color.RED);
+                    return;
                 }
+
+                // Confirm campus name does not already exists
+                if (App.db.getCampus(textFieldValue) != null) {
+                    frame.setNotification("Campus name " + textFieldValue + " already exists!", Color.RED);
+                    return;
+                }
+
+                
+                Campus newCampus = new Campus(App.userClient);
+                newCampus.setName(textFieldValue);
+                try {
+                    if ( newCampus.create(App.userClient, null) ) {
+                        // Success
+                        frame.setNotification(newCampus.getName() + " added to campus list.", null);
+                        // Refresh Tree
+                        mainTab.refreshDatabaseTree(newCampus);
+                    } else {
+                        // Failure
+                        frame.setNotification("Failed to add " + newCampus.getName() + " to campus list!", null);
+                    }
+
+                } catch (ConnectionException ce) {
+                    frame.setNotification(ce.getMessage(), Color.RED);
+                }
+                // TODO - (Connall) No Permission excemption
             }
         });
         add(createButton, c);
@@ -117,27 +129,38 @@ public class AddForm extends JPanel {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
+                String textFieldValue = nameField.getText();
                 
-                if (!nameField.getText().isBlank()) {
-                    Bird newBird = new Bird(App.userClient);
-                    newBird.setName(nameField.getText());
-                    newBird.setCampusId(campus.getId());
-                    try {
-                        if ( newBird.create(App.userClient, null) ) {
-                            // Success
-                            frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
-                            // Refresh Tree
-                            mainTab.refreshDatabaseTree(newBird);
-                        } else {
-                            // Failure
-                            frame.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);
-                        }
-                    } catch (ConnectionException ce) {
-                        frame.setNotification(ce.getMessage(), Color.RED);
-                    }
-                    // TODO - (Connall) No Permission excemption
-
+                // Confirm bird name textfield is not blank
+                if (textFieldValue.isBlank()) {
+                    frame.setNotification("Bird name field can not be blank!", Color.RED);
+                    return;
                 }
+
+                // Confirm campus name does not already exists
+                if (campus.getBird(textFieldValue) != null) {
+                    frame.setNotification("Bird name " + textFieldValue + " already exists in this campus!", Color.RED);
+                    return;
+                }
+
+                Bird newBird = new Bird(App.userClient);
+                newBird.setName(textFieldValue);
+                newBird.setCampusId(campus.getId());
+                try {
+                    if ( newBird.create(App.userClient, null) ) {
+                        // Success
+                        frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
+                        // Refresh Tree
+                        mainTab.refreshDatabaseTree(newBird);
+                    } else {
+                        // Failure
+                        frame.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);
+                    }
+                } catch (ConnectionException ce) {
+                    frame.setNotification(ce.getMessage(), Color.RED);
+                }
+                // TODO - (Connall) No Permission excemption
+
             }
         });
         add(createButton, c);

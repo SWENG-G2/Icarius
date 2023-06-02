@@ -1,7 +1,6 @@
 package icarius.gui.forms;
 
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import icarius.entities.Bird;
 import icarius.gui.forms.birdForms.AboutForm;
@@ -16,17 +15,16 @@ import icarius.gui.forms.birdForms.VideoForm;
 
 public class MainBirdForm extends JPanel{
     
-    public JTextField aboutField;
-    public JTextField locationField;
-    public JTextField dietField;
-    
 
-    public String listImageUrlPath;
-    public String heroImageUrlPath;
-    public String soundURLPath;
-    public String videoUrlPath;
-    public String locationImageUrlPath;
-    public String dietImageUrlPath;
+    public ListImageForm listImageForm;
+    public HeroImageForm heroImageForm;
+    public SoundForm soundForm;
+    public AboutForm aboutForm;
+    public VideoForm videoForm;
+    public LocationForm locationForm;
+    public LocationImageForm locationImageForm;
+    public DietForm dietForm;
+    public DietImageFrom dietImageFrom;
 
     public MainBirdForm(Bird bird, String selectedForm){
         initializeFields(bird);
@@ -35,53 +33,53 @@ public class MainBirdForm extends JPanel{
 
     public void setForm(Bird bird, String selectedForm) {
         removeAll();
-        
-        if(selectedForm.equals("List Image")){
-            ListImageForm listImageForm = new ListImageForm(bird);
-            listImageUrlPath = listImageForm.UrlPath;
-            add(listImageForm);
-        } else if (selectedForm.equals("Hero Image")){
-            HeroImageForm heroImageForm = new HeroImageForm(bird);
-            heroImageUrlPath = heroImageForm.UrlPath;
-            add(heroImageForm);
-        } else if (selectedForm.equals("Sound")){
-            SoundForm soundForm = new SoundForm(bird);
-            soundURLPath = soundForm.UrlPath;
-            add(soundForm);
-        } else if (selectedForm.equals("About")){
-            AboutForm aboutForm = new AboutForm(bird);
-            aboutField = aboutForm.textField;
-            add(aboutForm);
-        } else if (selectedForm.equals("Video")){
-            VideoForm videoForm = new VideoForm(bird);
-            videoUrlPath = videoForm.UrlPath;
-            add(videoForm);
-        } else if (selectedForm.equals("Location")){
-            LocationForm locationForm = new LocationForm(bird);
-            locationField = locationForm.textField;
-            add(locationForm);
-        } else if (selectedForm.equals("Location Image")){
-            LocationImageForm locationImageForm = new LocationImageForm(bird);
-            locationImageUrlPath = locationImageForm.UrlPath;
-            add(locationImageForm);
-        } else if (selectedForm.equals("Diet")){
-            DietForm dietForm = new DietForm(bird);
-            dietField = dietForm.textField;
-            add(dietForm);
-        } else if (selectedForm.equals("Diet Image")){
-            DietImageFrom dietImageFrom = new DietImageFrom(bird);
-            dietImageUrlPath = dietImageFrom.UrlPath;
-            add(dietImageFrom);
-        } else{
-            System.out.println("ERROR in gui>forms>birdForms>MainBirdForm");
+
+        switch (selectedForm) {
+            case "List Image":
+                add(listImageForm);
+                break;
+            case "Hero Image":
+                add(heroImageForm);
+                break;
+            case "Sound":
+                add(soundForm);
+                break;
+            case "About":
+                add(aboutForm);
+                break;
+            case "Video":
+                add(videoForm);
+                break;
+            case "Location":
+                add(locationForm);
+                break;
+            case "Location Image":
+                add(locationImageForm);
+                break;
+            case "Diet":
+                add(dietForm);
+                break;
+            case "Diet Image":
+                add(dietImageFrom);
+                break;
+            default:
+                System.out.println("ERROR in gui>forms>birdForms>MainBirdForm");
+                break;
         }
+        
         revalidate();
         repaint();
     }
 
     private void initializeFields(Bird bird){
-        aboutField = new JTextField(bird.getAboutMe());
-        locationField = new JTextField(bird.getLocation());
-        dietField = new JTextField(bird.getDiet());
+        listImageForm = new ListImageForm(bird);
+        heroImageForm = new HeroImageForm(bird);
+        soundForm = new SoundForm(bird);
+        aboutForm = new AboutForm(bird);
+        videoForm = new VideoForm(bird);
+        locationForm = new LocationForm(bird);
+        locationImageForm = new LocationImageForm(bird);
+        dietForm = new DietForm(bird);
+        dietImageFrom = new DietImageFrom(bird);
     }
 }
