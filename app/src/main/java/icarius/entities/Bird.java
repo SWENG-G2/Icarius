@@ -183,7 +183,10 @@ public class Bird implements ServerActions {
         request.addParameters(parameters);
 
         // Return TRUE if update request success, else FALSE
-        return request.send().isSuccessful();
+
+        ServerResponse response = request.send();
+        System.out.println(response);
+        return response.isSuccessful();
     }
 
     @Override

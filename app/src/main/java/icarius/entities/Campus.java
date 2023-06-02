@@ -75,7 +75,6 @@ public class Campus implements ServerActions {
         } else {
             // Fetch name from XML response
             try {
-                // TODO - birdListImage
                 Document document = DocumentHelper.parseText(responseBody);
                 Element root = document.getRootElement();
                 Element infoSlide = root.element("info");
@@ -104,7 +103,10 @@ public class Campus implements ServerActions {
                     // fetch bird
                     bird.setId(Long.parseLong(birdId));
                     bird.setCampusId(id);
+                    // if getRequestForBird is null then
                     bird.read(null);
+                    // else
+                    // bird.read(getRequestForBird);
                     birds.add(bird);
                 }
             } catch (DocumentException e) {

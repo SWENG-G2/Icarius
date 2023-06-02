@@ -27,11 +27,9 @@ public class BirdTest {
     private static final String[] parametersValues = { "Dalia", "listimage.png", "heroImage.png", "quack.mp3",
             "Birthday 20 days ago.", "abountMeVideo.mp4", "3rd floor lab", "location.png", "Avocados and kikos",
             "diet.png" };
-    private static final HashMap<String, String> requestParams = new HashMap<>();
-
     private static final long id = 9;
     private static Bird testBird;
-
+    private static final HashMap<String, String> requestParams = new HashMap<>();
     private static final String birdReadXML = "<presentation xmlns=\"urn:SWENG\" xmlns:SWENG=\"https://raw.githubusercontent.com/SWENG-G2/xml_standard/proposal-1/standard.xsd\">"
             +
             "<info>" +
@@ -70,6 +68,10 @@ public class BirdTest {
             "</slide>\n" +
             "</presentation>\n";
 
+    /**
+     * This sets up the test bird, places all the parameter values (bird name,
+     * location, diet image,etc) with their coressponding key
+     */
     @BeforeAll
     static void setUp() {
         IntStream.range(0, parameters.length).forEach(idx -> requestParams.put(parameters[idx], parametersValues[idx]));
@@ -89,6 +91,14 @@ public class BirdTest {
         testBird.setDietImageURL(parametersValues[9]);
     }
 
+    /**
+     * Creates a mock post request that returns a mock response
+     * when the request is sent. Then the parameter values are
+     * put into a hashmap and is compared to the parameters that
+     * are added to the request in the method undr test.
+     * 
+     * @throws IOException
+     */
     @Test
     void canCreateBird() throws IOException {
         PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
@@ -96,7 +106,7 @@ public class BirdTest {
         ServerResponse postResponse = new ServerResponse(200, Long.toString(id), null);
         doReturn(postResponse).when(mockPostRequest).send();
         // Test Method
-        
+
         assertTrue(testBird.create(null, mockPostRequest));
 
         HashMap<String, String> parameters = new HashMap<>();
@@ -115,6 +125,13 @@ public class BirdTest {
         assertEquals(testBird.getId(), id);
     }
 
+    /**
+     * Creates a blank bird object, mock get request which returns a response when
+     * the request is sent. Then we try and read the bird from the server without
+     * the id being set, then once the id is set we read the bird. Then each
+     * parameter read from the server is compared to the parameetrs set on the bird
+     * object.
+     */
     @Test
     void canReadBird() {
         Bird blankBird = new Bird(null);
@@ -141,6 +158,14 @@ public class BirdTest {
         assertEquals(parametersValues[8], blankBird.getDietImageURL());
     }
 
+    /**
+     * Creates a mock patch request and response for when the request is sent. It
+     * changes the parameters of the test bird and puts the new parameters into a
+     * hashmap and compares the hashmap to what was added to the request in the
+     * method under test.
+     * 
+     * @throws IOException
+     */
     @Test
     void canUpdateBird() throws IOException {
         PatchRequest mockPatchRequest = Mockito.mock(PatchRequest.class);
@@ -194,6 +219,9 @@ public class BirdTest {
     }
 
     /**
+     * Creates a mock delete request and response for when the request is sent. Sets
+     * the birds id then deletes it, verifies that the id is added to the request.
+     * 
      * @throws IOException
      */
     @Test

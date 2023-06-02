@@ -23,11 +23,14 @@ public class CampusTest {
 
     private static final long id = 22;
     private static final String RESPONSE_BODY_ID = "id: " + id;
-
     private static final String CAMPUS_NAME = "newCampus";
-
     private static Campus testCampus;
+    private static final String CAMPUS_READ_XML = "";
+    private static final String BIRD_READ_XML = "";
 
+    /**
+     * Set up method, just to create the test campus and give it a name.
+     */
     @BeforeAll
     static void setUp() {
         // Prepare bird
@@ -37,6 +40,9 @@ public class CampusTest {
         // testCampus.setId(id);
     }
 
+    /**
+     * 
+     */
     @Test
     void canCreateCampus() {
         // Mock request
@@ -44,14 +50,6 @@ public class CampusTest {
         ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
         doReturn(postResponse).when(mockPostRequest).send();
 
-        // Test Method
-
-        // TODO - assert parameters where added to request
-        // assertTrue(testCampus.create(null, mockPostRequest));
-        // assertEquals(id, testCampus.getId());
-
-        
-        // Test Method
         assertTrue(testCampus.create(null, mockPostRequest));
 
         verify(mockPostRequest, times(1)).addParameter("name", "newCampus");
@@ -59,24 +57,28 @@ public class CampusTest {
 
     }
 
+    /**
+     * 
+     */
     @Test
     void canReadCampus() {
 
-        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
-        GetRequest mockGetRequest = Mockito.mock(GetRequest.class);
+        GetRequest mockGetRequestForCampus = Mockito.mock(GetRequest.class);
+        GetRequest mockGetRequestForBird = Mockito.mock(GetRequest.class);
 
-        ServerResponse postResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
-        ServerResponse getResponse = new ServerResponse(200, CAMPUS_NAME, null);
-        doReturn(postResponse).when(mockPostRequest).send();
-        doReturn(getResponse).when(mockGetRequest).send();
-
-        testCampus.create(null, mockPostRequest);
+        ServerResponse getResponseForCampus = new ServerResponse(200, CAMPUS_READ_XML, null);
+        ServerResponse getResponseForBird = new ServerResponse(200, BIRD_READ_XML, null);
+        doReturn(getResponseForCampus).when(mockGetRequestForCampus).send();
+        doReturn(getResponseForBird).when(mockGetRequestForBird).send();
 
         // TODO - assert parameters where added to request
-        assertTrue(testCampus.read(mockGetRequest));
+        assertTrue(testCampus.read(mockGetRequestForCampus));
         assertEquals(CAMPUS_NAME, testCampus.getName());
     }
 
+    /**
+     * 
+     */
     @Test
     void canUpdateCampus() {
         PatchRequest mockPatchRequest = Mockito.mock(PatchRequest.class);
@@ -103,6 +105,9 @@ public class CampusTest {
         assertEquals(testCampus.getId(), id);
     }
 
+    /**
+     * 
+     */
     @Test
     void canDeleteCampus() {
         DeleteRequest mockDeleteRequest = Mockito.mock(DeleteRequest.class);
