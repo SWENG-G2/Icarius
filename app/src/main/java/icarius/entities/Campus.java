@@ -50,7 +50,7 @@ public class Campus implements ServerActions {
         ServerResponse response = request.send();
 
         // Print response and return created campus Id
-        System.out.println(response.getBody());
+        // System.out.println(response.getBody());
         String idString = response.getBody().replaceAll("[^0-9]", "");
         this.id = Long.valueOf(idString);
 
@@ -65,7 +65,6 @@ public class Campus implements ServerActions {
      */
     @Override
     public Boolean read(GetRequest request) {
-        System.out.println("request");
         // If required field not set, throw exception
         if (id == null)
             throw new RuntimeException("Campus id not set");
@@ -96,10 +95,16 @@ public class Campus implements ServerActions {
                     // Bird info
                     String birdId = slide.attributeValue("title");
                     String listImageUrl = "";
+                    String birdName = "";
 
                     // Get Bird listImageUrl
                     for (Iterator<Element> it2 = slide.elementIterator(); it2.hasNext();) {
                         Element node = it2.next();
+
+                        // Get Bird name
+                        if (node.getData() != "") {
+                            birdName = node.getData().toString();
+                        }
 
                         if (node.getName().equals("image")) {
                             for (Iterator<Attribute> it3 = node.attributeIterator(); it3.hasNext();) {
@@ -112,30 +117,19 @@ public class Campus implements ServerActions {
                     }
 
                     // fetch and add bird
-                    addBirdToBirds(Long.parseLong(birdId), listImageUrl, null);
+                    Bird bird = new Bird(user);
+                    bird.setName(birdName);
+                    bird.setId(Long.parseLong(birdId));
+                    bird.setCampusId(id);
+                    bird.setListImageURL(listImageUrl);
+                    birds.add(bird);
                 }
             } catch (DocumentException e) {
                 e.printStackTrace();
+                return false;
             }
             return true;
         }
-    }
-
-    /**
-     * Takes an id, list image url and a request, cretaes a bird, adds the id and
-     * list image url to the parameters and adds that bird to the birds list.
-     * 
-     * @param birdId
-     * @param listImageUrl
-     * @param request
-     */
-    protected void addBirdToBirds(Long birdId, String listImageUrl, GetRequest request) {
-        Bird bird = new Bird(user);
-        bird.setId(birdId);
-        bird.setCampusId(id);
-        bird.setListImageURL(listImageUrl);
-        bird.read(request);
-        birds.add(bird);
     }
 
     /**
