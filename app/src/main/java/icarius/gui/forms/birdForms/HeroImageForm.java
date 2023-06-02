@@ -26,6 +26,15 @@ public class HeroImageForm extends BirdFieldForm{
         UploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
     }
 
+    public HeroImageForm(){
+        // Configure Layout
+        GridBagConstraints c = configure();
+        c.gridx = 2;
+        c.gridy = 0;
+
+        UploadButton = addFileUploadField("Hero Image:", "", c, uploadHeroImage());
+    }
+
     public ActionListener uploadHeroImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

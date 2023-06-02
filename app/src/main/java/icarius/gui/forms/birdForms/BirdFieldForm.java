@@ -16,6 +16,8 @@ public abstract class BirdFieldForm extends JPanel{
 
     public JTextField textField;
 
+    public JTextArea textArea;
+
     protected JButton UploadButton;
 
     public String UrlPath;
@@ -68,7 +70,7 @@ public abstract class BirdFieldForm extends JPanel{
         if (placeholderText == null || placeholderText.equals("")) placeholderText = "Upload a file";
         JButton button = new JButton(placeholderText);
         button.addActionListener(al);
-        button.setPreferredSize(new Dimension(90, 20));
+        button.setPreferredSize(new Dimension(105, 20));
         add(button, c);
 
         // Increment y for next item

@@ -27,6 +27,15 @@ public class DietImageFrom extends BirdFieldForm{
         UploadButton = addFileUploadField("Diet Image:", bird.getDietImageURL(), c, uploadDietImage());
     }
 
+    public DietImageFrom(){
+        // Configure Layout
+        GridBagConstraints c = configure();
+        c.gridx = 2;
+        c.gridy = 0;
+
+        UploadButton = addFileUploadField("Diet Image:", "", c, uploadDietImage());
+    }
+
     public ActionListener uploadDietImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

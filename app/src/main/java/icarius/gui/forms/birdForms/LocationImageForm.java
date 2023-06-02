@@ -26,6 +26,15 @@ public class LocationImageForm extends BirdFieldForm{
             UploadButton = addFileUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
     }
 
+    public LocationImageForm(){
+        // Configure Layout
+        GridBagConstraints c = configure();
+        c.gridx = 2;
+        c.gridy = 0;
+
+        UploadButton = addFileUploadField("Location Image:", "", c, uploadLocationImage());
+    }
+
     public ActionListener uploadLocationImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

@@ -98,7 +98,7 @@ public class EditForm extends JPanel {
         // Configure Layout
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridwidth = 3;
+        c.gridwidth = 4;
 
         // Add MainBirdForm
         MainBirdForm birdForm = new MainBirdForm(bird, firstForm);
@@ -139,7 +139,7 @@ public class EditForm extends JPanel {
     private ActionListener formSelect(Bird bird, JComboBox<String> comboBox) {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                birdForm.setForm(bird, (String) comboBox.getSelectedItem());
+                birdForm.setForm((String) comboBox.getSelectedItem());
             }
         };
     }
@@ -204,9 +204,9 @@ public class EditForm extends JPanel {
 
                         // Update Bird entity with TextField Values
                         b.setName(newBirdName);
-                        b.setAboutMe(birdForm.aboutForm.textField.getText());
-                        b.setLocation(birdForm.locationForm.textField.getText());
-                        b.setDiet(birdForm.dietForm.textField.getText());
+                        b.setAboutMe(birdForm.aboutForm.textArea.getText());
+                        b.setLocation(birdForm.locationForm.textArea.getText());
+                        b.setDiet(birdForm.dietForm.textArea.getText());
 
                         // If file uploaded, Upload Files, then update Bird entity File Path
                         String listImageUrlPath = birdForm.listImageForm.UrlPath;

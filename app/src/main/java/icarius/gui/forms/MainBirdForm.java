@@ -28,10 +28,15 @@ public class MainBirdForm extends JPanel{
 
     public MainBirdForm(Bird bird, String selectedForm){
         initializeFields(bird);
-        this.setForm(bird, selectedForm);
+        this.setForm(selectedForm);
     }
 
-    public void setForm(Bird bird, String selectedForm) {
+    public MainBirdForm(String selectedForm){
+        initializeFields();
+        this.setForm(selectedForm);
+    }
+
+    public void setForm(String selectedForm) {
         removeAll();
 
         switch (selectedForm) {
@@ -81,5 +86,17 @@ public class MainBirdForm extends JPanel{
         locationImageForm = new LocationImageForm(bird);
         dietForm = new DietForm(bird);
         dietImageFrom = new DietImageFrom(bird);
+    }
+
+    private void initializeFields(){
+        listImageForm = new ListImageForm();
+        heroImageForm = new HeroImageForm();
+        soundForm = new SoundForm();
+        aboutForm = new AboutForm();
+        videoForm = new VideoForm();
+        locationForm = new LocationForm();
+        locationImageForm = new LocationImageForm();
+        dietForm = new DietForm();
+        dietImageFrom = new DietImageFrom();
     }
 }

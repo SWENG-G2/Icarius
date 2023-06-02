@@ -29,6 +29,16 @@ public class ListImageForm extends BirdFieldForm{
         UploadButton = addFileUploadField("List Image:", bird.getListImageURL(), c, uploadListImage());               
     }
 
+    public ListImageForm(){
+        // Configure Layout
+        GridBagConstraints c = configure();
+        c.gridx = 2;
+        c.gridy = 0;
+
+
+        UploadButton = addFileUploadField("List Image:", "", c, uploadListImage());               
+    }
+
     public ActionListener uploadListImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

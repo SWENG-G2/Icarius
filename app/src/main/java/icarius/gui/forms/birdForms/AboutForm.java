@@ -3,7 +3,6 @@ package icarius.gui.forms.birdForms;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import icarius.entities.Bird;
 
@@ -12,8 +11,17 @@ public class AboutForm extends BirdFieldForm{
         // Configure Layout
         GridBagConstraints c = configure();
 
-        JTextArea textArea = new JTextArea();
         textArea = addTextArea("About:", bird.getAboutMe(), c);
+
+        JScrollPane scrollpane = new JScrollPane(textArea);
+        add(scrollpane);
+    }
+
+    public AboutForm(){
+        // Configure Layout
+        GridBagConstraints c = configure();
+
+        textArea = addTextArea("About:", "", c);
 
         JScrollPane scrollpane = new JScrollPane(textArea);
         add(scrollpane);
