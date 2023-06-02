@@ -114,7 +114,7 @@ public class EditForm extends JPanel {
         return birdForm;
     }
 
-    private JComboBox<String> addComboBox(String labelText, String[] options, Bird bird, GridBagConstraints c) {
+    private void addComboBox(String labelText, String[] options, Bird bird, GridBagConstraints c) {
 
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -133,7 +133,6 @@ public class EditForm extends JPanel {
 
         // Increment y for next item
         c.gridy++;
-        return comboBox;
     }
 
     private ActionListener formSelect(Bird bird, JComboBox<String> comboBox) {

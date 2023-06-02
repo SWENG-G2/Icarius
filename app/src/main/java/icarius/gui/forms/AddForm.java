@@ -94,7 +94,6 @@ public class AddForm extends JPanel {
         birdForm = addBirdForm(birdFields[0], c);
     }
 
-    //TODO - make this void, in editForm too
     private void addComboBox(String labelText, String[] options, GridBagConstraints c) {
 
         // Configure Layout
