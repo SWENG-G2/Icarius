@@ -95,12 +95,10 @@ public class BirdTest {
      * Creates a mock post request that returns a mock response
      * when the request is sent. Then the parameter values are
      * put into a hashmap and is compared to the parameters that
-     * are added to the request in the method undr test.
-     * 
-     * @throws IOException
+     * are added to the request in the method under test.
      */
     @Test
-    void canCreateBird() throws IOException {
+    void canCreateBird() {
         PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
 
         ServerResponse postResponse = new ServerResponse(200, Long.toString(id), null);
@@ -163,11 +161,9 @@ public class BirdTest {
      * changes the parameters of the test bird and puts the new parameters into a
      * hashmap and compares the hashmap to what was added to the request in the
      * method under test.
-     * 
-     * @throws IOException
      */
     @Test
-    void canUpdateBird() throws IOException {
+    void canUpdateBird() {
         PatchRequest mockPatchRequest = Mockito.mock(PatchRequest.class);
         ServerResponse patchResponse = new ServerResponse(200, "", null);
         doReturn(patchResponse).when(mockPatchRequest).send();
@@ -221,11 +217,9 @@ public class BirdTest {
     /**
      * Creates a mock delete request and response for when the request is sent. Sets
      * the birds id then deletes it, verifies that the id is added to the request.
-     * 
-     * @throws IOException
      */
     @Test
-    void canDeleteBird() throws IOException {
+    void canDeleteBird() {
         DeleteRequest mockDeleteRequest = Mockito.mock(DeleteRequest.class);
         ServerResponse postResponse = new ServerResponse(200, Long.toString(id), null);
         doReturn(postResponse).when(mockDeleteRequest).send();

@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class Campus implements ServerActions {
     private Long id;
     private String name;
-    private List<Bird> birds;
+    public List<Bird> birds;
 
     private UserClient user;
 
@@ -32,6 +32,10 @@ public class Campus implements ServerActions {
         this.user = user;
     }
 
+    /**
+     * Creates a new post request, adds the campus name to the request,
+     * sends the request and gets a response of the campus' id.
+     */
     @Override
     public Boolean create(UserClient user, PostRequest request) {
         // If required field not set, throw exception
@@ -54,8 +58,14 @@ public class Campus implements ServerActions {
         return response.isSuccessful();
     }
 
+    /**
+     * Creates a new get request, gets an xml response, parse it to then get the id
+     * and
+     * the list image of the birds in the campus. Then, BLBABLALBAL
+     */
     @Override
     public Boolean read(GetRequest request) {
+        System.out.println("request");
         // If required field not set, throw exception
         if (id == null)
             throw new RuntimeException("Campus id not set");
@@ -83,31 +93,26 @@ public class Campus implements ServerActions {
                 // iterate through child elements of presentation with element name "slide"
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
+                    // Bird info
                     String birdId = slide.attributeValue("title");
-                    Bird bird = new Bird(user);
+                    String listImageUrl = "";
 
+                    // Get Bird listImageUrl
                     for (Iterator<Element> it2 = slide.elementIterator(); it2.hasNext();) {
                         Element node = it2.next();
 
                         if (node.getName().equals("image")) {
                             for (Iterator<Attribute> it3 = node.attributeIterator(); it3.hasNext();) {
                                 Attribute attribute = it3.next();
-
                                 if (attribute.getName().equals("url")) {
-                                    bird.setListImageURL(attribute.getData().toString());
+                                    listImageUrl = attribute.getData().toString();
                                 }
                             }
                         }
                     }
 
-                    // fetch bird
-                    bird.setId(Long.parseLong(birdId));
-                    bird.setCampusId(id);
-                    // if getRequestForBird is null then
-                    bird.read(null);
-                    // else
-                    // bird.read(getRequestForBird);
-                    birds.add(bird);
+                    // fetch and add bird
+                    addBirdToBirds(Long.parseLong(birdId), listImageUrl, null);
                 }
             } catch (DocumentException e) {
                 e.printStackTrace();
@@ -116,6 +121,27 @@ public class Campus implements ServerActions {
         }
     }
 
+    /**
+     * Takes an id, list image url and a request, cretaes a bird, adds the id and
+     * list image url to the parameters and adds that bird to the birds list.
+     * 
+     * @param birdId
+     * @param listImageUrl
+     * @param request
+     */
+    protected void addBirdToBirds(Long birdId, String listImageUrl, GetRequest request) {
+        Bird bird = new Bird(user);
+        bird.setId(birdId);
+        bird.setCampusId(id);
+        bird.setListImageURL(listImageUrl);
+        bird.read(request);
+        birds.add(bird);
+    }
+
+    /**
+     * Puts all the current (updated) parameters of the campus into a patch request
+     * then sends the request to the server.
+     */
     @Override
     public Boolean update(UserClient user, PatchRequest request) {
         // If required field not set, throw exception
@@ -135,6 +161,10 @@ public class Campus implements ServerActions {
         return request.send().isSuccessful();
     }
 
+    /**
+     * It gets the id of the campus off the server and sends a delete request.
+     * Returns true if successful.
+     */
     @Override
     public Boolean delete(UserClient user, DeleteRequest request) {
         // If required field not set, throw exception
@@ -152,6 +182,12 @@ public class Campus implements ServerActions {
         return response != null ? response.isSuccessful() : false;
     }
 
+    /**
+     * Finds a bird from its name and returns it.
+     * 
+     * @param birdName
+     * @return
+     */
     public Bird getBird(String birdName) {
         for (Bird bird : birds) {
             if (bird.getName().equals(birdName)) {
