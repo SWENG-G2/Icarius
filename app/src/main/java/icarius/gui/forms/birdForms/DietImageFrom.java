@@ -69,12 +69,13 @@ public class DietImageFrom extends BirdFieldForm{
                 dietImageLbl.setName(diet);
                 BufferedImage buffImage = null;
                 try {                    
-                    buffImage = ImageIO.read(new File(file.getPath()));
+                    buffImage = ImageIO.read(new File(UrlPath));
 
                     Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
                     dietImageLbl.setIcon(new ImageIcon(image));
                     add(dietImageLbl, c);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };

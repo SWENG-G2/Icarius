@@ -68,12 +68,13 @@ public class HeroImageForm extends BirdFieldForm{
                 heroImageLbl.setName(hero);
                 BufferedImage buffImage = null;
                 try {                    
-                    buffImage = ImageIO.read(new File(file.getPath()));
+                    buffImage = ImageIO.read(new File(UrlPath));
 
                     Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
                     heroImageLbl.setIcon(new ImageIcon(image));
                     add(heroImageLbl, c);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };

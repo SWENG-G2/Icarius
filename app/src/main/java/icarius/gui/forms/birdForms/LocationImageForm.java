@@ -68,12 +68,13 @@ public class LocationImageForm extends BirdFieldForm{
                 locationImageLbl.setName(location);
                 BufferedImage buffImage = null;
                 try {                    
-                    buffImage = ImageIO.read(new File(file.getPath()));
+                    buffImage = ImageIO.read(new File(UrlPath));
 
                     Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
                     locationImageLbl.setIcon(new ImageIcon(image));
                     add(locationImageLbl, c);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };

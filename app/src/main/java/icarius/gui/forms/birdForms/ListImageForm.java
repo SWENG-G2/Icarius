@@ -72,12 +72,13 @@ public class ListImageForm extends BirdFieldForm{
                 listImageLbl.setName(list);
                 BufferedImage buffImage = null;
                 try {                    
-                    buffImage = ImageIO.read(new File(file.getPath()));
+                    buffImage = ImageIO.read(new File(UrlPath));
 
                     Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
                     listImageLbl.setIcon(new ImageIcon(image));
                     add(listImageLbl, c);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
