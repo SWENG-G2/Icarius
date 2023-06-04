@@ -2,14 +2,10 @@ package icarius.gui.forms.birdForms;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import icarius.entities.Bird;
@@ -17,13 +13,24 @@ import icarius.entities.Bird;
 import static icarius.services.FileUploadService.*;
 
 public class HeroImageForm extends BirdFieldForm{
+    private String HERO_IMAGE_NAME = "Hero Image";
+    
     public HeroImageForm(Bird bird){
+        UrlPath = bird.getHeroImageURL();
+
         // Configure Layout
         GridBagConstraints c = configure();
         c.gridx = 2;
         c.gridy = 0;
+        c.fill = GridBagConstraints.REMAINDER;
 
         UploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
+
+        c.gridx = 0;
+        c.gridy++;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        add(getImage(HERO_IMAGE_NAME), c);  
     }
 
     public HeroImageForm(){
@@ -46,11 +53,10 @@ public class HeroImageForm extends BirdFieldForm{
                 c.fill = GridBagConstraints.HORIZONTAL;
 
                 // Removes previous image
-                String hero = "hero";
                 for (Component label : getComponents()) {
                     if (label instanceof JLabel)
                     {
-                        if (label.getName() == hero){
+                        if (label.getName().equals(HERO_IMAGE_NAME)){
                             remove(label);
                         }
                     }
@@ -64,18 +70,7 @@ public class HeroImageForm extends BirdFieldForm{
 
 
                 // Adds image to frame
-                JLabel heroImageLbl = new JLabel();
-                heroImageLbl.setName(hero);
-                BufferedImage buffImage = null;
-                try {                    
-                    buffImage = ImageIO.read(new File(UrlPath));
-
-                    Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
-                    heroImageLbl.setIcon(new ImageIcon(image));
-                    add(heroImageLbl, c);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                add(getImage(HERO_IMAGE_NAME), c);
             }
         };
     }

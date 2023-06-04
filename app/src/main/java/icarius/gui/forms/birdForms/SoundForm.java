@@ -27,10 +27,13 @@ import static icarius.services.FileUploadService.*;
 
 public class SoundForm extends BirdFieldForm{
     public SoundForm(Bird bird){
+        UrlPath = bird.getSoundURL();
+
         // Configure Layout
         GridBagConstraints c = configure();
         c.gridx = 0;
         c.gridy = 1;
+        c.fill = GridBagConstraints.REMAINDER;
 
         UploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadAudio());
 
@@ -122,17 +125,19 @@ public class SoundForm extends BirdFieldForm{
                             Clip clip = AudioSystem.getClip();
                             clip.open(audioIn);
                             clip.start();
+                            grabber.close();  
                             
-                        } catch (LineUnavailableException e) {
+                        } catch (java.lang.Exception e) {
                             e.printStackTrace();
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        } catch (UnsupportedAudioFileException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }       
-                    }                
+                        }     
+                    }
+                         
+                    try {
+                        grabber.close();
+                        System.out.println("grabber close");
+                    } catch (java.lang.Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

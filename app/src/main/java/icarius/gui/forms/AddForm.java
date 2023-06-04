@@ -209,12 +209,11 @@ public class AddForm extends JPanel {
                         return;
                     }
                 }
+
                 if (textFieldValue.isBlank()) {
                     frame.setNotification("Bird name field can not be blank!", Color.RED);
                     return;
                 }
-
-
 
                 // Confirm campus name does not already exists
                 if (campus.getBird(textFieldValue) != null) {
@@ -224,13 +223,13 @@ public class AddForm extends JPanel {
 
                 Bird newBird = new Bird(App.userClient);
 
-                Long cID = newBird.getCampusId();
-
                 newBird.setName(textFieldValue);
                 newBird.setCampusId(campus.getId());
                 newBird.setAboutMe(birdForm.aboutForm.textArea.getText());
                 newBird.setLocation(birdForm.locationForm.textArea.getText());
                 newBird.setDiet(birdForm.dietForm.textArea.getText());
+
+                Long cID = newBird.getCampusId();
 
                 String listImageUrlPath = uploadFile(App.userClient, cID, birdForm.listImageForm.UrlPath, "image", null);
                 newBird.setListImageURL(listImageUrlPath);
@@ -255,13 +254,9 @@ public class AddForm extends JPanel {
                     if ( newBird.create(App.userClient, null) ) {
                         //TODO - Connall - make sure I've added all of this to the right place
                         // Success
-
                         frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
                         // Refresh tree
                         mainTab.refreshDatabaseTree(newBird);
-
-                    
-
                     } else {
                         // Failure
                         frame.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);

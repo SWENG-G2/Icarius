@@ -22,6 +22,7 @@ public class ServerResponse {
             e.printStackTrace();
         }
         response.close();
+        System.out.println(this);
     }
 
     public ServerResponse(int code, String body, Headers headers) {

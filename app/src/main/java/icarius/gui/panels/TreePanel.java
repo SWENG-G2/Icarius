@@ -116,7 +116,7 @@ public class TreePanel extends JScrollPane {
                         // Edit Bird Selection
                         Campus campus = App.db.getCampus(selectedLocationText);
                         Bird bird = campus.getBird(selectedAnimalText);
-                        formPanel.setDetailsPage(bird);
+                        formPanel.setEditPage(bird);
                     }
                     break;
 

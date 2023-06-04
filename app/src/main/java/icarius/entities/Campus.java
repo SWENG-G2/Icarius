@@ -5,6 +5,7 @@ import java.util.List;
 
 import java.util.Iterator;
 
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -77,14 +78,39 @@ public class Campus implements ServerActions {
                 // iterate through child elements of presentation with element name "slide"
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
+                    
+                    // Bird info
                     String birdId = slide.attributeValue("title");
+                    String listImageUrl = "";
+                    String birdName = "";
 
-                    // fetch bird
+                    // Get Bird listImageUrl
+                    for (Iterator<Element> it2 = slide.elementIterator(); it2.hasNext();) {
+                        Element node = it2.next();
+
+                        // Get Bird name
+                        if (node.getData() != "") {
+                            birdName = node.getData().toString();
+                        }
+
+                        if (node.getName().equals("image")) {
+                            for (Iterator<Attribute> it3 = node.attributeIterator(); it3.hasNext();) {
+                                Attribute attribute = it3.next();
+                                if (attribute.getName().equals("url")) {
+                                    listImageUrl = attribute.getData().toString();
+                                }
+                            }
+                        }
+                    }
+
+                    // fetch and add bird
                     Bird bird = new Bird(user);
+                    bird.setName(birdName);
                     bird.setId(Long.parseLong(birdId));
                     bird.setCampusId(id);
+                    bird.setListImageURL(listImageUrl);
                     bird.read(null);
-                    birds.add( bird );
+                    birds.add(bird);
                 }
             } catch (DocumentException e) {
                 e.printStackTrace();

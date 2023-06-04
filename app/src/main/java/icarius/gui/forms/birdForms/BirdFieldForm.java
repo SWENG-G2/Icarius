@@ -3,12 +3,20 @@ package icarius.gui.forms.birdForms;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import icarius.App;
+
 import javax.swing.JTextArea;
 
 //Class to be inherited by the other bird forms, contrains functions which they all use
@@ -97,5 +105,33 @@ public abstract class BirdFieldForm extends JPanel{
         textArea.setLineWrap(true);
 
         return textArea;
+    }
+    
+
+    /**
+     * Create and return image at path specified by url image
+     * @return
+     */
+    protected JLabel getImage(String imageName) {
+        JLabel imageLbl = new JLabel();
+        imageLbl.setName(imageName);
+        BufferedImage buffImage = null;
+        try {
+            System.out.println(UrlPath);                    
+            // TODO - remove when using server
+            if (UrlPath.contains("localhost")) {
+                String[] newPath = UrlPath.split("https://localhost:8080");
+                String path = newPath[newPath.length - 1];
+                UrlPath = App.PENELOPE_STORAGE + path;
+                //UrlPath = UrlPath.replace("https://localhost:8080", App.PENELOPE_STORAGE);
+            }
+            System.out.println(UrlPath);
+            buffImage = ImageIO.read(new File(UrlPath));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
+        imageLbl.setIcon(new ImageIcon(image));
+        return imageLbl;
     }
 }

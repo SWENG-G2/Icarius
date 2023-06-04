@@ -48,7 +48,7 @@ public class EditForm extends JPanel {
             addBirdEditFields((Bird) o, c);
 
         // Add Cancel/Save Buttons
-        addCancelButton(o, c);
+        // addCancelButton(o, c);
         addSaveButton(o, c);
         addDeleteButton(o, c);
     }
@@ -155,7 +155,7 @@ public class EditForm extends JPanel {
     }
 
     private void addSaveButton(Object o, GridBagConstraints c) {
-        c.gridx = 1;
+        c.gridx = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         JButton editButton = new JButton("Save Changes");
         editButton.addActionListener(new ActionListener() {
