@@ -56,7 +56,7 @@ public class HeroImageForm extends BirdFieldForm{
                 for (Component label : getComponents()) {
                     if (label instanceof JLabel)
                     {
-                        if (label.getName().equals(HERO_IMAGE_NAME)){
+                        if (label.getName() == HERO_IMAGE_NAME){
                             remove(label);
                         }
                     }

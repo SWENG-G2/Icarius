@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -74,8 +75,14 @@ public abstract class BirdFieldForm extends JPanel{
 
         // Add TextField
         c.gridx++;
-        c.fill = GridBagConstraints.HORIZONTAL;
         if (placeholderText == null || placeholderText.equals("")) placeholderText = "Upload a file";
+
+        // Get File Name
+        String[] getFileName = placeholderText.split("/");
+        placeholderText = getFileName[getFileName.length - 1];
+
+        //c.gridwidth = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
         JButton button = new JButton(placeholderText);
         button.addActionListener(al);
         button.setPreferredSize(new Dimension(105, 20));
@@ -116,17 +123,20 @@ public abstract class BirdFieldForm extends JPanel{
         JLabel imageLbl = new JLabel();
         imageLbl.setName(imageName);
         BufferedImage buffImage = null;
-        try {
-            System.out.println(UrlPath);                    
+        try {      
+            System.out.println("PATH BEFORE: " + UrlPath);         
             // TODO - remove when using server
             if (UrlPath.contains("localhost")) {
-                String[] newPath = UrlPath.split("https://localhost:8080");
-                String path = newPath[newPath.length - 1];
-                UrlPath = App.PENELOPE_STORAGE + path;
-                //UrlPath = UrlPath.replace("https://localhost:8080", App.PENELOPE_STORAGE);
+                UrlPath = UrlPath.replace("https://localhost:8080", App.PENELOPE_STORAGE);
             }
-            System.out.println(UrlPath);
-            buffImage = ImageIO.read(new File(UrlPath));
+
+            if (UrlPath.contains("http")) {
+                UrlPath = UrlPath.replace(" ", "%20");
+                buffImage = ImageIO.read(new URL(UrlPath));
+            } else {
+                buffImage = ImageIO.read(new File(UrlPath));
+            }   
+            System.out.println("PATH AFTER: " + UrlPath);     
         } catch (Exception e) {
             e.printStackTrace();
         }

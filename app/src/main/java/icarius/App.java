@@ -16,7 +16,7 @@ import icarius.auth.UserClient;
 import icarius.entities.Database;
 
 public class App {
-    public static final String BASE_URL = "https://localhost:8080";
+    public static final String BASE_URL = "https://penelope.barillari.me:8080";
     public static UserClient userClient;
     public static Database db;
     public Gui gui;
@@ -25,7 +25,7 @@ public class App {
     public static final String PENELOPE_STORAGE = "/Desktop/sweng/penelope_storage";
 
     public static void main(String[] args) {
-        userClient = new UserClient(getUnsafeOkHttpClient());
+        userClient = new UserClient(new OkHttpClient());
         Gui gui = new Gui();
     }
 

@@ -57,7 +57,7 @@ public class ListImageForm extends BirdFieldForm{
                 for (Component label : getComponents()) {
                     if (label instanceof JLabel)
                     {
-                        if (label.getName().equals(LIST_IMAGE_NAME)){
+                        if (label.getName() == LIST_IMAGE_NAME){
                             remove(label);
                         }
                     }

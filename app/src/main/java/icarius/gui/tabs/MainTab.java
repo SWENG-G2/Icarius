@@ -55,7 +55,7 @@ public class MainTab extends JPanel {
 
         // Update form panel
         if (campusOrBird != null) {
-            formPanel.setDetailsPage(campusOrBird);
+            formPanel.setEditPage(campusOrBird);
         }
         add(formPanel, BorderLayout.CENTER);
 

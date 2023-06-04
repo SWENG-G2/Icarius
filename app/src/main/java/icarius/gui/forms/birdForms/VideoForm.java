@@ -88,6 +88,9 @@ public class VideoForm extends BirdFieldForm{
                     Image image = thumbnailBuff.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
                     thumbnailLbl.setIcon(new ImageIcon(image));
                     add(thumbnailLbl, c);
+
+                    grabber.close();
+                    converter.close();
                 } catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
                     e.printStackTrace();
                 }

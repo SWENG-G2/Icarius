@@ -274,6 +274,7 @@ public class EditForm extends JPanel {
             c.gridx = 1;
             c.gridy++;
         }
+        c.gridwidth = GridBagConstraints.REMAINDER;
 
         JButton editButton = new JButton("Delete");
 

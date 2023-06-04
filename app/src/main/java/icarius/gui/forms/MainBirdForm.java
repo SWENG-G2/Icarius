@@ -14,7 +14,7 @@ import icarius.gui.forms.birdForms.SoundForm;
 import icarius.gui.forms.birdForms.VideoForm;
 
 public class MainBirdForm extends JPanel{
-    
+    private Bird bird;
 
     public ListImageForm listImageForm;
     public HeroImageForm heroImageForm;
@@ -27,7 +27,8 @@ public class MainBirdForm extends JPanel{
     public DietImageFrom dietImageFrom;
 
     public MainBirdForm(Bird bird, String selectedForm){
-        initializeFields(bird);
+        this.bird = bird;
+        //initializeFields(bird);
         this.setForm(selectedForm);
     }
 
@@ -41,30 +42,39 @@ public class MainBirdForm extends JPanel{
 
         switch (selectedForm) {
             case "List Image":
+                if (listImageForm == null) listImageForm = new ListImageForm(bird);
                 add(listImageForm);
                 break;
             case "Hero Image":
+                if (heroImageForm == null) heroImageForm = new HeroImageForm(bird);
                 add(heroImageForm);
                 break;
             case "Sound":
+                if (soundForm == null) soundForm = new SoundForm(bird);
                 add(soundForm);
                 break;
             case "About":
+                if (aboutForm == null) aboutForm = new AboutForm(bird);
                 add(aboutForm);
                 break;
             case "Video":
+                if (videoForm == null) videoForm = new VideoForm(bird);
                 add(videoForm);
                 break;
             case "Location":
+                if (locationForm == null) locationForm = new LocationForm(bird);
                 add(locationForm);
                 break;
             case "Location Image":
+                if (locationImageForm == null) locationImageForm = new LocationImageForm(bird);
                 add(locationImageForm);
                 break;
             case "Diet":
+                if (dietForm == null) dietForm = new DietForm(bird);
                 add(dietForm);
                 break;
             case "Diet Image":
+                if (dietImageFrom == null) dietImageFrom = new DietImageFrom(bird);
                 add(dietImageFrom);
                 break;
             default:

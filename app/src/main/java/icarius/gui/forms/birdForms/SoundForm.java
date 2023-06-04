@@ -33,12 +33,13 @@ public class SoundForm extends BirdFieldForm{
         GridBagConstraints c = configure();
         c.gridx = 0;
         c.gridy = 1;
-        c.fill = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.HORIZONTAL;
 
         UploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadAudio());
 
-        c.gridx = 2;
+        c.gridx = 1;
         c.gridy = 2;
+        c.fill = GridBagConstraints.REMAINDER;
         JButton audioButton = new JButton("Play audio");
         add(audioButton, c);
 
@@ -79,7 +80,17 @@ public class SoundForm extends BirdFieldForm{
                         } catch (IOException e) {
                             e.printStackTrace();
                         }       
-                    }                
+                    } 
+                    
+                      
+                    try {
+                        grabber.close();
+                        System.out.println("grabber close");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

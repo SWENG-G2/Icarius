@@ -56,7 +56,7 @@ public class LocationImageForm extends BirdFieldForm{
                 for (Component label : getComponents()) {
                     if (label instanceof JLabel)
                     {
-                        if (label.getName().equals(LOCATION_IMAGE_NAME)){
+                        if (label.getName() == LOCATION_IMAGE_NAME){
                             remove(label);
                         }
                     }
