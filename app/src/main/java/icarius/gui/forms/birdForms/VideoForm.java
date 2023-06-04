@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -19,14 +20,15 @@ import icarius.entities.Bird;
 import static icarius.services.FileUploadService.*;
 
 public class VideoForm extends BirdFieldForm{
-    public VideoForm(Bird bird){
+    public VideoForm(Bird bird, HashMap<String, String> changedParams){
+        super(changedParams);
         // Configure Layout
         GridBagConstraints c = configure();
         c.gridx = 2;
         c.gridy = 0;
         c.fill = GridBagConstraints.REMAINDER;
 
-        UploadButton = addFileUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
+        uploadButton = addFileUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
     }
 
     public VideoForm(){
@@ -35,7 +37,7 @@ public class VideoForm extends BirdFieldForm{
         c.gridx = 2;
         c.gridy = 0;
 
-        UploadButton = addFileUploadField("Video:", "", c, uploadVideo());
+        uploadButton = addFileUploadField("Video:", "", c, uploadVideo());
     }
 
     public ActionListener uploadVideo() {
@@ -62,15 +64,18 @@ public class VideoForm extends BirdFieldForm{
                 // Upload file
                 File file = selectLocalFile("Video");
                 if (file == null) return;
-                UploadButton.setText("File selected: " + file.getName());
-                UrlPath = file.getPath();
+                uploadButton.setText("File selected: " + file.getName());
+                urlPath = file.getPath();
+                
+                if (changedParams != null)
+                    changedParams.put("aboutMeVideoURL", urlPath);
 
                 // Displays video thumbnail
-                BufferedImage thumbnailBuff = null;
                 JLabel thumbnailLbl = new JLabel();
                 thumbnailLbl.setName(video);
                 try {
-                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(UrlPath);
+                    BufferedImage thumbnailBuff = null;
+                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(urlPath);
                     grabber.start();
 
                     Java2DFrameConverter converter = new Java2DFrameConverter();

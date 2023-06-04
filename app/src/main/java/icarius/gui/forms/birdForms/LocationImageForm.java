@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
 
@@ -15,8 +16,9 @@ import static icarius.services.FileUploadService.*;
 public class LocationImageForm extends BirdFieldForm{
     private String LOCATION_IMAGE_NAME = "Location Image";
     
-    public LocationImageForm(Bird bird){
-        UrlPath = bird.getLocationImageURL();
+    public LocationImageForm(Bird bird, HashMap<String, String> changedParams){
+        super(changedParams);
+        urlPath = bird.getLocationImageURL();
         
         // Configure Layout
         GridBagConstraints c = configure();
@@ -24,7 +26,7 @@ public class LocationImageForm extends BirdFieldForm{
         c.gridy = 0;
         c.fill = GridBagConstraints.REMAINDER;
 
-        UploadButton = addFileUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
+        uploadButton = addFileUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
     
         c.gridx = 0;
         c.gridy++;
@@ -39,7 +41,7 @@ public class LocationImageForm extends BirdFieldForm{
         c.gridx = 2;
         c.gridy = 0;
 
-        UploadButton = addFileUploadField("Location Image:", "", c, uploadLocationImage());
+        uploadButton = addFileUploadField("Location Image:", "", c, uploadLocationImage());
     }
 
     public ActionListener uploadLocationImage() {
@@ -65,9 +67,12 @@ public class LocationImageForm extends BirdFieldForm{
                 //Upload Image
                 File file = selectLocalFile("Image");
                 if (file == null) return;
-                UploadButton.setText("File selected: " + file.getName());
-                UrlPath = file.getPath();
+                uploadButton.setText("File selected: " + file.getName());
+                urlPath = file.getPath();
 
+                
+                if (changedParams != null)
+                    changedParams.put("locationImageURL", urlPath);
 
                 // Adds image to frame
                 add(getImage(LOCATION_IMAGE_NAME), c);

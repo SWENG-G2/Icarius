@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
 
@@ -15,8 +16,9 @@ import static icarius.services.FileUploadService.*;
 public class HeroImageForm extends BirdFieldForm{
     private String HERO_IMAGE_NAME = "Hero Image";
     
-    public HeroImageForm(Bird bird){
-        UrlPath = bird.getHeroImageURL();
+    public HeroImageForm(Bird bird, HashMap<String, String> changedParams){
+        super(changedParams);
+        urlPath = bird.getHeroImageURL();
 
         // Configure Layout
         GridBagConstraints c = configure();
@@ -24,7 +26,7 @@ public class HeroImageForm extends BirdFieldForm{
         c.gridy = 0;
         c.fill = GridBagConstraints.REMAINDER;
 
-        UploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
+        uploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
 
         c.gridx = 0;
         c.gridy++;
@@ -34,12 +36,13 @@ public class HeroImageForm extends BirdFieldForm{
     }
 
     public HeroImageForm(){
+        super(null);
         // Configure Layout
         GridBagConstraints c = configure();
         c.gridx = 2;
         c.gridy = 0;
 
-        UploadButton = addFileUploadField("Hero Image:", "", c, uploadHeroImage());
+        uploadButton = addFileUploadField("Hero Image:", "", c, uploadHeroImage());
     }
 
     public ActionListener uploadHeroImage() {
@@ -65,9 +68,11 @@ public class HeroImageForm extends BirdFieldForm{
                 //Upload Image
                 File file = selectLocalFile("Image");
                 if (file == null) return;
-                UploadButton.setText("File selected: " + file.getName());
-                UrlPath = file.getPath();
+                uploadButton.setText("File selected: " + file.getName());
+                urlPath = file.getPath();
 
+                if (changedParams != null)
+                    changedParams.put("heroImageURL", urlPath);
 
                 // Adds image to frame
                 add(getImage(HERO_IMAGE_NAME), c);

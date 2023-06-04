@@ -6,6 +6,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -35,6 +37,7 @@ public class EditForm extends JPanel {
             "Location", "Location Image", "Diet", "Diet Image" };
 
     private MainBirdForm birdForm;
+
 
     // Edit Page
     public EditForm(Object o) {
@@ -202,47 +205,17 @@ public class EditForm extends JPanel {
                         }
 
                         // Update Bird entity with TextField Values
-                        b.setName(newBirdName);
-                        b.setAboutMe(birdForm.aboutForm.textArea.getText());
-                        b.setLocation(birdForm.locationForm.textArea.getText());
-                        b.setDiet(birdForm.dietForm.textArea.getText());
+                        HashMap<String, String> changedParams = birdForm.getChangeParams();
+                        changedParams.forEach((reqParameter, localFile) -> {
+                            String fileUrl = uploadFile(App.userClient, cID, localFile, reqParameter, null);
+                            if(fileUrl != null)
+                                changedParams.put(reqParameter, fileUrl);
+                        });
 
-                        // If file uploaded, Upload Files, then update Bird entity File Path
-                        String listImageUrlPath = birdForm.listImageForm.UrlPath;
-                        if (listImageUrlPath != null) {
-                            listImageUrlPath = uploadFile(App.userClient, cID, listImageUrlPath, "image", null);
-                            b.setListImageURL(listImageUrlPath);
-                        }
-
-                        String heroImageUrlPath = birdForm.heroImageForm.UrlPath;
-                        if (heroImageUrlPath != null) {
-                            heroImageUrlPath = uploadFile(App.userClient, cID, heroImageUrlPath, "image", null);
-                            b.setHeroImageURL(heroImageUrlPath);
-                        }
-
-                        String soundURLPath = birdForm.soundForm.UrlPath;
-                        if (soundURLPath != null) {
-                            soundURLPath = uploadFile(App.userClient, cID, soundURLPath, "audio", null);
-                            b.setSoundURL(soundURLPath);
-                        }
-
-                        String videoUrlPath = birdForm.videoForm.UrlPath;
-                        if (videoUrlPath != null) {
-                            videoUrlPath = uploadFile(App.userClient, cID, videoUrlPath, "video", null);
-                            b.setAboutMeVideoURL(videoUrlPath);
-                        }
-
-                        String locationImageUrlPath = birdForm.locationImageForm.UrlPath;
-                        if (locationImageUrlPath != null) {
-                            locationImageUrlPath = uploadFile(App.userClient, cID, locationImageUrlPath, "image", null);
-                            b.setLocationImageURL(locationImageUrlPath);
-                        }
-
-                        String dietImageUrlPath = birdForm.dietImageFrom.UrlPath;
-                        if (dietImageUrlPath != null) {
-                            dietImageUrlPath = uploadFile(App.userClient, cID, dietImageUrlPath, "image", null);
-                            b.setDietImageURL(dietImageUrlPath);
-                        }
+                        changedParams.put("name", newBirdName);
+                        changedParams.put("aboutMe", birdForm.aboutForm.textArea.getText());
+                        changedParams.put("location", birdForm.locationForm.textArea.getText());
+                        changedParams.put("diet", birdForm.dietForm.textArea.getText());
 
                         // Send Update Bird Request
                         if (b.update(App.userClient, null)) {

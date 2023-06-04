@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -26,8 +27,9 @@ import icarius.entities.Bird;
 import static icarius.services.FileUploadService.*;
 
 public class SoundForm extends BirdFieldForm{
-    public SoundForm(Bird bird){
-        UrlPath = bird.getSoundURL();
+    public SoundForm(Bird bird, HashMap<String, String> changedParams){
+        super(changedParams);
+        urlPath = bird.getSoundURL();
 
         // Configure Layout
         GridBagConstraints c = configure();
@@ -35,7 +37,7 @@ public class SoundForm extends BirdFieldForm{
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        UploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadAudio());
+        uploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadAudio());
 
         c.gridx = 1;
         c.gridy = 2;
@@ -46,8 +48,10 @@ public class SoundForm extends BirdFieldForm{
         audioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (UrlPath!= null){
-                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(UrlPath);     
+                if (urlPath!= null){
+                    urlPath = urlPath.replace(" ", "%20");
+
+                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(urlPath);     
                     try {
                         grabber.start();
                         System.out.println("grabber start");
@@ -66,7 +70,8 @@ public class SoundForm extends BirdFieldForm{
                             //soundLine.open(audioFormat);
                             //soundLine.start();
                             //Only works with wav:
-                            AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL("file:///" + UrlPath));
+                            //AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL("file:///" + UrlPath));
+                            AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL(urlPath));
                             Clip clip = AudioSystem.getClip();
                             clip.open(audioIn);
                             clip.start();
@@ -102,7 +107,7 @@ public class SoundForm extends BirdFieldForm{
         c.gridx = 0;
         c.gridy = 1;
 
-        UploadButton = addFileUploadField("Sound:", "", c, uploadAudio());
+        uploadButton = addFileUploadField("Sound:", "", c, uploadAudio());
 
         JButton audioButton = new JButton("Play audio");
         c.gridx = 2;
@@ -112,8 +117,8 @@ public class SoundForm extends BirdFieldForm{
         audioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (UrlPath!= null){
-                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(UrlPath);     
+                if (urlPath!= null){
+                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(urlPath);     
                     try {
                         grabber.start();
                         System.out.println("grabber start");
@@ -132,7 +137,7 @@ public class SoundForm extends BirdFieldForm{
                             //soundLine.open(audioFormat);
                             //soundLine.start();
                             //Only works with wav:
-                            AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL("file:///" + UrlPath));
+                            AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL("file:///" + urlPath));
                             Clip clip = AudioSystem.getClip();
                             clip.open(audioIn);
                             clip.start();
@@ -167,8 +172,12 @@ public class SoundForm extends BirdFieldForm{
                 // Upload file
                 File file = selectLocalFile("Audio");
                 if (file == null) return;
-                UploadButton.setText("File selected: " + file.getName());
-                UrlPath = file.getPath();
+                uploadButton.setText("File selected: " + file.getName());
+                urlPath = file.getPath();
+
+                
+                if (changedParams != null)
+                    changedParams.put("soundURL", urlPath);
             }
         };
     } 

@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
 
@@ -12,35 +13,35 @@ import icarius.entities.Bird;
 
 import static icarius.services.FileUploadService.*;
 
-
-public class DietImageFrom extends BirdFieldForm{
+public class DietImageForm extends BirdFieldForm {
     private String DIET_IMAGE_NAME = "Diet Image";
-    
-    public DietImageFrom(Bird bird){
-        UrlPath = bird.getDietImageURL();
-        
+
+    public DietImageForm(Bird bird, HashMap<String, String> changedParams) {
+        super(changedParams);
+        urlPath = bird.getDietImageURL();
+
         // Configure Layout
         GridBagConstraints c = configure();
         c.gridx = 2;
         c.gridy = 0;
         c.fill = GridBagConstraints.REMAINDER;
 
-        UploadButton = addFileUploadField("Diet Image:", bird.getDietImageURL(), c, uploadDietImage());
-        
+        uploadButton = addFileUploadField("Diet Image:", bird.getDietImageURL(), c, uploadDietImage());
+
         c.gridx = 0;
         c.gridy++;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        add(getImage(DIET_IMAGE_NAME), c);  
+        add(getImage(DIET_IMAGE_NAME), c);
     }
 
-    public DietImageFrom(){
+    public DietImageForm() {
         // Configure Layout
         GridBagConstraints c = configure();
         c.gridx = 2;
         c.gridy = 0;
 
-        UploadButton = addFileUploadField("Diet Image:", "", c, uploadDietImage());
+        uploadButton = addFileUploadField("Diet Image:", "", c, uploadDietImage());
     }
 
     public ActionListener uploadDietImage() {
@@ -55,20 +56,22 @@ public class DietImageFrom extends BirdFieldForm{
 
                 // Removes previous image
                 for (Component label : getComponents()) {
-                    if (label instanceof JLabel)
-                    {
-                        if (label.getName() == DIET_IMAGE_NAME){
+                    if (label instanceof JLabel) {
+                        if (label.getName() == DIET_IMAGE_NAME) {
                             remove(label);
                         }
                     }
                 }
 
-                //Upload Image
+                // Upload Image
                 File file = selectLocalFile("Image");
-                if (file == null) return;
-                UploadButton.setText("File selected: " + file.getName());
-                UrlPath = file.getPath();
+                if (file == null)
+                    return;
+                uploadButton.setText("File selected: " + file.getName());
+                urlPath = file.getPath();
 
+                if (changedParams != null)
+                    changedParams.put("dietImageURL", urlPath);
 
                 // Adds image to frame
                 add(getImage(DIET_IMAGE_NAME), c);

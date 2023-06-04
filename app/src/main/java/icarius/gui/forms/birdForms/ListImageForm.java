@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
 
@@ -16,8 +17,9 @@ import static icarius.services.FileUploadService.*;
 public class ListImageForm extends BirdFieldForm{
     private String LIST_IMAGE_NAME = "List Image";
     
-    public ListImageForm(Bird bird){
-        UrlPath = bird.getListImageURL();
+    public ListImageForm(Bird bird, HashMap<String, String> changedParams){
+        super(changedParams);
+        urlPath = bird.getListImageURL();
 
         // Configure Layout
         GridBagConstraints c = configure();
@@ -25,7 +27,7 @@ public class ListImageForm extends BirdFieldForm{
         c.gridy = 0;
         c.fill = GridBagConstraints.REMAINDER;
 
-        UploadButton = addFileUploadField("List Image:", UrlPath, c, uploadListImage());
+        uploadButton = addFileUploadField("List Image:", urlPath, c, uploadListImage());
 
         c.gridx = 0;
         c.gridy++;
@@ -40,7 +42,7 @@ public class ListImageForm extends BirdFieldForm{
         c.gridx = 2;
         c.gridy = 0;
 
-        UploadButton = addFileUploadField("List Image:", "", c, uploadListImage());               
+        uploadButton = addFileUploadField("List Image:", "", c, uploadListImage());               
     }
 
     public ActionListener uploadListImage() {
@@ -66,9 +68,12 @@ public class ListImageForm extends BirdFieldForm{
                 //Upload Image
                 File file = selectLocalFile("Image");
                 if (file == null) return;
-                UploadButton.setText("File selected: " + file.getName());
-                UrlPath = file.getPath();
+                uploadButton.setText("File selected: " + file.getName());
+                urlPath = file.getPath();
 
+
+                if (changedParams != null)
+                    changedParams.put("listImageURL", urlPath);
 
                 // Adds image to frame
                 add(getImage(LIST_IMAGE_NAME), c);

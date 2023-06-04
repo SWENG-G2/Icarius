@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -22,16 +23,22 @@ import javax.swing.JTextArea;
 
 //Class to be inherited by the other bird forms, contrains functions which they all use
 public abstract class BirdFieldForm extends JPanel{
+    protected final HashMap<String, String> changedParams;
 
     public JTextField textField;
 
     public JTextArea textArea;
 
-    protected JButton UploadButton;
+    protected JButton uploadButton;
 
-    public String UrlPath;
+    public String urlPath;
 
-    public BirdFieldForm(){
+    public BirdFieldForm(HashMap<String, String> changedParams){
+        this.changedParams = changedParams;
+    }
+
+    public BirdFieldForm() {
+        this.changedParams = null;
     }
 
     protected GridBagConstraints configure() {
@@ -78,14 +85,16 @@ public abstract class BirdFieldForm extends JPanel{
         if (placeholderText == null || placeholderText.equals("")) placeholderText = "Upload a file";
 
         // Get File Name
-        String[] getFileName = placeholderText.split("/");
-        placeholderText = getFileName[getFileName.length - 1];
+        // String[] getFileName = placeholderText.split("/");
+        // placeholderText = getFileName[getFileName.length - 1];
+        placeholderText = placeholderText.replace(App.BASE_URL + "/", "");
 
         //c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         JButton button = new JButton(placeholderText);
         button.addActionListener(al);
         button.setPreferredSize(new Dimension(105, 20));
+
         add(button, c);
 
         // Increment y for next item
@@ -122,26 +131,35 @@ public abstract class BirdFieldForm extends JPanel{
     protected JLabel getImage(String imageName) {
         JLabel imageLbl = new JLabel();
         imageLbl.setName(imageName);
-        BufferedImage buffImage = null;
-        try {      
-            System.out.println("PATH BEFORE: " + UrlPath);         
-            // TODO - remove when using server
-            if (UrlPath.contains("localhost")) {
-                UrlPath = UrlPath.replace("https://localhost:8080", App.PENELOPE_STORAGE);
+        new Thread() {
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                super.run();
+                BufferedImage buffImage = null;
+                try {      
+                    //System.out.println("PATH BEFORE: " + UrlPath);         
+                    // TODO - remove when using server
+                    if (urlPath.contains("localhost")) {
+                        urlPath = urlPath.replace("https://localhost:8080", App.PENELOPE_STORAGE);
+                    }
+        
+                    if (urlPath.contains("http")) {
+                        urlPath = urlPath.replace(" ", "%20");
+                        buffImage = ImageIO.read(new URL(urlPath).openStream());
+                    } else {
+                        buffImage = ImageIO.read(new File(urlPath));
+                    }   
+                    //System.out.println("PATH AFTER: " + UrlPath);     
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (buffImage != null) {
+                    Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
+                    imageLbl.setIcon(new ImageIcon(image));
+                }
             }
-
-            if (UrlPath.contains("http")) {
-                UrlPath = UrlPath.replace(" ", "%20");
-                buffImage = ImageIO.read(new URL(UrlPath));
-            } else {
-                buffImage = ImageIO.read(new File(UrlPath));
-            }   
-            System.out.println("PATH AFTER: " + UrlPath);     
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
-        imageLbl.setIcon(new ImageIcon(image));
+        }.run();
         return imageLbl;
     }
 }

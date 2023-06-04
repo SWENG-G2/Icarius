@@ -22,6 +22,7 @@ import icarius.gui.tabs.MainTab;
 import icarius.http.ConnectionException;
 
 import static icarius.services.FileUploadService.*;
+import static icarius.services.FileDetails.*;
 
 public class AddForm extends JPanel {
     private Campus campus;
@@ -199,8 +200,8 @@ public class AddForm extends JPanel {
                 
                 String[] fieldValues = {textFieldValue, birdForm.aboutForm.textArea.getText(),
                     birdForm.locationForm.textArea.getText(), birdForm.dietForm.textArea.getText(),
-                    birdForm.listImageForm.UrlPath, birdForm.heroImageForm.UrlPath, birdForm.soundForm.UrlPath,
-                    birdForm.videoForm.UrlPath, birdForm.locationImageForm.UrlPath, birdForm.dietImageFrom.UrlPath};
+                    birdForm.listImageForm.urlPath, birdForm.heroImageForm.urlPath, birdForm.soundForm.urlPath,
+                    birdForm.videoForm.urlPath, birdForm.locationImageForm.urlPath, birdForm.dietImageFrom.urlPath};
 
                 // Confirm bird name textfield is not blank
                 for (String fieldValue : fieldValues){
@@ -231,22 +232,22 @@ public class AddForm extends JPanel {
 
                 Long cID = newBird.getCampusId();
 
-                String listImageUrlPath = uploadFile(App.userClient, cID, birdForm.listImageForm.UrlPath, "image", null);
+                String listImageUrlPath = uploadFile(App.userClient, cID, birdForm.listImageForm.urlPath, LIST_IMAGE_URL, null);
                 newBird.setListImageURL(listImageUrlPath);
 
-                String heroImageUrlPath = uploadFile(App.userClient, cID, birdForm.heroImageForm.UrlPath, "image", null);
+                String heroImageUrlPath = uploadFile(App.userClient, cID, birdForm.heroImageForm.urlPath, HERO_IMAGE_URL, null);
                 newBird.setHeroImageURL(heroImageUrlPath);
 
-                String soundURLPath = uploadFile(App.userClient, cID, birdForm.soundForm.UrlPath, "audio", null);
+                String soundURLPath = uploadFile(App.userClient, cID, birdForm.soundForm.urlPath, SOUND_URL, null);
                 newBird.setSoundURL(soundURLPath);
 
-                String videoUrlPath = uploadFile(App.userClient, cID, birdForm.videoForm.UrlPath, "video", null);
+                String videoUrlPath = uploadFile(App.userClient, cID, birdForm.videoForm.urlPath, VIDEO_URL, null);
                 newBird.setAboutMeVideoURL(videoUrlPath);
 
-                String locationImageUrlPath = uploadFile(App.userClient, cID, birdForm.locationImageForm.UrlPath, "image", null);
+                String locationImageUrlPath = uploadFile(App.userClient, cID, birdForm.locationImageForm.urlPath, LOCATION_IMAGE_URL, null);
                 newBird.setLocationImageURL(locationImageUrlPath);
 
-                String dietImageUrlPath = uploadFile(App.userClient, cID, birdForm.dietImageFrom.UrlPath, "image", null);
+                String dietImageUrlPath = uploadFile(App.userClient, cID, birdForm.dietImageFrom.urlPath, DIET_IMAGE_URL, null);
                 newBird.setDietImageURL(dietImageUrlPath);
 
 

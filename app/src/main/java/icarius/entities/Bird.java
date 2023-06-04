@@ -9,6 +9,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import icarius.App;
 import icarius.auth.UserClient;
 import icarius.http.DeleteRequest;
 import icarius.http.GetRequest;
@@ -34,6 +35,7 @@ public class Bird implements ServerActions {
     private String dietImageURL;
 
     private UserClient user;
+    private HashMap<String, String> changedParams;
 
     public Bird(UserClient user) {
         this.user = user;
@@ -170,18 +172,21 @@ public class Bird implements ServerActions {
         if (request == null)
             request = new PatchRequest("/api/birds/" + campusId + "/edit", user);
 
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("id", Long.toString(this.getId()));
-        parameters.put("name", this.name);
-        parameters.put("heroImageURL", heroImageURL);
-        parameters.put("soundURL", soundURL);
-        parameters.put("aboutMe", aboutMe);
-        parameters.put("aboutMeVideoURL", aboutMeVideoURL);
-        parameters.put("location", location);
-        parameters.put("locationImageURL", locationImageURL);
-        parameters.put("diet", diet);
-        parameters.put("dietImageURL", dietImageURL);
-        request.addParameters(parameters);
+        // HashMap<String, String> parameters = new HashMap<>();
+        // parameters.put("id", Long.toString(this.getId()));
+        // parameters.put("name", this.name);
+        // parameters.put("listImageURL", listImageURL);
+        // parameters.put("heroImageURL", heroImageURL.replace(App.BASE_URL+"/",""));
+        // parameters.put("soundURL", soundURL.replace(App.BASE_URL+"/",""));
+        // parameters.put("aboutMe", aboutMe);
+        // parameters.put("aboutMeVideoURL", aboutMeVideoURL.replace(App.BASE_URL+"/",""));
+        // parameters.put("location", location);
+        // parameters.put("locationImageURL", locationImageURL.replace(App.BASE_URL+"/",""));
+        // parameters.put("diet", diet);
+        // parameters.put("dietImageURL", dietImageURL.replace(App.BASE_URL+"/",""));
+        // request.addParameters(parameters);
+        changedParams.put("id", Long.toString(this.getId()));
+        request.addParameters(changedParams);
 
         // Return TRUE if update request success, else FALSE
         return request.send().isSuccessful();
@@ -205,6 +210,11 @@ public class Bird implements ServerActions {
 
         // Return TRUE if delete request success, else FALSE
         return response.isSuccessful();
+    }
+
+    public HashMap<String, String> clearParams() {
+        changedParams = new HashMap<>();
+        return changedParams;
     }
 
     @Override
