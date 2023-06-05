@@ -35,6 +35,9 @@ public class ServerRequestTest {
         IntStream.range(0, parameters.length).forEach(idx -> requestParams.put(parameters[idx], parametersValues[idx]));
     }
 
+    /**
+     * Test request can format url without authorisation
+     */
     @Test
     public void canFormatNoAuthURL() {
         ServerRequest classUnderTest = Mockito.mock(ServerRequest.class, Answers.CALLS_REAL_METHODS);
@@ -61,6 +64,11 @@ public class ServerRequestTest {
         assertEquals(expectedUrl.toString(), generatedUrl.toString());
     }
 
+    /**
+     * Test request can handle IOException when executed
+     * 
+     * @throws IOException
+     */
     @Test
     public void canHandleIOExceptionInRequestExecution() throws IOException {
         ServerRequest classUnderTest = Mockito.mock(ServerRequest.class, Answers.CALLS_REAL_METHODS);
