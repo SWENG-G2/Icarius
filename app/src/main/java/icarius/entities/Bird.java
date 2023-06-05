@@ -39,6 +39,10 @@ public class Bird implements ServerActions {
         this.user = user;
     }
 
+    /**
+     * Creates a new post request, puts the parameter values of the new
+     * bird in the request. Then, a response of the bird id is received.
+     */
     @Override
     public Boolean create(UserClient user, PostRequest request) {
         // If required field not set, throw exception
@@ -65,12 +69,18 @@ public class Bird implements ServerActions {
         ServerResponse response = request.send();
 
         // Print response and return created bird Id
-        System.out.println(response.getBody());
         String responseBody = response.getBody().replaceAll("[^0-9]", "");
         this.id = Long.valueOf(responseBody);
         return response.isSuccessful();
     }
 
+    /**
+     * Sends a request to the server to get the xml response of the bird's
+     * information. Then,
+     * it iterates through each slide, node and attribute to find the required
+     * information
+     * of the bird.
+     */
     @Override
     public Boolean read(GetRequest request) {
         // If required field not set, throw exception
@@ -160,6 +170,10 @@ public class Bird implements ServerActions {
         }
     }
 
+    /**
+     * Puts all the current (updated) parameters of the bird into a patch request
+     * then sends the request to the server.
+     */
     @Override
     public Boolean update(UserClient user, PatchRequest request) {
         // If required field not set, throw exception
@@ -174,6 +188,7 @@ public class Bird implements ServerActions {
         parameters.put("id", Long.toString(this.getId()));
         parameters.put("name", this.name);
         parameters.put("heroImageURL", heroImageURL);
+        parameters.put("listImageURL", listImageURL);
         parameters.put("soundURL", soundURL);
         parameters.put("aboutMe", aboutMe);
         parameters.put("aboutMeVideoURL", aboutMeVideoURL);
@@ -187,6 +202,9 @@ public class Bird implements ServerActions {
         return request.send().isSuccessful();
     }
 
+    /**
+     * It gets the id of the bird off the server and sends a delete request.
+     */
     @Override
     public Boolean delete(UserClient user, DeleteRequest request) {
         // If required field not set, throw exception
@@ -199,9 +217,6 @@ public class Bird implements ServerActions {
 
         request.addParameter("id", String.valueOf(id));
         ServerResponse response = request.send();
-
-        // Print response
-        System.out.println(response.getBody());
 
         // Return TRUE if delete request success, else FALSE
         return response.isSuccessful();

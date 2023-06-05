@@ -1,15 +1,13 @@
 package icarius.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -24,18 +22,14 @@ import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
 
 public class BirdTest {
-    private static final String[] parameters = { "name", "heroImageURL", "soundURL", "aboutMe",
+    private static final String[] parameters = { "name", "listImageURL", "heroImageURL", "soundURL", "aboutMe",
             "abountMeVideoURL", "location", "locationImageURL", "diet", "dietImageURL" };
-    private static final String[] parametersValues = { "Dalia", "heroImage.png", "quack.mp3",
+    private static final String[] parametersValues = { "Dalia", "listimage.png", "heroImage.png", "quack.mp3",
             "Birthday 20 days ago.", "abountMeVideo.mp4", "3rd floor lab", "location.png", "Avocados and kikos",
             "diet.png" };
-    private static final HashMap<String, String> requestParams = new HashMap<>();
-
-    private static final long id = 22;
-    private static final String RESPONSE_BODY_ID = "id: " + id;
-    private static final String RESPONSE_BODY_NAME = "name: " + parameters[0];
+    private static final long id = 9;
     private static Bird testBird;
-
+    private static final HashMap<String, String> requestParams = new HashMap<>();
     private static final String birdReadXML = "<presentation xmlns=\"urn:SWENG\" xmlns:SWENG=\"https://raw.githubusercontent.com/SWENG-G2/xml_standard/proposal-1/standard.xsd\">"
             +
             "<info>" +
@@ -74,6 +68,10 @@ public class BirdTest {
             "</slide>\n" +
             "</presentation>\n";
 
+    /**
+     * This sets up the test bird, places all the parameter values (bird name,
+     * location, diet image,etc) with their coressponding key
+     */
     @BeforeAll
     static void setUp() {
         IntStream.range(0, parameters.length).forEach(idx -> requestParams.put(parameters[idx], parametersValues[idx]));
@@ -82,30 +80,56 @@ public class BirdTest {
         UserClient userMock = Mockito.mock(UserClient.class);
         testBird = new Bird(userMock);
         testBird.setName(parametersValues[0]);
-        testBird.setHeroImageURL(parametersValues[1]);
-        testBird.setSoundURL(parametersValues[2]);
-        testBird.setAboutMe(parametersValues[3]);
-        testBird.setAboutMeVideoURL(parametersValues[4]);
-        testBird.setLocation(parametersValues[5]);
-        testBird.setLocationImageURL(parametersValues[6]);
-        testBird.setDiet(parametersValues[7]);
+        testBird.setListImageURL(parametersValues[1]);
+        testBird.setHeroImageURL(parametersValues[2]);
+        testBird.setSoundURL(parametersValues[3]);
+        testBird.setAboutMe(parametersValues[4]);
+        testBird.setAboutMeVideoURL(parametersValues[5]);
+        testBird.setLocation(parametersValues[6]);
+        testBird.setLocationImageURL(parametersValues[7]);
+        testBird.setDiet(parametersValues[8]);
+        testBird.setDietImageURL(parametersValues[9]);
     }
 
+    /**
+     * Creates a mock post request that returns a mock response
+     * when the request is sent. Then the parameter values are
+     * put into a hashmap and is compared to the parameters that
+     * are added to the request in the method under test.
+     */
     @Test
-    void canCreateBird() throws IOException {
-        // Mock request
-        PostRequest mockRequest = Mockito.mock(PostRequest.class);
+    void canCreateBird() {
+        PostRequest mockPostRequest = Mockito.mock(PostRequest.class);
 
-        ServerResponse response = new ServerResponse(200, RESPONSE_BODY_ID, null);
-        doReturn(response).when(mockRequest).send();
-
+        ServerResponse postResponse = new ServerResponse(200, Long.toString(id), null);
+        doReturn(postResponse).when(mockPostRequest).send();
         // Test Method
-        assertTrue(testBird.create(null, mockRequest));
 
-        // TODO - assert parameters where added to request
-        assertEquals(id, testBird.getId());
+        assertTrue(testBird.create(null, mockPostRequest));
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("name", parametersValues[0]);
+        parameters.put("listImageURL", parametersValues[1]);
+        parameters.put("heroImageURL", parametersValues[2]);
+        parameters.put("soundURL", parametersValues[3]);
+        parameters.put("aboutMe", parametersValues[4]);
+        parameters.put("aboutMeVideoURL", parametersValues[5]);
+        parameters.put("location", parametersValues[6]);
+        parameters.put("locationImageURL", parametersValues[7]);
+        parameters.put("diet", parametersValues[8]);
+        parameters.put("dietImageURL", parametersValues[9]);
+
+        verify(mockPostRequest, times(1)).addParameters(parameters);
+        assertEquals(testBird.getId(), id);
     }
 
+    /**
+     * Creates a blank bird object, mock get request which returns a response when
+     * the request is sent. Then we try and read the bird from the server without
+     * the id being set, then once the id is set we read the bird. Then each
+     * parameter read from the server is compared to the parameetrs set on the bird
+     * object.
+     */
     @Test
     void canReadBird() {
         Bird blankBird = new Bird(null);
@@ -132,14 +156,20 @@ public class BirdTest {
         assertEquals(parametersValues[8], blankBird.getDietImageURL());
     }
 
+    /**
+     * Creates a mock patch request and response for when the request is sent. It
+     * changes the parameters of the test bird and puts the new parameters into a
+     * hashmap and compares the hashmap to what was added to the request in the
+     * method under test.
+     */
     @Test
     void canUpdateBird() {
-
         PatchRequest mockPatchRequest = Mockito.mock(PatchRequest.class);
         ServerResponse patchResponse = new ServerResponse(200, "", null);
         doReturn(patchResponse).when(mockPatchRequest).send();
 
         String newBirdieName = "Dophelia";
+        String newBirdieListImageURL = "listimageimageimage.png";
         String newBirdieHeroImageURL = "quack.png";
         String newBirdieSoundURL = "squaaaaaark.mp3";
         String newBirdieAboutMe = "tall and beautiful";
@@ -150,12 +180,13 @@ public class BirdTest {
         String newBirdieDietImageURL = "halloumi.png";
 
         testBird.setName(newBirdieName);
+        testBird.setListImageURL(newBirdieListImageURL);
         testBird.setHeroImageURL(newBirdieHeroImageURL);
         testBird.setSoundURL(newBirdieSoundURL);
         testBird.setAboutMe(newBirdieAboutMe);
         testBird.setAboutMeVideoURL(newBirdieAboutMeVideoURL);
         testBird.setLocation(newBirdieLocation);
-        testBird.setListImageURL(newBirdieLocationImageURL);
+        testBird.setLocationImageURL(newBirdieLocationImageURL);
         testBird.setDiet(newBirdieDiet);
         testBird.setDietImageURL(newBirdieDietImageURL);
 
@@ -165,36 +196,37 @@ public class BirdTest {
             e.printStackTrace();
         }
         testBird.setId(id);
-        assertTrue(testBird.update(null, mockPatchRequest));
+        testBird.update(null, mockPatchRequest);
 
-        // Confirm information added to request
-        // HashMap<String, String> sentRequestParams = mockPatchRequest.getParams();
-        // assertNull(sentRequestParams);
-        // assertEquals(newBirdieName, sentRequestParams.get("name"));
-        // assertEquals(newBirdieHeroImageURL, sentRequestParams.get("heroImageURL"));
-        // assertEquals(newBirdieSoundURL, sentRequestParams.get("soundURL"));
-        // assertEquals(newBirdieAboutMe, sentRequestParams.get("aboutMe"));
-        // assertEquals(newBirdieAboutMeVideoURL,
-        // sentRequestParams.get("abountMeVideoURL"));
-        // assertEquals(newBirdieLocation, sentRequestParams.get("location"));
-        // assertEquals(newBirdieLocationImageURL,
-        // sentRequestParams.get("locationImageURL"));
-        // assertEquals(newBirdieDiet, sentRequestParams.get("diet"));
-        // assertEquals(newBirdieDietImageURL, sentRequestParams.get("dietImageURL"));
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("name", newBirdieName);
+        parameters.put("listImageURL", newBirdieListImageURL);
+        parameters.put("heroImageURL", newBirdieHeroImageURL);
+        parameters.put("soundURL", newBirdieSoundURL);
+        parameters.put("aboutMe", newBirdieAboutMe);
+        parameters.put("aboutMeVideoURL", newBirdieAboutMeVideoURL);
+        parameters.put("location", newBirdieLocation);
+        parameters.put("locationImageURL", newBirdieLocationImageURL);
+        parameters.put("diet", newBirdieDiet);
+        parameters.put("dietImageURL", newBirdieDietImageURL);
+
+        verify(mockPatchRequest, times(1)).addParameters(parameters);
+        assertEquals(testBird.getId(), id);
     }
 
+    /**
+     * Creates a mock delete request and response for when the request is sent. Sets
+     * the birds id then deletes it, verifies that the id is added to the request.
+     */
     @Test
     void canDeleteBird() {
-
         DeleteRequest mockDeleteRequest = Mockito.mock(DeleteRequest.class);
-        ServerResponse deleteResponse = new ServerResponse(200, RESPONSE_BODY_ID, null);
-        doReturn(deleteResponse).when(mockDeleteRequest).send();
-        
+        ServerResponse postResponse = new ServerResponse(200, Long.toString(id), null);
+        doReturn(postResponse).when(mockDeleteRequest).send();
+
         testBird.setId(id);
-        assertTrue(testBird.delete(null, mockDeleteRequest));
-        
-        // HashMap<String, String> sentRequestParams = mockDeleteRequest.getParams();
-        // assertNull(sentRequestParams);
-        // assertEquals(id, sentRequestParams.get("id"));
+        testBird.delete(null, mockDeleteRequest);
+
+        verify(mockDeleteRequest, times(1)).addParameter("id", Long.toString(id));
     }
 }
