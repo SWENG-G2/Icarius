@@ -18,12 +18,17 @@ public class ServerResponseTest {
     private static final String HEADER_VAL = "HEADER_VAL";
     private static final int RESPONSE_CODE = 200;
 
+    /**
+     * Test we can construct a ServerResponse object from a server response
+     * - Mock response and construct ServerResponse
+     * - Test ServerResponse contains mocked response properties
+     */
     @Test
     public void canParseResponse() {
         Request mockRequest = new Request.Builder()
                 .url(App.BASE_URL + TEST_PATH)
                 .build();
-                
+
         Response mockResponse = new Response.Builder()
                 .request(mockRequest)
                 .body(ResponseBody.create(RESPONSE_BODY, MediaType.get("text/plain; charset=UTF-8")))
@@ -40,6 +45,9 @@ public class ServerResponseTest {
         assertEquals(HEADER_VAL, responseClass.getHeader(HEADER_KEY));
     }
 
+    /**
+     * Test new header can be added to response
+     */
     @Test
     public void canAddHeader() {
         ServerResponse responseClass = new ServerResponse(200, "", null);
