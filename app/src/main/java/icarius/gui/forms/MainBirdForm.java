@@ -17,7 +17,6 @@ import icarius.gui.forms.birdForms.VideoForm;
 import lombok.Getter;
 
 public class MainBirdForm extends JPanel{
-    private Bird bird;
     @Getter
     private final HashMap<String,String> changeParams;
 
@@ -32,7 +31,6 @@ public class MainBirdForm extends JPanel{
     public DietImageForm dietImageFrom;
 
     public MainBirdForm(Bird bird, String selectedForm){
-        this.bird = bird;
         this.changeParams = bird.clearParams();
         initializeFields(bird);
         this.setForm(selectedForm);

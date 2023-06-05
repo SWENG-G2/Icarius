@@ -12,6 +12,12 @@ import icarius.http.ServerResponse;
 import static icarius.services.FileDetails.*;
 
 public class FileUploadService {
+    /**
+     * Opens File Browser
+     * 
+     * @param type
+     * @return Local path file of selected file
+     */
     public static File selectLocalFile(String type) {
         final JFileChooser fc = new JFileChooser();
 
@@ -38,15 +44,14 @@ public class FileUploadService {
 
         // Return Chosen File
         return (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) ? fc.getSelectedFile() : null;
-
-        // TODO - (HARRY) investigate following warning that appears when i click file upload button
-        // WARNING: An illegal reflective access operation has occurred 
-        // WARNING: Illegal reflective access by com.formdev.flatlaf.ui.FlatFileChooserUI$FlatShortcutsPanel (file:/C:/Users/Connall/.gradle/caches/modules-2/files-2.1/com.formdev/flatlaf/3.0/b5410f3f9137febc7d916ca4e0a7e9f6ddeb5b9a/flatlaf-3.0.jar) to method sun.awt.shell.ShellFolder.get(java.lang.String)
-        // WARNING: Please consider reporting this to the maintainers of com.formdev.flatlaf.ui.FlatFileChooserUI$FlatShortcutsPanel
-        // WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-        // WARNING: All illegal access operations will be denied in a future release
     }
 
+    /**
+     * Identify attributes of file parameter
+     * 
+     * @param fileReqParam
+     * @return FileDetails object
+     */
     private static FileDetails getFileDetails(String fileReqParam) {
         switch(fileReqParam) {
             case HERO_IMAGE_URL:
@@ -64,6 +69,16 @@ public class FileUploadService {
         }
     } 
 
+    /**
+     * Upload a file to the server
+     * 
+     * @param user
+     * @param campusId
+     * @param localFilePath
+     * @param fileReqParam
+     * @param request
+     * @return URL of uploaded file on server
+     */
     public static String uploadFile(UserClient user, Long campusId, String localFilePath, String fileReqParam, PostRequest request) {
         // Create request
         FileDetails fileDetails = getFileDetails(fileReqParam);

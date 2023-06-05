@@ -182,7 +182,6 @@ public class AddForm extends JPanel {
                 } catch (ConnectionException ce) {
                     frame.setNotification(ce.getMessage(), Color.RED);
                 }
-                // TODO - (Connall) No Permission excemption
             }
         });
         add(createButton, c);
@@ -253,7 +252,6 @@ public class AddForm extends JPanel {
 
                 try {
                     if ( newBird.create(App.userClient, null) ) {
-                        //TODO - Connall - make sure I've added all of this to the right place
                         // Success
                         frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
                         // Refresh tree
@@ -265,7 +263,6 @@ public class AddForm extends JPanel {
                 } catch (ConnectionException ce) {
                     frame.setNotification(ce.getMessage(), Color.RED);
                 }
-                // TODO - (Connall) No Permission excemption
 
             }
         });

@@ -49,7 +49,6 @@ public class TreePanel extends JScrollPane {
                 if (App.userClient.getAdmin() || App.userClient.getCampusPermissions().contains(campus.getId())) {
                     root.add(constructCampusNode(campus));
                 }
-                // TODO - if user has no permissions show zero permissions message
             }
         }
 
@@ -116,6 +115,7 @@ public class TreePanel extends JScrollPane {
                         // Edit Bird Selection
                         Campus campus = App.db.getCampus(selectedLocationText);
                         Bird bird = campus.getBird(selectedAnimalText);
+                        bird.read(null);
                         formPanel.setEditPage(bird);
                     }
                     break;

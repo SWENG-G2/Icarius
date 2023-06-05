@@ -17,11 +17,22 @@ public class User {
     private @Setter @Getter Boolean admin = false;
     private @Getter List<Campus> campusPermissions = new ArrayList<>();
 
+    /**
+     * @param userClient
+     * @param username
+     */
     public User(UserClient userClient, String username) {
         this.userClient = userClient;
         this.username = username;
     }
 
+    /**
+     * Create user on server
+     * 
+     * @param password
+     * @param request
+     * @return TRUE if successfully created on server, else FALSE
+     */
     public Boolean create(String password, PostRequest request) {
         // Send create user request to server
         if (request == null)
@@ -36,6 +47,12 @@ public class User {
         return response.isSuccessful();
     }
 
+    /**
+     * Delete user on server
+     * 
+     * @param request
+     * @return TRUE if successfully deleted from server, else FALSE
+     */
     public Boolean delete(PostRequest request) {
         // Send create user request to server
         if (request == null)
@@ -47,6 +64,13 @@ public class User {
         return response.isSuccessful();
     }
 
+    /**
+     * Add campus permissions to user on server
+     * 
+     * @param campusId
+     * @param request
+     * @return TRUE if successfully added permissions to user on server, else FALSE
+     */
     public Boolean addCampus(Long campusId, PatchRequest request) {
         // Send create user request to server
         if (request == null)
@@ -60,6 +84,13 @@ public class User {
         return response.isSuccessful();
     }
 
+    /**
+     * Remove campus permissions to user on server
+     * 
+     * @param campusId
+     * @param request
+     * @return TRUE if successfully removed permissions from user on server, else FALSE
+     */
     public Boolean removeCampus(Long campusId, PatchRequest request) {
         // Send create user request to server
         if (request == null)
@@ -72,10 +103,18 @@ public class User {
         return response.isSuccessful();
     }
 
+    /**
+     * Add campus permission to local object
+     * @param campus
+     */
     public void addPermission(Campus campus) {
         campusPermissions.add(campus);
     }
 
+    /**
+     * Remove campus permission from local object
+     * @param campus
+     */
     public void removePermission(Campus campus) {
         campusPermissions.remove(campus);
     }

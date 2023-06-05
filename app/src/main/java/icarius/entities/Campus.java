@@ -28,14 +28,13 @@ public class Campus implements ServerActions {
 
     private UserClient user;
 
+    /**
+     * @param user
+     */
     public Campus(UserClient user) {
         this.user = user;
     }
 
-    /**
-     * Creates a new post request, adds the campus name to the request,
-     * sends the request and gets a response of the campus' id.
-     */
     @Override
     public Boolean create(UserClient user, PostRequest request) {
         // If required field not set, throw exception
@@ -58,11 +57,6 @@ public class Campus implements ServerActions {
         return response.isSuccessful();
     }
 
-    /**
-     * Creates a new get request, gets an xml response, parse it to then get the id
-     * and
-     * the list image of the birds in the campus. Then, BLBABLALBAL
-     */
     @Override
     public Boolean read(GetRequest request) {
         // If required field not set, throw exception
@@ -103,10 +97,11 @@ public class Campus implements ServerActions {
                         Element node = it2.next();
 
                         // Get Bird name
-                        if (node.getData() != "") {
+                        if (slide.indexOf(node) == 1) {
                             birdName = node.getData().toString();
                         }
 
+                        // Get bird list image URL
                         if (node.getName().equals("image")) {
                             for (Iterator<Attribute> it3 = node.attributeIterator(); it3.hasNext();) {
                                 Attribute attribute = it3.next();
@@ -133,10 +128,6 @@ public class Campus implements ServerActions {
         }
     }
 
-    /**
-     * Puts all the current (updated) parameters of the campus into a patch request
-     * then sends the request to the server.
-     */
     @Override
     public Boolean update(UserClient user, PatchRequest request) {
         // If required field not set, throw exception
@@ -156,10 +147,6 @@ public class Campus implements ServerActions {
         return request.send().isSuccessful();
     }
 
-    /**
-     * It gets the id of the campus off the server and sends a delete request.
-     * Returns true if successful.
-     */
     @Override
     public Boolean delete(UserClient user, DeleteRequest request) {
         // If required field not set, throw exception

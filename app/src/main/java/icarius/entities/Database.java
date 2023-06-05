@@ -17,6 +17,10 @@ import lombok.Getter;
 public class Database {
     private @Getter List<Campus> database = new ArrayList<>();
     
+    /**
+     * Read and create database from server
+     * @param user
+     */
     public Database(UserClient user) {
         // send and store GET request response
         GetRequest request = new GetRequest("/campus/list", user);
@@ -46,6 +50,12 @@ public class Database {
         }
     }
 
+    /**
+     * Find campus by string
+     * 
+     * @param campusName
+     * @return Campus Object
+     */
     public Campus getCampus(String campusName) {
         for (Campus campus : database) {
             if (campus.getName().equals(campusName)) {
@@ -55,6 +65,12 @@ public class Database {
         return null;
     }
 
+    /**
+     * Find campus by id
+     * 
+     * @param campusId
+     * @return Campus Object
+     */
     public Campus getCampusById(Long campusId) {
         for (Campus campus : database) {
             if (campus.getId() == campusId) {

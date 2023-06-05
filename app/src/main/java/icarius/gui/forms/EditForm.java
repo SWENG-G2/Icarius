@@ -6,7 +6,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
 import java.util.HashMap;
 
 import javax.swing.JButton;
@@ -14,14 +13,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.event.SwingPropertyChangeSupport;
-
 import icarius.App;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
 import icarius.gui.Gui;
 import icarius.gui.frames.MainFrame;
-import icarius.gui.panels.FormPanel;
 import icarius.gui.tabs.MainTab;
 import icarius.http.ConnectionException;
 
@@ -149,17 +145,6 @@ public class EditForm extends JPanel {
         };
     }
 
-    private void addCancelButton(Object o, GridBagConstraints c) {
-        c.gridx = 0;
-        JButton editButton = new JButton("Cancel");
-        editButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                ((FormPanel) getParent()).setDetailsPage(o);
-            }
-        });
-        add(editButton, c);
-    }
-
     private void addSaveButton(Object o, GridBagConstraints c) {
         c.gridx = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -237,7 +222,6 @@ public class EditForm extends JPanel {
                 } catch (ConnectionException ce) {
                     frame.setNotification(ce.getMessage(), Color.RED);
                 }
-                // TODO - (Connall) No Permission excemption
             }
         });
         add(editButton, c);
@@ -290,7 +274,6 @@ public class EditForm extends JPanel {
                 } catch (ConnectionException ce) {
                     frame.setNotification(ce.getMessage(), Color.RED);
                 }
-                // TODO - (Connall) No Permission excemption
             }
         });
 

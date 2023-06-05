@@ -136,12 +136,9 @@ public abstract class BirdFieldForm extends JPanel{
         new Thread() {
             @Override
             public void run() {
-                // TODO Auto-generated method stub
                 super.run();
                 BufferedImage buffImage = null;
-                try {      
-                    // System.out.println("PATH BEFORE: " + urlPath);         
-                    // TODO - remove when using server
+                try {
                     if (urlPath.contains("localhost")) {
                         urlPath = urlPath.replace("https://localhost:8080", App.PENELOPE_STORAGE);
                     }
@@ -151,8 +148,7 @@ public abstract class BirdFieldForm extends JPanel{
                         buffImage = ImageIO.read(new URL(urlPath).openStream());
                     } else {
                         buffImage = ImageIO.read(new File(urlPath));
-                    }   
-                    // System.out.println("PATH AFTER: " + urlPath);     
+                    }  
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

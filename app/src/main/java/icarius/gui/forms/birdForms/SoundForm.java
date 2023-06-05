@@ -9,13 +9,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
 
@@ -60,17 +57,7 @@ public class SoundForm extends BirdFieldForm{
                     }
                     
                     if (grabber.getAudioChannels() > 0) {
-                        /* Not currently working
-                        final AudioFormat audioFormat = new AudioFormat(grabber.getSampleRate(), 16, grabber.getAudioChannels(), true, true);
-                        final DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-                        final SourceDataLine soundLine;
-                        */
                         try {
-                            //soundLine = (SourceDataLine) AudioSystem.getLine(info);
-                            //soundLine.open(audioFormat);
-                            //soundLine.start();
-                            //Only works with wav:
-                            //AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL("file:///" + UrlPath));
                             AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL(urlPath));
                             Clip clip = AudioSystem.getClip();
                             clip.open(audioIn);
@@ -128,16 +115,7 @@ public class SoundForm extends BirdFieldForm{
                     }
                     
                     if (grabber.getAudioChannels() > 0) {
-                        /* Not currently working
-                        final AudioFormat audioFormat = new AudioFormat(grabber.getSampleRate(), 16, grabber.getAudioChannels(), true, true);
-                        final DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-                        final SourceDataLine soundLine;
-                        */
                         try {
-                            //soundLine = (SourceDataLine) AudioSystem.getLine(info);
-                            //soundLine.open(audioFormat);
-                            //soundLine.start();
-                            //Only works with wav:
                             AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL("file:///" + urlPath));
                             Clip clip = AudioSystem.getClip();
                             clip.open(audioIn);

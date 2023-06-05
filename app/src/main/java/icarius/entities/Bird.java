@@ -9,7 +9,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import icarius.App;
 import icarius.auth.UserClient;
 import icarius.http.DeleteRequest;
 import icarius.http.GetRequest;
@@ -37,14 +36,13 @@ public class Bird implements ServerActions {
     private UserClient user;
     private HashMap<String, String> changedParams;
 
+    /**
+     * @param user
+     */
     public Bird(UserClient user) {
         this.user = user;
     }
 
-    /**
-     * Creates a new post request, puts the parameter values of the new
-     * bird in the request. Then, a response of the bird id is received.
-     */
     @Override
     public Boolean create(UserClient user, PostRequest request) {
         // If required field not set, throw exception
@@ -76,13 +74,6 @@ public class Bird implements ServerActions {
         return response.isSuccessful();
     }
 
-    /**
-     * Sends a request to the server to get the xml response of the bird's
-     * information. Then,
-     * it iterates through each slide, node and attribute to find the required
-     * information
-     * of the bird.
-     */
     @Override
     public Boolean read(GetRequest request) {
         // If required field not set, throw exception
@@ -99,6 +90,7 @@ public class Bird implements ServerActions {
         ServerResponse response = request.send();
         String responseBody = response.getBody();
 
+        // Parse XML response
         if (responseBody == null || responseBody.isEmpty() || !response.isSuccessful()) {
             return false;
         } else {
@@ -172,10 +164,6 @@ public class Bird implements ServerActions {
         }
     }
 
-    /**
-     * Puts all the current (updated) parameters of the bird into a patch request
-     * then sends the request to the server.
-     */
     @Override
     public Boolean update(UserClient user, PatchRequest request) {
         // If required field not set, throw exception
@@ -186,19 +174,6 @@ public class Bird implements ServerActions {
         if (request == null)
             request = new PatchRequest("/api/birds/" + campusId + "/edit", user);
 
-        // HashMap<String, String> parameters = new HashMap<>();
-        // parameters.put("id", Long.toString(this.getId()));
-        // parameters.put("name", this.name);
-        // parameters.put("listImageURL", listImageURL);
-        // parameters.put("heroImageURL", heroImageURL.replace(App.BASE_URL+"/",""));
-        // parameters.put("soundURL", soundURL.replace(App.BASE_URL+"/",""));
-        // parameters.put("aboutMe", aboutMe);
-        // parameters.put("aboutMeVideoURL", aboutMeVideoURL.replace(App.BASE_URL+"/",""));
-        // parameters.put("location", location);
-        // parameters.put("locationImageURL", locationImageURL.replace(App.BASE_URL+"/",""));
-        // parameters.put("diet", diet);
-        // parameters.put("dietImageURL", dietImageURL.replace(App.BASE_URL+"/",""));
-        // request.addParameters(parameters);
         changedParams.put("id", Long.toString(this.getId()));
         request.addParameters(changedParams);
 
@@ -206,9 +181,6 @@ public class Bird implements ServerActions {
         return request.send().isSuccessful();
     }
 
-    /**
-     * It gets the id of the bird off the server and sends a delete request.
-     */
     @Override
     public Boolean delete(UserClient user, DeleteRequest request) {
         // If required field not set, throw exception
