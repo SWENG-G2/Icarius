@@ -41,7 +41,7 @@ public class SoundForm extends BirdFieldForm{
 
         c.gridx = 1;
         c.gridy = 2;
-        c.fill = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.HORIZONTAL;
         JButton audioButton = new JButton("Play audio");
         add(audioButton, c);
 
@@ -110,8 +110,9 @@ public class SoundForm extends BirdFieldForm{
         uploadButton = addFileUploadField("Sound:", "", c, uploadAudio());
 
         JButton audioButton = new JButton("Play audio");
-        c.gridx = 2;
+        c.gridx = 1;
         c.gridy = 2;
+        c.fill = GridBagConstraints.HORIZONTAL;
         add(audioButton, c);
 
         audioButton.addActionListener(new ActionListener() {
@@ -172,7 +173,7 @@ public class SoundForm extends BirdFieldForm{
                 // Upload file
                 File file = selectLocalFile("Audio");
                 if (file == null) return;
-                uploadButton.setText("File selected: " + file.getName());
+                uploadButton.setText(getUploadedFileText(file.getName()));
                 urlPath = file.getPath();
 
                 

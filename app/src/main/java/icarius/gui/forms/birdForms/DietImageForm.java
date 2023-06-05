@@ -52,7 +52,8 @@ public class DietImageForm extends BirdFieldForm {
                 c.gridx = 0;
                 c.gridy = 1;
                 c.gridwidth = 2;
-                c.fill = GridBagConstraints.HORIZONTAL;
+                c.anchor = GridBagConstraints.CENTER;
+                c.fill = GridBagConstraints.REMAINDER;
 
                 // Removes previous image
                 for (Component label : getComponents()) {
@@ -67,7 +68,8 @@ public class DietImageForm extends BirdFieldForm {
                 File file = selectLocalFile("Image");
                 if (file == null)
                     return;
-                uploadButton.setText("File selected: " + file.getName());
+                
+                uploadButton.setText(getUploadedFileText(file.getName()));
                 urlPath = file.getPath();
 
                 if (changedParams != null)

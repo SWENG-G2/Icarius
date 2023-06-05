@@ -14,6 +14,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.SwingPropertyChangeSupport;
 
 import icarius.App;
 import icarius.entities.Bird;
@@ -45,15 +46,17 @@ public class EditForm extends JPanel {
         GridBagConstraints c = configure();
 
         // Add Details
-        if (o instanceof Campus)
+        if (o instanceof Campus) {
             addCampusEditFields((Campus) o, c);
-        if (o instanceof Bird)
-            addBirdEditFields((Bird) o, c);
+        }
 
-        // Add Cancel/Save Buttons
-        // addCancelButton(o, c);
+        if (o instanceof Bird) {
+            addBirdEditFields((Bird) o, c);
+        }
+
         addSaveButton(o, c);
         addDeleteButton(o, c);
+
     }
 
     private GridBagConstraints configure() {
@@ -208,8 +211,10 @@ public class EditForm extends JPanel {
                         HashMap<String, String> changedParams = birdForm.getChangeParams();
                         changedParams.forEach((reqParameter, localFile) -> {
                             String fileUrl = uploadFile(App.userClient, cID, localFile, reqParameter, null);
-                            if(fileUrl != null)
+                            if(fileUrl != null) 
                                 changedParams.put(reqParameter, fileUrl);
+                                System.out.println(changedParams);
+                            
                         });
 
                         changedParams.put("name", newBirdName);
@@ -244,7 +249,7 @@ public class EditForm extends JPanel {
             c.gridx = 3;
             c.gridy = 0;
         } else if (o instanceof Campus) {
-            c.gridx = 1;
+            c.gridx = 0;
             c.gridy++;
         }
         c.gridwidth = GridBagConstraints.REMAINDER;

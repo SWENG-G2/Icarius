@@ -78,22 +78,24 @@ public abstract class BirdFieldForm extends JPanel{
         c.gridx = 0;
         
         // Add Label
-        add(new JLabel(labelText), c);
+        JLabel label = new JLabel(labelText);
+        add(label, c);
 
         // Add TextField
         c.gridx++;
         if (placeholderText == null || placeholderText.equals("")) placeholderText = "Upload a file";
 
         // Get File Name
-        // String[] getFileName = placeholderText.split("/");
-        // placeholderText = getFileName[getFileName.length - 1];
-        placeholderText = placeholderText.replace(App.BASE_URL + "/", "");
+        String[] getFileName = placeholderText.split("/");
+        placeholderText = getFileName[getFileName.length - 1];
 
-        //c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
+        if (placeholderText.length() > 30) {
+            placeholderText = placeholderText.substring(0, 30) + "...";
+        }
         JButton button = new JButton(placeholderText);
         button.addActionListener(al);
-        button.setPreferredSize(new Dimension(105, 20));
+        button.setPreferredSize(new Dimension(150, 20));
 
         add(button, c);
 
@@ -105,7 +107,7 @@ public abstract class BirdFieldForm extends JPanel{
     // Returns added textArea
     protected JTextArea addTextArea(String labelText, String placeholderText, GridBagConstraints c) {
         // Configure Layout
-        c.fill = GridBagConstraints.NONE;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
 
@@ -138,7 +140,7 @@ public abstract class BirdFieldForm extends JPanel{
                 super.run();
                 BufferedImage buffImage = null;
                 try {      
-                    //System.out.println("PATH BEFORE: " + UrlPath);         
+                    // System.out.println("PATH BEFORE: " + urlPath);         
                     // TODO - remove when using server
                     if (urlPath.contains("localhost")) {
                         urlPath = urlPath.replace("https://localhost:8080", App.PENELOPE_STORAGE);
@@ -150,16 +152,24 @@ public abstract class BirdFieldForm extends JPanel{
                     } else {
                         buffImage = ImageIO.read(new File(urlPath));
                     }   
-                    //System.out.println("PATH AFTER: " + UrlPath);     
+                    // System.out.println("PATH AFTER: " + urlPath);     
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if (buffImage != null) {
-                    Image image = buffImage.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
+                    Image image = buffImage.getScaledInstance(200, 200, Image.SCALE_DEFAULT);
                     imageLbl.setIcon(new ImageIcon(image));
                 }
             }
         }.run();
         return imageLbl;
+    }
+
+    protected String getUploadedFileText(String fileName) {
+        String text = "File selected: " + fileName;
+        if (text.length() > 35) {
+            text = text.substring(0, 35);
+        }
+        return text + "...";
     }
 }

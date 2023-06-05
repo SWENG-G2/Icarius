@@ -67,7 +67,7 @@ public class LocationImageForm extends BirdFieldForm{
                 //Upload Image
                 File file = selectLocalFile("Image");
                 if (file == null) return;
-                uploadButton.setText("File selected: " + file.getName());
+                uploadButton.setText(getUploadedFileText(file.getName()));
                 urlPath = file.getPath();
 
                 

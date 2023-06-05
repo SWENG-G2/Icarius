@@ -257,7 +257,7 @@ public class AddForm extends JPanel {
                         // Success
                         frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);
                         // Refresh tree
-                        mainTab.refreshDatabaseTree(newBird);
+                        mainTab.refreshDatabaseTree(campus);
                     } else {
                         // Failure
                         frame.setNotification("Failed to add " + newBird.getName() + " to " + campus.getName() + "!", null);

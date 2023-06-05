@@ -20,7 +20,7 @@ public class FileUploadService {
         switch (type) {
             case "image":
                 fc.setDialogTitle("Select an Image file");
-                filter = new FileNameExtensionFilter("PNG, JPEG, JPG and GIF images", "png", "gif", "jpeg","JPG");
+                filter = new FileNameExtensionFilter("PNG, JPEG, JPG and GIF images", "png", "gif", "jpeg","JPG", "webp");
                 break;
             case "audio":
                 fc.setDialogTitle("Select an Audio file");
@@ -75,8 +75,7 @@ public class FileUploadService {
             request.addParameter("process", "true");
         }
         ServerResponse response = request.send();
-        System.out.println(response);
-        return response.getBody();
+        return response.isSuccessful() ? response.getBody() : null;
     }
 
 
