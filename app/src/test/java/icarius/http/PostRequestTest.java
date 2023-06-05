@@ -29,8 +29,13 @@ public class PostRequestTest {
     private static final String RESPONSE_BODY = "https://www.youtube.com/shorts/VLkvr4XDTII";
     private static final String AUTH = "1234";
 
+    /**
+     * Test can execute PostRequest with authorisation
+     * 
+     * @throws IOException
+     */
     @Test
-    void canExecuteRequest() throws IOException {
+    public void canExecuteRequest() throws IOException {
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
         UserClient userMock = Mockito.mock(UserClient.class);
         Call callMock = Mockito.mock(Call.class);
@@ -68,7 +73,10 @@ public class PostRequestTest {
         assertEquals(RESPONSE_BODY, response.getBody());
     }
 
-    @Test
+    /**
+     * Test can execute PostRequest containing a file with authorisation
+     * @throws IOException
+     */
     public void canExecuteRequestWithFile() throws IOException {
         OkHttpClient clientMock = Mockito.mock(OkHttpClient.class);
         UserClient userMock = Mockito.mock(UserClient.class);
@@ -77,10 +85,10 @@ public class PostRequestTest {
         File file = new File(TEST_FILE_PATH);
         MediaType MEDIA_TYPE = MediaType.parse("application/octet-stream");
         RequestBody expectedRequestBody = new MultipartBody.Builder()
-        .setType(MultipartBody.FORM)
-        .addFormDataPart("file", file.getName(), RequestBody.create(file, MEDIA_TYPE))
-        .addFormDataPart("type", "image")
-        .build();
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", file.getName(), RequestBody.create(file, MEDIA_TYPE))
+                .addFormDataPart("type", "image")
+                .build();
 
         Request expectedRequest = new Request.Builder()
                 .url(App.BASE_URL + TEST_PATH)

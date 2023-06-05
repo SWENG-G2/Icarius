@@ -26,50 +26,75 @@ public abstract class ServerRequest {
     @Getter
     protected Request request;
 
+    /**
+     * Abstract ServerRequest Constructor
+     * @param urlPath
+     * @param user
+     */
     protected ServerRequest(String urlPath, UserClient user) {
         this.url = App.BASE_URL + urlPath;
         this.user = user;
         this.params = new HashMap<>();
     }
 
+    /**
+     * Set endpoint in server for request
+     * Server Base URL is automatically added
+     * @param urlPath
+     */
     public void setUrl(String urlPath) {
         this.url = App.BASE_URL + urlPath;
     }
 
+    /**
+     * Add Parameter to Server Request
+     * @param key
+     * @param value
+     */
     public void addParameter(String key, String value) {
         params.put(key, value);
     }
 
+    /**
+     * Add multiple parameters to request
+     * @param parameters
+     */
     public void addParameters(Map<String, String> parameters) {
         params.putAll(parameters);
     }
 
+    /**
+     * Build URL by adding request parameters to request URL
+     * @return Complete Request URL
+     */
     public String getUrl() {
         HttpUrl.Builder urlB = HttpUrl.parse(url).newBuilder();
         params.forEach((key, value) -> urlB.addQueryParameter(key, value));
         return urlB.build().toString();
     }
 
+    /**
+     * Send request to server and return response
+     * @param request
+     * @return ServerResponse response
+     */
     protected ServerResponse execute(Request request) {
         // Execute Call
         Call call = user.getOkHttpClient().newCall(request);
         try {
             ServerResponse serverResponse = new ServerResponse(call.execute());
-            // TODO - (CONNALL) once penelope modified to return decryption error, run test below
-            // Test:
-            //      Open Icarius and Log in
-            //      Restart Penelope
-            //      Log out and log back in
-            //      Check correct creds aren't denied and that server does not have decryption error twice
             return serverResponse;
         } catch (ConnectException connectException) {
             throw new ConnectionException("Server is unreachable, please try again later.");
-            //TODO - (CONNALL) - permission excemption
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;
         }
     }
 
+    /**
+     * Send Server Request to server
+     * @return ServerResponse response
+     */
     public abstract ServerResponse send();
 }

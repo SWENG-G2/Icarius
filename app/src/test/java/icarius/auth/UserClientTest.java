@@ -13,7 +13,13 @@ import icarius.http.PostRequest;
 import icarius.http.ServerResponse;
 import okhttp3.OkHttpClient;
 
-public class UserTest {
+public class UserClientTest {
+    /**
+     * Test whether key can be fetched from server by:
+     * - Mocking request
+     * - Return Mocked Response
+     * - Test Correct Header value is retrieved from response
+     */
     @Test
     public void canRefreshKey() {
         // Mock Server Request and Response
@@ -32,6 +38,13 @@ public class UserTest {
         assertEquals("KEY_TEST", userMock.getPublicKey());
     }
 
+    /**
+     * Test whether User credentials can be validated by server
+     * - Mock server request
+     * - Mock server response
+     * - Test correct header values retrieved from response
+     * - Test method returns true if response successful
+     */
     @Test
     public void canValidate() {
         // Mock Server Request and Response

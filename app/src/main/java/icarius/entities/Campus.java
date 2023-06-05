@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class Campus implements ServerActions {
     private Long id;
     private String name;
-    private List<Bird> birds;
+    public List<Bird> birds;
 
     private UserClient user;
 
@@ -32,19 +32,25 @@ public class Campus implements ServerActions {
         this.user = user;
     }
 
+    /**
+     * Creates a new post request, adds the campus name to the request,
+     * sends the request and gets a response of the campus' id.
+     */
     @Override
     public Boolean create(UserClient user, PostRequest request) {
         // If required field not set, throw exception
-        if (name == null) throw new RuntimeException("Campus name not set");
+        if (name == null)
+            throw new RuntimeException("Campus name not set");
 
         // Send create campus request to server
-        if (request == null) request = new PostRequest("/api/campus/new", user);
-      
+        if (request == null)
+            request = new PostRequest("/api/campus/new", user);
+
         request.addParameter("name", name);
-        ServerResponse response =  request.send();
+        ServerResponse response = request.send();
 
         // Print response and return created campus Id
-        System.out.println(response.getBody());
+        // System.out.println(response.getBody());
         String idString = response.getBody().replaceAll("[^0-9]", "");
         this.id = Long.valueOf(idString);
 
@@ -52,13 +58,20 @@ public class Campus implements ServerActions {
         return response.isSuccessful();
     }
 
+    /**
+     * Creates a new get request, gets an xml response, parse it to then get the id
+     * and
+     * the list image of the birds in the campus. Then, BLBABLALBAL
+     */
     @Override
     public Boolean read(GetRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Campus id not set");
+        if (id == null)
+            throw new RuntimeException("Campus id not set");
 
         // Send read campus request to server
-        if (request == null) request = new GetRequest("/campus/" + id, user);
+        if (request == null)
+            request = new GetRequest("/campus/" + id, user);
 
         // send and store GET request response
         this.birds = new ArrayList<>();
@@ -75,10 +88,11 @@ public class Campus implements ServerActions {
                 Element root = document.getRootElement();
                 Element infoSlide = root.element("info");
                 this.name = infoSlide.element("title").getData().toString();
+
                 // iterate through child elements of presentation with element name "slide"
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
-                    
+                  
                     // Bird info
                     String birdId = slide.attributeValue("title");
                     String listImageUrl = "";
@@ -109,40 +123,52 @@ public class Campus implements ServerActions {
                     bird.setId(Long.parseLong(birdId));
                     bird.setCampusId(id);
                     bird.setListImageURL(listImageUrl);
-                    bird.read(null);
                     birds.add(bird);
                 }
             } catch (DocumentException e) {
                 e.printStackTrace();
+                return false;
             }
             return true;
         }
     }
-    
+
+    /**
+     * Puts all the current (updated) parameters of the campus into a patch request
+     * then sends the request to the server.
+     */
     @Override
     public Boolean update(UserClient user, PatchRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Campus id not set");
+        if (id == null)
+            throw new RuntimeException("Campus id not set");
 
         // Send update campus request to server
-        if (request == null) request = new PatchRequest("/api/campus/edit", user);
+        if (request == null)
+            request = new PatchRequest("/api/campus/edit", user);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("newName", this.name);
-        params.put("id", this.getId()+"");
+        params.put("id", this.getId() + "");
         request.addParameters(params);
 
         // Return TRUE if update request success, else FALSE
         return request.send().isSuccessful();
     }
 
+    /**
+     * It gets the id of the campus off the server and sends a delete request.
+     * Returns true if successful.
+     */
     @Override
     public Boolean delete(UserClient user, DeleteRequest request) {
         // If required field not set, throw exception
-        if (id == null) throw new RuntimeException("Campus id not set");
+        if (id == null)
+            throw new RuntimeException("Campus id not set");
 
         // Send delete campus request to server
-        if (request == null) request = new DeleteRequest("/api/campus/remove", user);
+        if (request == null)
+            request = new DeleteRequest("/api/campus/remove", user);
 
         request.addParameter("id", String.valueOf(id));
         ServerResponse response = request.send();
@@ -151,6 +177,12 @@ public class Campus implements ServerActions {
         return response != null ? response.isSuccessful() : false;
     }
 
+    /**
+     * Finds a bird from its name and returns it.
+     * 
+     * @param birdName
+     * @return
+     */
     public Bird getBird(String birdName) {
         for (Bird bird : birds) {
             if (bird.getName().equals(birdName)) {

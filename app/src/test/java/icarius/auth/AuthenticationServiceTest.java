@@ -24,6 +24,19 @@ public class AuthenticationServiceTest {
     private String MOCK_PASSWORD = "testPassword";
     private String MOCK_TIME = "2023-05-21T20:52:24.193223100+01:00[Europe/London]";
 
+    /**
+     * Test that we can get encrypted authorisation keywork in the form "username=password=time" with a public key
+     * 
+     * Test that we can decrypt keyword using associated private key
+     * 
+     * @throws InvalidKeyException
+     * @throws InvalidAlgorithmParameterException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeySpecException
+     */
     @Test
     public void canEncryptDecrypt()
             throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException,

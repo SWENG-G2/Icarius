@@ -26,6 +26,11 @@ public class DeleteRequestTest {
 
     private static final String AUTH = "1234";
 
+    /**
+     * Test can execute DeleteRequest with authorisation
+     * 
+     * @throws IOException
+     */
     @Test
     public void canExecuteRequest() throws IOException {
         OkHttpClient clientMock = mock(OkHttpClient.class);

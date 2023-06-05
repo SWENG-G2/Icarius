@@ -7,6 +7,10 @@ import okhttp3.RequestBody;
 
 public class PatchRequest extends ServerRequest {
 
+    /**
+     * @param urlPath
+     * @param user
+     */
     public PatchRequest(String urlPath, UserClient user) {
         super(urlPath, user);
     }

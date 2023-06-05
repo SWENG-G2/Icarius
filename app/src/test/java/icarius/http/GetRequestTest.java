@@ -24,6 +24,11 @@ public class GetRequestTest {
 
     private static final String RESPONSE_BODY = "https://www.youtube.com/shorts/VLkvr4XDTII";
 
+    /**
+     * Test can execute GetRequest without authorisation
+     * 
+     * @throws IOException
+     */
     @Test
     public void canExecuteRequest() throws IOException {
         OkHttpClient clientMock = mock(OkHttpClient.class);

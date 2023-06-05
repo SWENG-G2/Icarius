@@ -27,6 +27,10 @@ public class PostRequest extends ServerRequest {
                 }
             });
 
+    /**
+     * @param urlPath
+     * @param user
+     */
     public PostRequest(String urlPath, UserClient user) {
         super(urlPath, user);
     }
@@ -49,22 +53,38 @@ public class PostRequest extends ServerRequest {
         return execute(request);
     }
 
+    /**
+     * Adds a local file to the Server Request
+     * @param filePath path to local file
+     * @param fileType file type (image, audio, video)
+     */
     public void addFile(String filePath, String fileType) {
         validateFileType(fileType);
         this.filePath = filePath;
         this.fileType = fileType;
     }
 
+    /**
+     * @return TRUE if Server Request contains a file, else FALSE
+     */
     public boolean containsFile() {
         return !(filePath == null || filePath.isBlank());
     }
 
+    /**
+     * Throws InvalidFileTypeException if file type is invalid
+     * @param fileType
+     */
     private void validateFileType(String fileType) {
         if (!validFileTypes.contains(fileType)) {
             throw new InvalidFileTypeException("Invalid file type '" + fileType + "'");
         }
     }
 
+    /**
+     * Builds a MultipartBody for the Server Request containing a file
+     * @return RequestBody of the Server Request
+     */
     private RequestBody buildFileUpload() {
         File file = new File(filePath);
         MediaType MEDIA_TYPE = MediaType.parse("application/octet-stream");
