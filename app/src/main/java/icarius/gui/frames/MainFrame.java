@@ -30,8 +30,9 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Gui.MAIN_FRAME_X_SIZE, Gui.MAIN_FRAME_Y_SIZE);
         setLocationRelativeTo(null);
-        setResizable(false);
-        if (pos != null) setLocation(pos);
+        //setResizable(false);
+        if (pos != null)
+            setLocation(pos);
         setVisible(true);
 
         add(getMainPanel());

@@ -9,10 +9,10 @@ import javax.swing.JPanel;
 import icarius.entities.User;
 import icarius.gui.forms.UserForm;
 
-public class UserInfoPanel extends JPanel{
+public class UserInfoPanel extends JPanel {
     private GridBagConstraints c;
 
-    public UserInfoPanel(){
+    public UserInfoPanel() {
         setLayout(new GridBagLayout());
         c = new GridBagConstraints();
 

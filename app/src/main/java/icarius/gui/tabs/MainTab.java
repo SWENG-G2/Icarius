@@ -2,16 +2,19 @@ package icarius.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-
 import javax.swing.JPanel;
-
+import javax.swing.JTree;
 import icarius.App;
 import icarius.entities.Database;
 import icarius.gui.Gui;
 import icarius.gui.panels.TreePanel;
+import lombok.Getter;
 import icarius.gui.panels.FormPanel;
 
 public class MainTab extends JPanel {
+    private TreePanel dbTreePanel;
+    private @Getter FormPanel formPanel;
+
     public MainTab() {
         // Configure Tab
         setLayout(new BorderLayout());
@@ -20,13 +23,14 @@ public class MainTab extends JPanel {
         add(getTreePanel(), BorderLayout.WEST);
 
         // Create and Add Panel to edit selected entity
-        add(new FormPanel(), BorderLayout.CENTER);
+        formPanel = new FormPanel();
+        add(formPanel, BorderLayout.CENTER);
     }
 
     public TreePanel getTreePanel() {
         // Fetch Database
         App.db = new Database(App.userClient);
-        TreePanel dbTreePanel = new TreePanel();
+        dbTreePanel = new TreePanel();
 
         // Set tree panel width to 1/3 of frame
         int width = Gui.MAIN_FRAME_X_SIZE / 3;
@@ -34,16 +38,62 @@ public class MainTab extends JPanel {
         return dbTreePanel;
     }
     
-    public void refreshDatabaseTree() {
-        removeAll();
+    public void refreshDatabaseTree(Object campusOrBird) {
+        // Save current status
+        JTree oldTree = dbTreePanel.getTree();
 
-        // Create and Add Panel containing database tree
-        add(getTreePanel(), BorderLayout.WEST);
+        // refresh tree
+        remove(dbTreePanel);
+        getTreePanel();
+        add(dbTreePanel, BorderLayout.WEST);
 
-        // Create and Add Panel to edit selected entity
-        add(new FormPanel(), BorderLayout.CENTER);
+
+        // Expand tree to previous state
+        JTree newTree = dbTreePanel.getTree();
+        expandTree(oldTree, newTree);
+
+
+        // Update form panel
+        if (campusOrBird != null) {
+            formPanel.setEditPage(campusOrBird);
+        }
+        add(formPanel, BorderLayout.CENTER);
+
 
         revalidate();
         repaint();
+    }
+
+    private void expandTree(JTree oldTree, JTree newTree) {
+        // Get Tree Roots
+        Object oldTreeRoot = oldTree.getModel().getRoot();
+        Object newTreeRoot = newTree.getModel().getRoot();
+
+        // Row number of campus in each tree
+        int newRowNum = 0;
+        int oldRowNum = 0;
+        
+        // For each campus
+        for(int campusNum = 0; campusNum < oldTree.getModel().getChildCount(oldTreeRoot); campusNum++){
+            if( oldTree.isExpanded(oldRowNum) ){
+                // If campus expanded in old tree, expand in new tree
+                newTree.expandRow(newRowNum);
+
+                // Get Row number of next campus in old tree
+                Object oldTreeCampus = newTree.getModel().getChild(oldTreeRoot, campusNum);
+                int oldTreeCampusChildNum = newTree.getModel().getChildCount(oldTreeCampus);
+                oldRowNum += oldTreeCampusChildNum + 1;
+
+                // Get Row number of next campus in new tree
+                Object newTreeCampus = newTree.getModel().getChild(newTreeRoot, campusNum);
+                int newTreeCampusChildNum = newTree.getModel().getChildCount(newTreeCampus);
+                newRowNum += newTreeCampusChildNum + 1;
+            } else {
+                // If campus not expanded, go to next tree
+                oldRowNum++;
+                newRowNum++;
+            }
+        }
+
     }
 }

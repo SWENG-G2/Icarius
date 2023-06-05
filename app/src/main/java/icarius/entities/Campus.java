@@ -92,6 +92,7 @@ public class Campus implements ServerActions {
                 // iterate through child elements of presentation with element name "slide"
                 for (Iterator<Element> it = root.elementIterator("slide"); it.hasNext();) {
                     Element slide = it.next();
+                  
                     // Bird info
                     String birdId = slide.attributeValue("title");
                     String listImageUrl = "";

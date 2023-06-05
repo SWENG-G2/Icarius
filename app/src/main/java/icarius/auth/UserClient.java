@@ -72,7 +72,11 @@ public class UserClient {
                 String campusPermissionHeader = response.getHeader("Campuses");
 
                 // If permissions header doesn't exist or is empty return
-                if (campusPermissionHeader.equals("") || campusPermissionHeader == null) {
+                if (campusPermissionHeader == null) {
+                    return this.valid;
+                }
+
+                if (campusPermissionHeader.equals("")) {
                     return this.valid;
                 }
 

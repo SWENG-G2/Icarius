@@ -12,9 +12,11 @@ import javax.swing.tree.TreeSelectionModel;
 import icarius.App;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
+import icarius.gui.tabs.MainTab;
+import lombok.Getter;
 
 public class TreePanel extends JScrollPane {
-    private JTree tree;
+    private @Getter JTree tree;
     public static final String ADD_BIRD_TEXT = "+[Add Bird]";
     public static final String ADD_CAMPUS_TEXT = "+[Add Campus]";
     
@@ -39,7 +41,7 @@ public class TreePanel extends JScrollPane {
 
     public DefaultMutableTreeNode createTreeModel() {
         // Create the Tree using Database
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("FaunaFinder");
 
         if (App.db != null) {
             for (Campus campus : App.db.getDatabase()) {
@@ -84,7 +86,7 @@ public class TreePanel extends JScrollPane {
             if (path == null) return;
 
             // Get Form JPanel
-            FormPanel formPanel = (FormPanel) getParent().getComponent(1);
+            FormPanel formPanel = ((MainTab) getParent()).getFormPanel();
             
             String selectedLocationText, selectedAnimalText;
             switch (path.getPathCount()) {
@@ -114,7 +116,7 @@ public class TreePanel extends JScrollPane {
                         // Edit Bird Selection
                         Campus campus = App.db.getCampus(selectedLocationText);
                         Bird bird = campus.getBird(selectedAnimalText);
-                        formPanel.setDetailsPage(bird);
+                        formPanel.setEditPage(bird);
                     }
                     break;
 

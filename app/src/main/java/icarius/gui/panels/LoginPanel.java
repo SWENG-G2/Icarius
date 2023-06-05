@@ -19,7 +19,7 @@ public class LoginPanel extends JPanel {
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(5,5,5,5));
         addLabels();
-        addFields();
+        addFields(loginAction);
         addLoginButton(loginAction);
     }
 
@@ -36,13 +36,15 @@ public class LoginPanel extends JPanel {
         add(new JLabel("Key:"), c);
     }
 
-    private void addFields() {
+    private void addFields(ActionListener loginAction) {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         
         c.gridy = 0;
         add(usernameField, c);
+
+        passwordField.addActionListener(loginAction);
 
         c.gridy = 1;
         add(passwordField, c);

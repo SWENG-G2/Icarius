@@ -6,16 +6,20 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.time.LocalDate;
+import java.util.HashMap;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.SwingPropertyChangeSupport;
 
 import icarius.App;
 import icarius.entities.Bird;
 import icarius.entities.Campus;
+import icarius.gui.Gui;
 import icarius.gui.frames.MainFrame;
 import icarius.gui.panels.FormPanel;
 import icarius.gui.tabs.MainTab;
@@ -29,23 +33,12 @@ public class EditForm extends JPanel {
 
     // Bird Edit Page Fields
     private JTextField birdNameField;
-    private JTextField aboutField;
-    private JTextField locationField;
-    private JTextField dietField;
 
-    private JButton listImageUploadButton;
-    private JButton heroImageUploadButton;
-    private JButton soundUploadButton;
-    private JButton videoUploadButton;
-    private JButton locationImageUploadButton;
-    private JButton dietImageUploadButton;
+    private String[] birdFields = { "List Image", "Hero Image", "Sound", "About", "Video",
+            "Location", "Location Image", "Diet", "Diet Image" };
 
-    private String listImageUrlPath;
-    private String heroImageUrlPath;
-    private String soundURLPath;
-    private String videoUrlPath;
-    private String locationImageUrlPath;
-    private String dietImageUrlPath;
+    private MainBirdForm birdForm;
+
 
     // Edit Page
     public EditForm(Object o) {
@@ -53,13 +46,17 @@ public class EditForm extends JPanel {
         GridBagConstraints c = configure();
 
         // Add Details
-        if (o instanceof Campus) addCampusEditFields((Campus) o, c);
-        if (o instanceof Bird) addBirdEditFields((Bird) o, c);
+        if (o instanceof Campus) {
+            addCampusEditFields((Campus) o, c);
+        }
 
-        // Add Cancel/Save Buttons
-        addCancelButton(o, c);
+        if (o instanceof Bird) {
+            addBirdEditFields((Bird) o, c);
+        }
+
         addSaveButton(o, c);
         addDeleteButton(o, c);
+
     }
 
     private GridBagConstraints configure() {
@@ -79,15 +76,8 @@ public class EditForm extends JPanel {
 
     private void addBirdEditFields(Bird bird, GridBagConstraints c) {
         birdNameField = addTextField("Bird Name:", bird.getName(), c);
-        listImageUploadButton = addFileUploadField("List Image:", bird.getListImageURL(), c, uploadListImage());
-        heroImageUploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
-        soundUploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadAudio());
-        aboutField = addTextField("About:", bird.getAboutMe(), c);
-        videoUploadButton = addFileUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
-        locationField = addTextField("Location:", bird.getLocation(), c);
-        locationImageUploadButton = addFileUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
-        dietField = addTextField("Diet:", bird.getDiet(), c);
-        dietImageUploadButton = addFileUploadField("Diet Image:", bird.getDietImageURL(), c, uploadDietImage());
+        addComboBox("Section Select:", birdFields, bird, c);
+        birdForm = addBirdForm(bird, birdFields[0], c);
     }
 
     // Returns added textfield
@@ -95,14 +85,14 @@ public class EditForm extends JPanel {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
-        
+
         // Add Label
         add(new JLabel(labelText), c);
 
         // Add TextField
         c.gridx++;
         c.fill = GridBagConstraints.HORIZONTAL;
-        JTextField textField = new JTextField(placeholderText, 18);
+        JTextField textField = new JTextField(placeholderText, 15);
         add(textField, c);
 
         // Increment y for next item
@@ -110,90 +100,51 @@ public class EditForm extends JPanel {
         return textField;
     }
 
-    private JButton addFileUploadField(String labelText, String placeholderText, GridBagConstraints c, ActionListener al) {
+    private MainBirdForm addBirdForm(Bird bird, String firstForm, GridBagConstraints c) {
+        // Configure Layout
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridwidth = 4;
+
+        // Add MainBirdForm
+        MainBirdForm birdForm = new MainBirdForm(bird, firstForm);
+        int height = (int) (Gui.MAIN_FRAME_Y_SIZE / 1.79);
+        birdForm.setPreferredSize(new Dimension(this.getWidth(), height));
+        add(birdForm, c);
+
+        // Resets gridwidth for next item
+        c.gridwidth = 1;
+        // Increment y for next item
+        c.gridy++;
+
+        return birdForm;
+    }
+
+    private void addComboBox(String labelText, String[] options, Bird bird, GridBagConstraints c) {
+
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
-        
-        // Add Label
+
         add(new JLabel(labelText), c);
 
-        // Add TextField
+        // Add ComboBox
         c.gridx++;
         c.fill = GridBagConstraints.HORIZONTAL;
-        if (placeholderText == null || placeholderText.equals("")) placeholderText = "Upload a file";
-        JButton button = new JButton(placeholderText);
-        button.addActionListener(al);
-        button.setPreferredSize(new Dimension(90, 20));
-        add(button, c);
+
+        JComboBox<String> comboBox = new JComboBox<>(options);
+        comboBox.addActionListener(formSelect(bird, comboBox));
+
+        add(comboBox, c);
 
         // Increment y for next item
         c.gridy++;
-        return button;
     }
 
-    public ActionListener uploadListImage() {
+    private ActionListener formSelect(Bird bird, JComboBox<String> comboBox) {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                File file = selectLocalFile("Image");
-                if (file == null) return;
-                listImageUploadButton.setText("File selected: " + file.getName());
-                listImageUrlPath = file.getPath();
-            }
-        };
-    }
-
-    public ActionListener uploadHeroImage() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                File file = selectLocalFile("Image");
-                if (file == null) return;
-                heroImageUploadButton.setText("File selected: " + file.getName());
-                heroImageUrlPath = file.getPath();
-            }
-        };
-    }
-
-    public ActionListener uploadAudio() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                File file = selectLocalFile("Audio");
-                if (file == null) return;
-                soundUploadButton.setText("File selected: " + file.getName());
-                soundURLPath = file.getPath();
-            }
-        };
-    }
-
-    public ActionListener uploadVideo() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                File file = selectLocalFile("Video");
-                if (file == null) return;
-                videoUploadButton.setText("File selected: " + file.getName());
-                videoUrlPath = file.getPath();
-            }
-        };
-    }
-
-    public ActionListener uploadLocationImage() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                File file = selectLocalFile("Image");
-                if (file == null) return;
-                locationImageUploadButton.setText("File selected: " + file.getName());
-                locationImageUrlPath = file.getPath();
-            }
-        };
-    }
-
-    public ActionListener uploadDietImage() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                File file = selectLocalFile("Image");
-                if (file == null) return;
-                dietImageUploadButton.setText("File selected: " + file.getName());
-                dietImageUrlPath = file.getPath();
+                birdForm.setForm((String) comboBox.getSelectedItem());
             }
         };
     }
@@ -201,7 +152,7 @@ public class EditForm extends JPanel {
     private void addCancelButton(Object o, GridBagConstraints c) {
         c.gridx = 0;
         JButton editButton = new JButton("Cancel");
-        editButton.addActionListener(new ActionListener(){
+        editButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 ((FormPanel) getParent()).setDetailsPage(o);
             }
@@ -210,15 +161,24 @@ public class EditForm extends JPanel {
     }
 
     private void addSaveButton(Object o, GridBagConstraints c) {
-        c.gridx = 1;
+        c.gridx = 0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
         JButton editButton = new JButton("Save Changes");
-        editButton.addActionListener(new ActionListener(){
+        editButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
+
                 try {
                     if (o instanceof Campus) {
                         Campus c = (Campus) o;
+                        String newCampusName = campusNameField.getText();
+
+                        // Check if campus already exists with this name
+                        if (App.db.getCampus(newCampusName) != null) {
+                            frame.setNotification("Campus: '" + c.getName() + "' already exists!", Color.RED);
+                        }
+
                         c.setName(campusNameField.getText());
 
                         // Send Update Campus Request
@@ -227,49 +187,40 @@ public class EditForm extends JPanel {
                             frame.setNotification("Campus: '" + c.getName() + "' has been successfully updated.", null);
                         } else {
                             // FAILURE
-                            frame.setNotification("Campus: '" + c.getName() + "' failed to update, please contact an administrator.", null);
+                            frame.setNotification(
+                                    "Campus: '" + c.getName() + "' failed to update, please contact an administrator.",
+                                    Color.RED);
                         }
                     }
                     if (o instanceof Bird) {
                         Bird b = (Bird) o;
                         Long cID = b.getCampusId();
 
+                        // If trying to update name to a name already existing in this campus
+                        String newBirdName = birdNameField.getText();
+                        if (!newBirdName.equals(b.getName())
+                                && App.db.getCampusById(cID).getBird(newBirdName) != null) {
+                            // Attempting to change bird name to existing bird
+                            frame.setNotification(
+                                    "Update failed, bird: '" + b.getName() + "' already exists in this campus!",
+                                    Color.RED);
+                            return;
+                        }
+
                         // Update Bird entity with TextField Values
-                        b.setName(birdNameField.getText());
-                        b.setAboutMe(aboutField.getText());
-                        b.setLocation(locationField.getText());
-                        b.setDiet(dietField.getText());
+                        HashMap<String, String> changedParams = birdForm.getChangeParams();
+                        changedParams.forEach((reqParameter, localFile) -> {
+                            String fileUrl = uploadFile(App.userClient, cID, localFile, reqParameter, null);
+                            if(fileUrl != null) 
+                                changedParams.put(reqParameter, fileUrl);
+                                System.out.println(changedParams);
+                            
+                        });
 
-                        // If file uploaded, Upload Files, then update Bird entity File Path
-                        if (listImageUrlPath != null) {
-                            listImageUrlPath = uploadFile(App.userClient, cID, listImageUrlPath, "image", null);
-                            b.setListImageURL(listImageUrlPath);
-                        }
-
-                        if (heroImageUrlPath != null) {
-                            heroImageUrlPath = uploadFile(App.userClient, cID, heroImageUrlPath, "image", null);
-                            b.setHeroImageURL(heroImageUrlPath);
-                        }
-
-                        if (soundURLPath != null) {
-                            soundURLPath = uploadFile(App.userClient, cID, soundURLPath, "audio", null);
-                            b.setSoundURL(soundURLPath);
-                        }
-                        
-                        if (videoUrlPath != null) {
-                            videoUrlPath = uploadFile(App.userClient, cID, videoUrlPath, "video", null);
-                            b.setAboutMeVideoURL(videoUrlPath);
-                        }
-                        
-                        if (locationImageUrlPath != null) {
-                            locationImageUrlPath = uploadFile(App.userClient, cID, locationImageUrlPath, "image", null);
-                            b.setLocationImageURL(locationImageUrlPath);
-                        }
-                        
-                        if (dietImageUrlPath != null) {
-                            dietImageUrlPath = uploadFile(App.userClient, cID, dietImageUrlPath, "image", null);
-                            b.setDietImageURL(dietImageUrlPath);
-                        }
+                        changedParams.put("name", newBirdName);
+                        changedParams.put("aboutMe", birdForm.aboutForm.textArea.getText());
+                        changedParams.put("location", birdForm.locationForm.textArea.getText());
+                        changedParams.put("diet", birdForm.dietForm.textArea.getText());
 
                         // Send Update Bird Request
                         if (b.update(App.userClient, null)) {
@@ -277,10 +228,12 @@ public class EditForm extends JPanel {
                             frame.setNotification("Bird: '" + b.getName() + "' has been successfully updated.", null);
                         } else {
                             // FAILURE
-                            frame.setNotification("Bird: '" + b.getName() + "' failed to update, please contact an administrator.", null);
+                            frame.setNotification(
+                                    "Bird: '" + b.getName() + "' failed to update, please contact an administrator.",
+                                    Color.RED);
                         }
                     }
-                    mainTab.refreshDatabaseTree();
+                    mainTab.refreshDatabaseTree(o);
                 } catch (ConnectionException ce) {
                     frame.setNotification(ce.getMessage(), Color.RED);
                 }
@@ -288,23 +241,31 @@ public class EditForm extends JPanel {
             }
         });
         add(editButton, c);
+        c.gridwidth = 1;
     }
 
     private void addDeleteButton(Object o, GridBagConstraints c) {
-        c.gridx = 1;
-        c.gridy++;
+        if (o instanceof Bird) {
+            c.gridx = 3;
+            c.gridy = 0;
+        } else if (o instanceof Campus) {
+            c.gridx = 0;
+            c.gridy++;
+        }
+        c.gridwidth = GridBagConstraints.REMAINDER;
+
         JButton editButton = new JButton("Delete");
 
-        editButton.addActionListener(new ActionListener(){
+        editButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 MainFrame frame = (MainFrame) getTopLevelAncestor();
                 MainTab mainTab = frame.getMainTab();
-                
+
                 try {
                     if (o instanceof Campus) {
                         // Remove Campus from server
                         Campus c = (Campus) o;
-                        if ( c.delete(App.userClient, null) ) {
+                        if (c.delete(App.userClient, null)) {
                             // Success
                             frame.setNotification("Campus: '" + c.getName() + "' has been successfully removed.", null);
                         } else {
@@ -315,17 +276,17 @@ public class EditForm extends JPanel {
 
                     if (o instanceof Bird) {
                         Bird b = (Bird) o;
-                        if ( b.delete(App.userClient, null) ) {
+                        if (b.delete(App.userClient, null)) {
                             // Success
                             frame.setNotification("Bird: '" + b.getName() + "' has been successfully removed.", null);
                         } else {
                             // Failure
                             frame.setNotification("Bird: Failed to remove '" + b.getName() + "' from server!", null);
-                        }         
+                        }
                     }
 
                     // Refresh Tree
-                    mainTab.refreshDatabaseTree();
+                    mainTab.refreshDatabaseTree(o);
                 } catch (ConnectionException ce) {
                     frame.setNotification(ce.getMessage(), Color.RED);
                 }

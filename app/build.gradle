@@ -32,6 +32,9 @@ dependencies {
 
     // FlatLaf
     implementation 'com.formdev:flatlaf:3.0'
+
+    //Java CV
+    implementation 'org.bytedeco:javacv-platform:1.5.8'
 }
 
 application {

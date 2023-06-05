@@ -9,9 +9,11 @@ import icarius.gui.forms.DetailsForm;
 import icarius.gui.forms.EditForm;
 
 public class FormPanel extends JPanel {
+    private String WELCOME_TEXT = "Select an item to continue.";
+
     public FormPanel() {        
         JPanel welcomePanel = new JPanel();
-        welcomePanel.add(new JLabel("Select an item to continue."));
+        welcomePanel.add(new JLabel(WELCOME_TEXT));
         add(welcomePanel);
     }
 
