@@ -25,12 +25,17 @@ public class MainFrame extends JFrame {
     private @Getter UsersTab usersTab;
     private JLabel notificationLabel = new JLabel(" ");
 
+    /**
+     * Initialises the main frame of the GUI
+     * 
+     * @param pos
+     */
     public MainFrame(Point pos) {
         setTitle("Icarius");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Gui.MAIN_FRAME_X_SIZE, Gui.MAIN_FRAME_Y_SIZE);
         setLocationRelativeTo(null);
-        //setResizable(false);
+        // setResizable(false);
         if (pos != null)
             setLocation(pos);
         setVisible(true);
@@ -41,6 +46,12 @@ public class MainFrame extends JFrame {
         validate();
     }
 
+    /**
+     * sets the message in the notification section of the footer panel
+     * 
+     * @param message
+     * @param color
+     */
     public void setNotification(String message, Color color) {
         notificationLabel.setText(message);
         if (color == null) {
@@ -50,6 +61,12 @@ public class MainFrame extends JFrame {
         }
     }
 
+    /**
+     * Creates the main panel and adds the mainTab. If the logged in user is an
+     * admin users and create user tabs
+     * 
+     * @return JTabbedPane mainPanel
+     */
     private JTabbedPane getMainPanel() {
         JTabbedPane mainPanel = new JTabbedPane();
         mainTab = new MainTab();
@@ -62,6 +79,12 @@ public class MainFrame extends JFrame {
         return mainPanel;
     }
 
+    /**
+     * creates and sets the layout of the footer panel, which contains the log out
+     * button and notification label.
+     * 
+     * @return JPanel footerPanel
+     */
     private JPanel getFooterPanel() {
         JPanel footerPanel = new JPanel();
         footerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 8, 8));

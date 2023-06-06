@@ -16,6 +16,11 @@ import static icarius.services.FileUploadService.*;
 public class LocationImageForm extends BirdFieldForm{
     private String LOCATION_IMAGE_NAME = "Location Image";
     
+    /**
+     * location image form for editing bird
+     * @param bird
+     * @param changedParams
+     */
     public LocationImageForm(Bird bird, HashMap<String, String> changedParams){
         super(changedParams);
         urlPath = bird.getLocationImageURL();
@@ -35,6 +40,9 @@ public class LocationImageForm extends BirdFieldForm{
         add(getImage(LOCATION_IMAGE_NAME), c);  
     }
 
+    /**
+     * location form for creating new bird
+     */
     public LocationImageForm(){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -44,6 +52,10 @@ public class LocationImageForm extends BirdFieldForm{
         uploadButton = addFileUploadField("Location Image:", "", c, uploadLocationImage());
     }
 
+    /**
+     * action listener to get selected picture from local files
+     * @return new ActionListener
+     */
     public ActionListener uploadLocationImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

@@ -35,8 +35,11 @@ public class EditForm extends JPanel {
 
     private MainBirdForm birdForm;
 
-
-    // Edit Page
+    /**
+     * Edit page for campus and bird entities
+     * 
+     * @param o
+     */
     public EditForm(Object o) {
         // Configure Layout
         GridBagConstraints c = configure();
@@ -55,6 +58,11 @@ public class EditForm extends JPanel {
 
     }
 
+    /**
+     * Configures gridBagConstraints
+     * 
+     * @return GridBagConstraints c
+     */
     private GridBagConstraints configure() {
         // Configure layout
         setLayout(new GridBagLayout());
@@ -66,17 +74,36 @@ public class EditForm extends JPanel {
         return c;
     }
 
+    /**
+     * Adds fields for editing a campus
+     * 
+     * @param campus
+     * @param c
+     */
     private void addCampusEditFields(Campus campus, GridBagConstraints c) {
         campusNameField = addTextField("Campus Name:", campus.getName(), c);
     }
 
+    /**
+     * Adds fields for editing a bird
+     * 
+     * @param bird
+     * @param c
+     */
     private void addBirdEditFields(Bird bird, GridBagConstraints c) {
         birdNameField = addTextField("Bird Name:", bird.getName(), c);
         addComboBox("Section Select:", birdFields, bird, c);
         birdForm = addBirdForm(bird, birdFields[0], c);
     }
 
-    // Returns added textfield
+    /**
+     * Returns added textfield
+     * 
+     * @param labelText
+     * @param placeholderText
+     * @param c
+     * @return JTextField textField
+     */
     private JTextField addTextField(String labelText, String placeholderText, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -96,6 +123,14 @@ public class EditForm extends JPanel {
         return textField;
     }
 
+    /**
+     * Returns form for editing bird information
+     * 
+     * @param bird
+     * @param firstForm
+     * @param c
+     * @return MainBirdForm birdForm
+     */
     private MainBirdForm addBirdForm(Bird bird, String firstForm, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -116,6 +151,15 @@ public class EditForm extends JPanel {
         return birdForm;
     }
 
+    /**
+     * creates and adds combobox that controls which form of the edit bird form is
+     * on screen
+     * 
+     * @param labelText
+     * @param options
+     * @param bird
+     * @param c
+     */
     private void addComboBox(String labelText, String[] options, Bird bird, GridBagConstraints c) {
 
         // Configure Layout
@@ -137,6 +181,14 @@ public class EditForm extends JPanel {
         c.gridy++;
     }
 
+    /**
+     * ActionListener for comboBox that controls which form of the edit bird form is
+     * on screen
+     * 
+     * @param bird
+     * @param comboBox
+     * @return new ActionListener
+     */
     private ActionListener formSelect(Bird bird, JComboBox<String> comboBox) {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -145,6 +197,12 @@ public class EditForm extends JPanel {
         };
     }
 
+    /**
+     * Adds button to save changes made in edit manu
+     * 
+     * @param o
+     * @param c
+     */
     private void addSaveButton(Object o, GridBagConstraints c) {
         c.gridx = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -196,10 +254,10 @@ public class EditForm extends JPanel {
                         HashMap<String, String> changedParams = birdForm.getChangeParams();
                         changedParams.forEach((reqParameter, localFile) -> {
                             String fileUrl = uploadFile(App.userClient, cID, localFile, reqParameter, null);
-                            if(fileUrl != null) 
+                            if (fileUrl != null)
                                 changedParams.put(reqParameter, fileUrl);
-                                System.out.println(changedParams);
-                            
+                            System.out.println(changedParams);
+
                         });
 
                         changedParams.put("name", newBirdName);
@@ -228,6 +286,12 @@ public class EditForm extends JPanel {
         c.gridwidth = 1;
     }
 
+    /**
+     * adds button which deletes selected bird or campus entity
+     * 
+     * @param o
+     * @param c
+     */
     private void addDeleteButton(Object o, GridBagConstraints c) {
         if (o instanceof Bird) {
             c.gridx = 3;

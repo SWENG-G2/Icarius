@@ -34,6 +34,11 @@ public class UserListPanel extends JScrollPane {
     private GridBagConstraints c;
     private JPanel panel;
 
+    /**
+     * Panel containing list of users as buttons - used in UsersTab
+     * 
+     * @param frame
+     */
     public UserListPanel(MainFrame frame) {
         this.frame = frame;
 
@@ -53,6 +58,9 @@ public class UserListPanel extends JScrollPane {
         updateUserList();
     }
 
+    /**
+     * Removes outdated user list, adds updated user list in its place
+     */
     public void updateUserList() {
         // Get User List
         userList = fetchUserList();
@@ -81,6 +89,11 @@ public class UserListPanel extends JScrollPane {
         }
     }
 
+    /**
+     * Returns list of users stored in the server
+     * 
+     * @return List<User> userList
+     */
     private List<User> fetchUserList() {
         List<User> userList = new ArrayList<>();
 

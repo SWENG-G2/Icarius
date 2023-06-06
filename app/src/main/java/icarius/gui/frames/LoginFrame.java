@@ -21,26 +21,34 @@ public class LoginFrame extends JFrame {
     private LoginPanel loginPanel;
     public JLabel notificationLabel = new JLabel(" ", SwingConstants.CENTER);
 
+    /**
+     * Frame where user enters login details to be able to view the rest of the GUI
+     * 
+     * @param pos
+     */
     public LoginFrame(Point pos) {
         setTitle("Icarius Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(Gui.MAIN_FRAME_X_SIZE, Gui.MAIN_FRAME_Y_SIZE);
         setLocationRelativeTo(null);
         setResizable(false);
-        if (pos != null) setLocation(pos);
+        if (pos != null)
+            setLocation(pos);
         setVisible(true);
 
         loginPanel = new LoginPanel(logInAction);
         add(loginPanel);
 
         notificationLabel.setForeground(Color.RED);
-        notificationLabel.setBorder(new EmptyBorder(5,5,5,5));
+        notificationLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
         add(notificationLabel, BorderLayout.SOUTH);
 
         validate();
     }
 
-    // Actions
+    /**
+     * action listener for login button
+     */
     private ActionListener logInAction = new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
             // Get Entered Credentials
@@ -52,7 +60,7 @@ public class LoginFrame extends JFrame {
             App.userClient.setCredentials(credentials);
             try {
                 App.userClient.validate(null);
-    
+
                 if (App.userClient.getValid()) {
                     new MainFrame(getLocation());
                     dispose(); // Close the login frame

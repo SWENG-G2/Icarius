@@ -22,7 +22,7 @@ import icarius.App;
 import javax.swing.JTextArea;
 
 //Class to be inherited by the other bird forms, contrains functions which they all use
-public abstract class BirdFieldForm extends JPanel{
+public abstract class BirdFieldForm extends JPanel {
     protected final HashMap<String, String> changedParams;
 
     public JTextField textField;
@@ -33,14 +33,27 @@ public abstract class BirdFieldForm extends JPanel{
 
     public String urlPath;
 
-    public BirdFieldForm(HashMap<String, String> changedParams){
+    /**
+     * BirdFieldForm constructor for existing bird
+     * 
+     * @param changedParams
+     */
+    public BirdFieldForm(HashMap<String, String> changedParams) {
         this.changedParams = changedParams;
     }
 
+    /**
+     * BirdFieldForm constructor for creating bird
+     */
     public BirdFieldForm() {
         this.changedParams = null;
     }
 
+    /**
+     * Configures gridBagConstraints
+     * 
+     * @return GridBagConstraints c
+     */
     protected GridBagConstraints configure() {
         // Configure layout
         setLayout(new GridBagLayout());
@@ -52,12 +65,19 @@ public abstract class BirdFieldForm extends JPanel{
         return c;
     }
 
-    // Returns added textfield
+    /**
+     * Adds a label and textfield component to the form
+     * 
+     * @param labelText
+     * @param placeholderText - TextField placeholder text
+     * @param c               - GridBagConstraints
+     * @return JTextField - added textfield
+     */
     protected JTextField addTextField(String labelText, String placeholderText, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
-        
+
         // Add Label
         add(new JLabel(labelText), c);
 
@@ -72,18 +92,29 @@ public abstract class BirdFieldForm extends JPanel{
         return textField;
     }
 
-    protected JButton addFileUploadField(String labelText, String placeholderText, GridBagConstraints c, ActionListener al) {
+    /**
+     * Adds a label and textfield component to the form
+     * 
+     * @param labelText
+     * @param placeholderText - Button placeholder text
+     * @param c               - GridBagConstraints
+     * @param al              - Button ActionListener
+     * @return JButton - added JButton
+     */
+    protected JButton addFileUploadField(String labelText, String placeholderText, GridBagConstraints c,
+            ActionListener al) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
-        
+
         // Add Label
         JLabel label = new JLabel(labelText);
         add(label, c);
 
         // Add TextField
         c.gridx++;
-        if (placeholderText == null || placeholderText.equals("")) placeholderText = "Upload a file";
+        if (placeholderText == null || placeholderText.equals(""))
+            placeholderText = "Upload a file";
 
         // Get File Name
         String[] getFileName = placeholderText.split("/");
@@ -104,7 +135,14 @@ public abstract class BirdFieldForm extends JPanel{
         return button;
     }
 
-    // Returns added textArea
+    /**
+     * Adds a label and textarea component to the form
+     * 
+     * @param labelText
+     * @param placeholderText - TextArea placeholder text
+     * @param c               - GridBagConstraints
+     * @return JTextArea - added JTextArea
+     */
     protected JTextArea addTextArea(String labelText, String placeholderText, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -124,10 +162,10 @@ public abstract class BirdFieldForm extends JPanel{
 
         return textArea;
     }
-    
 
     /**
      * Create and return image at path specified by url image
+     * 
      * @return
      */
     protected JLabel getImage(String imageName) {
@@ -142,13 +180,13 @@ public abstract class BirdFieldForm extends JPanel{
                     if (urlPath.contains("localhost")) {
                         urlPath = urlPath.replace("https://localhost:8080", App.PENELOPE_STORAGE);
                     }
-        
+
                     if (urlPath.contains("http")) {
                         urlPath = urlPath.replace(" ", "%20");
                         buffImage = ImageIO.read(new URL(urlPath).openStream());
                     } else {
                         buffImage = ImageIO.read(new File(urlPath));
-                    }  
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -161,6 +199,10 @@ public abstract class BirdFieldForm extends JPanel{
         return imageLbl;
     }
 
+    /**
+     * @param fileName
+     * @return File name formatted for displaying on JButton
+     */
     protected String getUploadedFileText(String fileName) {
         String text = "File selected: " + fileName;
         if (text.length() > 35) {

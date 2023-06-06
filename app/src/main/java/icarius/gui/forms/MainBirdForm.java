@@ -16,9 +16,9 @@ import icarius.gui.forms.birdForms.SoundForm;
 import icarius.gui.forms.birdForms.VideoForm;
 import lombok.Getter;
 
-public class MainBirdForm extends JPanel{
+public class MainBirdForm extends JPanel {
     @Getter
-    private final HashMap<String,String> changeParams;
+    private final HashMap<String, String> changeParams;
 
     public ListImageForm listImageForm;
     public HeroImageForm heroImageForm;
@@ -30,18 +30,34 @@ public class MainBirdForm extends JPanel{
     public DietForm dietForm;
     public DietImageForm dietImageFrom;
 
-    public MainBirdForm(Bird bird, String selectedForm){
+    /**
+     * Form for editing a bird
+     * 
+     * @param bird
+     * @param selectedForm
+     */
+    public MainBirdForm(Bird bird, String selectedForm) {
         this.changeParams = bird.clearParams();
         initializeFields(bird);
         this.setForm(selectedForm);
     }
 
-    public MainBirdForm(String selectedForm){
+    /**
+     * Form for creating a bird
+     * 
+     * @param selectedForm
+     */
+    public MainBirdForm(String selectedForm) {
         this.changeParams = null;
         initializeFields();
         this.setForm(selectedForm);
     }
 
+    /**
+     * selects the displayed form depending on what is selected in the combo box
+     * 
+     * @param selectedForm
+     */
     public void setForm(String selectedForm) {
         removeAll();
 
@@ -77,12 +93,17 @@ public class MainBirdForm extends JPanel{
                 System.out.println("ERROR in gui>forms>birdForms>MainBirdForm");
                 break;
         }
-        
+
         revalidate();
         repaint();
     }
 
-    private void initializeFields(Bird bird){
+    /**
+     * Initializes fields for the selected bird
+     * 
+     * @param bird
+     */
+    private void initializeFields(Bird bird) {
         listImageForm = new ListImageForm(bird, changeParams);
         heroImageForm = new HeroImageForm(bird, changeParams);
         soundForm = new SoundForm(bird, changeParams);
@@ -94,7 +115,10 @@ public class MainBirdForm extends JPanel{
         dietImageFrom = new DietImageForm(bird, changeParams);
     }
 
-    private void initializeFields(){
+    /**
+     * Initializes fields for creating a bird
+     */
+    private void initializeFields() {
         listImageForm = new ListImageForm();
         heroImageForm = new HeroImageForm();
         soundForm = new SoundForm();

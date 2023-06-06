@@ -13,10 +13,16 @@ import icarius.entities.Bird;
 
 import static icarius.services.FileUploadService.*;
 
-public class HeroImageForm extends BirdFieldForm{
+public class HeroImageForm extends BirdFieldForm {
     private String HERO_IMAGE_NAME = "Hero Image";
-    
-    public HeroImageForm(Bird bird, HashMap<String, String> changedParams){
+
+    /**
+     * hero image form for editing exisiting bird
+     * 
+     * @param bird
+     * @param changedParams
+     */
+    public HeroImageForm(Bird bird, HashMap<String, String> changedParams) {
         super(changedParams);
         urlPath = bird.getHeroImageURL();
 
@@ -32,10 +38,13 @@ public class HeroImageForm extends BirdFieldForm{
         c.gridy++;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        add(getImage(HERO_IMAGE_NAME), c);  
+        add(getImage(HERO_IMAGE_NAME), c);
     }
 
-    public HeroImageForm(){
+    /**
+     * hero image form for creating new bird
+     */
+    public HeroImageForm() {
         super(null);
         // Configure Layout
         GridBagConstraints c = configure();
@@ -45,6 +54,11 @@ public class HeroImageForm extends BirdFieldForm{
         uploadButton = addFileUploadField("Hero Image:", "", c, uploadHeroImage());
     }
 
+    /**
+     * action listener to get selected picture from local files
+     * 
+     * @return new ActionListener
+     */
     public ActionListener uploadHeroImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -57,17 +71,17 @@ public class HeroImageForm extends BirdFieldForm{
 
                 // Removes previous image
                 for (Component label : getComponents()) {
-                    if (label instanceof JLabel)
-                    {
-                        if (label.getName() == HERO_IMAGE_NAME){
+                    if (label instanceof JLabel) {
+                        if (label.getName() == HERO_IMAGE_NAME) {
                             remove(label);
                         }
                     }
                 }
 
-                //Upload Image
+                // Upload Image
                 File file = selectLocalFile("Image");
-                if (file == null) return;
+                if (file == null)
+                    return;
                 uploadButton.setText(getUploadedFileText(file.getName()));
                 urlPath = file.getPath();
 

@@ -19,8 +19,14 @@ import icarius.entities.Bird;
 
 import static icarius.services.FileUploadService.*;
 
-public class VideoForm extends BirdFieldForm{
-    public VideoForm(Bird bird, HashMap<String, String> changedParams){
+public class VideoForm extends BirdFieldForm {
+    /**
+     * video form for editing bird
+     * 
+     * @param bird
+     * @param changedParams
+     */
+    public VideoForm(Bird bird, HashMap<String, String> changedParams) {
         super(changedParams);
         // Configure Layout
         GridBagConstraints c = configure();
@@ -31,7 +37,10 @@ public class VideoForm extends BirdFieldForm{
         uploadButton = addFileUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
     }
 
-    public VideoForm(){
+    /**
+     * video form for creating new bird
+     */
+    public VideoForm() {
         // Configure Layout
         GridBagConstraints c = configure();
         c.gridx = 2;
@@ -40,6 +49,11 @@ public class VideoForm extends BirdFieldForm{
         uploadButton = addFileUploadField("Video:", "", c, uploadVideo());
     }
 
+    /**
+     * action listener to get selected video from local files
+     * 
+     * @return new ActionListener
+     */
     public ActionListener uploadVideo() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -53,9 +67,8 @@ public class VideoForm extends BirdFieldForm{
                 // Removes previous thumbnail
                 String video = "video";
                 for (Component label : getComponents()) {
-                    if (label instanceof JLabel)
-                    {
-                        if (label.getName() == video){
+                    if (label instanceof JLabel) {
+                        if (label.getName() == video) {
                             remove(label);
                         }
                     }
@@ -63,10 +76,11 @@ public class VideoForm extends BirdFieldForm{
 
                 // Upload file
                 File file = selectLocalFile("Video");
-                if (file == null) return;
+                if (file == null)
+                    return;
                 uploadButton.setText("File selected: " + file.getName());
                 urlPath = file.getPath();
-                
+
                 if (changedParams != null)
                     changedParams.put("aboutMeVideoURL", urlPath);
 
@@ -80,8 +94,8 @@ public class VideoForm extends BirdFieldForm{
 
                     Java2DFrameConverter converter = new Java2DFrameConverter();
 
-                    //Grabs a key frame from the first 50
-                    for (int i = 0 ; i < 50 ; i++){
+                    // Grabs a key frame from the first 50
+                    for (int i = 0; i < 50; i++) {
                         org.bytedeco.javacv.Frame frame = grabber.grabKeyFrame();
                         if (converter.convert(frame) == null) {
                             break;
@@ -89,7 +103,7 @@ public class VideoForm extends BirdFieldForm{
                             thumbnailBuff = converter.convert(frame);
                         }
                     }
-                    
+
                     Image image = thumbnailBuff.getScaledInstance(300, 200, Image.SCALE_DEFAULT);
                     thumbnailLbl.setIcon(new ImageIcon(image));
                     add(thumbnailLbl, c);

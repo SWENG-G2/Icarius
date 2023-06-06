@@ -24,8 +24,12 @@ public class CreateUserTab extends JPanel {
     private JPasswordField confirmPassField;
     private JComboBox<String> roleBox;
 
-    private String[] roles = {"User", "Admin"};
+    private String[] roles = { "User", "Admin" };
 
+    /**
+     * Tab used to create users in the server
+     * 
+     */
     public CreateUserTab() {
         // Configure Layout
         GridBagConstraints c = configure();
@@ -43,6 +47,11 @@ public class CreateUserTab extends JPanel {
         add(createButton, c);
     }
 
+    /**
+     * Configures gridBagConstraints
+     * 
+     * @return GridBagConstraints c
+     */
     private GridBagConstraints configure() {
         // Configure layout
         setLayout(new GridBagLayout());
@@ -54,12 +63,18 @@ public class CreateUserTab extends JPanel {
         return c;
     }
 
-    // Returns added textfield
+    /**
+     * Returns added text field
+     * 
+     * @param labelText
+     * @param c
+     * @return JTextField textField
+     */
     private JTextField addTextField(String labelText, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
-        
+
         // Add Label
         add(new JLabel(labelText), c);
 
@@ -74,25 +89,31 @@ public class CreateUserTab extends JPanel {
         return textField;
     }
 
-        // Returns added textfield
-        private JPasswordField addPasswordField(String labelText, GridBagConstraints c) {
-            // Configure Layout
-            c.fill = GridBagConstraints.NONE;
-            c.gridx = 0;
-            
-            // Add Label
-            add(new JLabel(labelText), c);
-    
-            // Add TextField
-            c.gridx++;
-            c.fill = GridBagConstraints.HORIZONTAL;
-            JPasswordField passwordField = new JPasswordField(18);
-            add(passwordField, c);
-    
-            // Increment y for next item
-            c.gridy++;
-            return passwordField;
-        }
+    /**
+     * Returns added password field
+     * 
+     * @param labelText
+     * @param c
+     * @return JPasswordField passwordField
+     */
+    private JPasswordField addPasswordField(String labelText, GridBagConstraints c) {
+        // Configure Layout
+        c.fill = GridBagConstraints.NONE;
+        c.gridx = 0;
+
+        // Add Label
+        add(new JLabel(labelText), c);
+
+        // Add TextField
+        c.gridx++;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        JPasswordField passwordField = new JPasswordField(18);
+        add(passwordField, c);
+
+        // Increment y for next item
+        c.gridy++;
+        return passwordField;
+    }
 
     private JComboBox<String> addComboBox(String labelText, String[] options, GridBagConstraints c) {
         // Configure Layout
@@ -113,8 +134,16 @@ public class CreateUserTab extends JPanel {
         return comboBox;
     }
 
+    /**
+     * returns added comboBox
+     * 
+     * @param labelText
+     * @param options
+     * @param c
+     * @return JComboBox<String> comboBox
+     */
     private ActionListener buttonAction = new ActionListener() {
-        public void actionPerformed(ActionEvent ae){
+        public void actionPerformed(ActionEvent ae) {
             MainFrame frame = (MainFrame) getTopLevelAncestor();
             String username = nameField.getText();
             String password = String.valueOf(passField.getPassword());
@@ -142,12 +171,12 @@ public class CreateUserTab extends JPanel {
 
             // Create user with entered username
             User user = new User(App.userClient, username);
-            
+
             // If admin role selected set user to admin
             if (roleBox.getSelectedItem().equals("Admin")) {
                 user.setAdmin(true);
             }
-            
+
             // Create user in server
             try {
                 if (user.create(password, null)) {

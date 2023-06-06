@@ -23,8 +23,14 @@ import icarius.entities.Bird;
 
 import static icarius.services.FileUploadService.*;
 
-public class SoundForm extends BirdFieldForm{
-    public SoundForm(Bird bird, HashMap<String, String> changedParams){
+public class SoundForm extends BirdFieldForm {
+    /**
+     * sound form for editing bird
+     * 
+     * @param bird
+     * @param changedParams
+     */
+    public SoundForm(Bird bird, HashMap<String, String> changedParams) {
         super(changedParams);
         urlPath = bird.getSoundURL();
 
@@ -45,24 +51,24 @@ public class SoundForm extends BirdFieldForm{
         audioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (urlPath!= null){
+                if (urlPath != null) {
                     urlPath = urlPath.replace(" ", "%20");
 
-                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(urlPath);     
+                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(urlPath);
                     try {
                         grabber.start();
                         System.out.println("grabber start");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    
+
                     if (grabber.getAudioChannels() > 0) {
                         try {
                             AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL(urlPath));
                             Clip clip = AudioSystem.getClip();
                             clip.open(audioIn);
                             clip.start();
-                            
+
                         } catch (LineUnavailableException e) {
                             e.printStackTrace();
                         } catch (MalformedURLException e) {
@@ -71,10 +77,9 @@ public class SoundForm extends BirdFieldForm{
                             e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
-                        }       
-                    } 
-                    
-                      
+                        }
+                    }
+
                     try {
                         grabber.close();
                         System.out.println("grabber close");
@@ -88,7 +93,10 @@ public class SoundForm extends BirdFieldForm{
         });
     }
 
-    public SoundForm(){
+    /**
+     * sound form for creating new bird
+     */
+    public SoundForm() {
         // Configure Layout
         GridBagConstraints c = configure();
         c.gridx = 0;
@@ -105,28 +113,28 @@ public class SoundForm extends BirdFieldForm{
         audioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (urlPath!= null){
-                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(urlPath);     
+                if (urlPath != null) {
+                    FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(urlPath);
                     try {
                         grabber.start();
                         System.out.println("grabber start");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    
+
                     if (grabber.getAudioChannels() > 0) {
                         try {
                             AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL("file:///" + urlPath));
                             Clip clip = AudioSystem.getClip();
                             clip.open(audioIn);
                             clip.start();
-                            grabber.close();  
-                            
+                            grabber.close();
+
                         } catch (java.lang.Exception e) {
                             e.printStackTrace();
-                        }     
+                        }
                     }
-                         
+
                     try {
                         grabber.close();
                         System.out.println("grabber close");
@@ -138,6 +146,11 @@ public class SoundForm extends BirdFieldForm{
         });
     }
 
+    /**
+     * action listener to get selected audio file from local files
+     * 
+     * @return new ActionListener
+     */
     public ActionListener uploadAudio() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -150,14 +163,14 @@ public class SoundForm extends BirdFieldForm{
 
                 // Upload file
                 File file = selectLocalFile("Audio");
-                if (file == null) return;
+                if (file == null)
+                    return;
                 uploadButton.setText(getUploadedFileText(file.getName()));
                 urlPath = file.getPath();
 
-                
                 if (changedParams != null)
                     changedParams.put("soundURL", urlPath);
             }
         };
-    } 
+    }
 }

@@ -13,6 +13,11 @@ import icarius.gui.panels.UserListPanel;
 public class UsersTab extends JPanel {
     public UserListPanel userListPanel;
 
+    /**
+     * Tab to display information of and edit users in server
+     * 
+     * @param frame
+     */
     public UsersTab(MainFrame frame) {
         // Configure Tab
         setLayout(new BorderLayout());

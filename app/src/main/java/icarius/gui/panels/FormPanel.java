@@ -11,12 +11,19 @@ import icarius.gui.forms.EditForm;
 public class FormPanel extends JPanel {
     private String WELCOME_TEXT = "Select an item to continue.";
 
-    public FormPanel() {        
+    /**
+     * Panel used in MainTab which displays the add, edit and details forms for both
+     * campus and bird
+     */
+    public FormPanel() {
         JPanel welcomePanel = new JPanel();
         welcomePanel.add(new JLabel(WELCOME_TEXT));
         add(welcomePanel);
     }
 
+    /**
+     * Creates and adds the addForm for campuses
+     */
     public void setAddCampus() {
         removeAll();
         add(new AddForm());
@@ -24,6 +31,9 @@ public class FormPanel extends JPanel {
         repaint();
     }
 
+    /**
+     * Creates and adds the addForm for birds
+     */
     public void setAddBird(Campus campus) {
         removeAll();
         add(new AddForm(campus));
@@ -31,6 +41,9 @@ public class FormPanel extends JPanel {
         repaint();
     }
 
+    /**
+     * Creates and adds the editForm for either birds or campuses
+     */
     public void setEditPage(Object o) {
         removeAll();
         add(new EditForm(o));
@@ -38,6 +51,9 @@ public class FormPanel extends JPanel {
         repaint();
     }
 
+    /**
+     * Creates and adds the detailsForm for either birds or campuses
+     */
     public void setDetailsPage(Object o) {
         removeAll();
         add(new DetailsForm(o));

@@ -15,10 +15,17 @@ public class MainTab extends JPanel {
     private TreePanel dbTreePanel;
     private @Getter FormPanel formPanel;
 
+    /**
+     * Tab accessable by all users of the GUI.
+     * Birds and campuses are displayed in a JTree on the left of the tab.
+     * Right of tab contains add, edit, and detail fields for selected bird or
+     * campus.
+     * 
+     */
     public MainTab() {
         // Configure Tab
         setLayout(new BorderLayout());
-        
+
         // Create and Add Panel containing database tree
         add(getTreePanel(), BorderLayout.WEST);
 
@@ -27,6 +34,12 @@ public class MainTab extends JPanel {
         add(formPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * creates tree panel using data from database, sets preferred size of it, and
+     * returns it.
+     * 
+     * @return TreePanel dbTreePanel
+     */
     public TreePanel getTreePanel() {
         // Fetch Database
         App.db = new Database(App.userClient);
@@ -37,7 +50,12 @@ public class MainTab extends JPanel {
         dbTreePanel.setPreferredSize(new Dimension(width, this.getHeight()));
         return dbTreePanel;
     }
-    
+
+    /**
+     * refreshes JTree and updates details form
+     * 
+     * @param campusOrBird
+     */
     public void refreshDatabaseTree(Object campusOrBird) {
         // Save current status
         JTree oldTree = dbTreePanel.getTree();
@@ -47,11 +65,9 @@ public class MainTab extends JPanel {
         getTreePanel();
         add(dbTreePanel, BorderLayout.WEST);
 
-
         // Expand tree to previous state
         JTree newTree = dbTreePanel.getTree();
         expandTree(oldTree, newTree);
-
 
         // Update form panel
         if (campusOrBird != null) {
@@ -59,11 +75,16 @@ public class MainTab extends JPanel {
         }
         add(formPanel, BorderLayout.CENTER);
 
-
         revalidate();
         repaint();
     }
 
+    /**
+     * expands new tree to its previous state
+     * 
+     * @param oldTree
+     * @param newTree
+     */
     private void expandTree(JTree oldTree, JTree newTree) {
         // Get Tree Roots
         Object oldTreeRoot = oldTree.getModel().getRoot();
@@ -72,10 +93,10 @@ public class MainTab extends JPanel {
         // Row number of campus in each tree
         int newRowNum = 0;
         int oldRowNum = 0;
-        
+
         // For each campus
-        for(int campusNum = 0; campusNum < oldTree.getModel().getChildCount(oldTreeRoot); campusNum++){
-            if( oldTree.isExpanded(oldRowNum) ){
+        for (int campusNum = 0; campusNum < oldTree.getModel().getChildCount(oldTreeRoot); campusNum++) {
+            if (oldTree.isExpanded(oldRowNum)) {
                 // If campus expanded in old tree, expand in new tree
                 newTree.expandRow(newRowNum);
 
