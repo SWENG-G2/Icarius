@@ -135,12 +135,7 @@ public class CreateUserTab extends JPanel {
     }
 
     /**
-     * returns added comboBox
-     * 
-     * @param labelText
-     * @param options
-     * @param c
-     * @return JComboBox<String> comboBox
+     * An action listener for button callback 
      */
     private ActionListener buttonAction = new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
