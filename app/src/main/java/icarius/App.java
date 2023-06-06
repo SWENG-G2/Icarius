@@ -31,6 +31,7 @@ public class App {
 
     /**
      * Create client used to bypass SSL when using local server
+     * WARNING: THIS SHOULD NEVER BE USED IN PRODUCTION
      * @return OkHttpClient that is unsafe for standard use
      */
     private static OkHttpClient getUnsafeOkHttpClient() {
