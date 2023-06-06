@@ -17,6 +17,10 @@ import icarius.entities.Bird;
 import static icarius.services.FileUploadService.*;
 
 public class LocationImageForm extends BirdFieldForm{
+    /**
+     * location image form for editing bird
+     * @param bird
+     */
     public LocationImageForm(Bird bird){
             // Configure Layout
             GridBagConstraints c = configure();
@@ -26,6 +30,9 @@ public class LocationImageForm extends BirdFieldForm{
             UploadButton = addFileUploadField("Location Image:", bird.getLocationImageURL(), c, uploadLocationImage());
     }
 
+    /**
+     * location form for creating new bird
+     */
     public LocationImageForm(){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -35,6 +42,11 @@ public class LocationImageForm extends BirdFieldForm{
         UploadButton = addFileUploadField("Location Image:", "", c, uploadLocationImage());
     }
 
+
+    /**
+     * action listener to get selected picture from local files
+     * @return new ActionListener
+     */
     public ActionListener uploadLocationImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
