@@ -15,6 +15,10 @@ public class LoginPanel extends JPanel {
     public JTextField usernameField = new JTextField("", 20);
     public JPasswordField passwordField = new JPasswordField("", 20);
 
+    /**
+     * Panel for the login frame
+     * @param loginAction
+     */
     public LoginPanel(ActionListener loginAction) {
         setLayout(new GridBagLayout());
         setBorder(new EmptyBorder(5,5,5,5));
@@ -23,6 +27,9 @@ public class LoginPanel extends JPanel {
         addLoginButton(loginAction);
     }
 
+    /**
+     * Adds the panels labels
+     */
     private void addLabels() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -36,6 +43,10 @@ public class LoginPanel extends JPanel {
         add(new JLabel("Key:"), c);
     }
 
+
+    /**
+     * Creates and adds the panels fields
+     */
     private void addFields() {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -48,6 +59,11 @@ public class LoginPanel extends JPanel {
         add(passwordField, c);
     }
 
+
+    /**
+     * Creates and adds the login button with an ActionListener
+     * @param loginAction
+     */
     private void addLoginButton(ActionListener loginAction) {
         // Create Button
         JButton logInButton = new JButton("Login");

@@ -21,6 +21,10 @@ public class LoginFrame extends JFrame {
     private LoginPanel loginPanel;
     public JLabel notificationLabel = new JLabel(" ", SwingConstants.CENTER);
 
+    /**
+     * Frame where user enters login details to be able to view the rest of the GUI
+     * @param pos
+     */
     public LoginFrame(Point pos) {
         setTitle("Icarius Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,7 +44,9 @@ public class LoginFrame extends JFrame {
         validate();
     }
 
-    // Actions
+    /**
+     * action listener for login button
+     */
     private ActionListener logInAction = new ActionListener() {
         public void actionPerformed(ActionEvent ae) {
             // Get Entered Credentials

@@ -17,6 +17,11 @@ import icarius.entities.Bird;
 import static icarius.services.FileUploadService.*;
 
 public class HeroImageForm extends BirdFieldForm{
+
+    /**
+     * hero image form for editing exisiting bird
+     * @param bird
+     */
     public HeroImageForm(Bird bird){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -26,6 +31,9 @@ public class HeroImageForm extends BirdFieldForm{
         UploadButton = addFileUploadField("Hero Image:", bird.getHeroImageURL(), c, uploadHeroImage());
     }
 
+    /**
+     * hero image form for creating new bird
+     */
     public HeroImageForm(){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -35,6 +43,10 @@ public class HeroImageForm extends BirdFieldForm{
         UploadButton = addFileUploadField("Hero Image:", "", c, uploadHeroImage());
     }
 
+    /**
+     * action listener to get selected picture from local files
+     * @return new ActionListener
+     */
     public ActionListener uploadHeroImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

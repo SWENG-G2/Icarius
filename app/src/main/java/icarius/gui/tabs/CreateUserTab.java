@@ -26,6 +26,10 @@ public class CreateUserTab extends JPanel {
 
     private String[] roles = {"User", "Admin"};
 
+    /**
+     * Tab used to create users in the server
+     * 
+     */
     public CreateUserTab() {
         // Configure Layout
         GridBagConstraints c = configure();
@@ -43,6 +47,10 @@ public class CreateUserTab extends JPanel {
         add(createButton, c);
     }
 
+    /**
+     * Configures gridBagConstraints
+     * @return GridBagConstraints c
+     */
     private GridBagConstraints configure() {
         // Configure layout
         setLayout(new GridBagLayout());
@@ -54,7 +62,12 @@ public class CreateUserTab extends JPanel {
         return c;
     }
 
-    // Returns added textfield
+    /**
+     * Returns added text field
+     * @param labelText
+     * @param c
+     * @return JTextField textField
+     */
     private JTextField addTextField(String labelText, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -74,26 +87,39 @@ public class CreateUserTab extends JPanel {
         return textField;
     }
 
-        // Returns added textfield
-        private JPasswordField addPasswordField(String labelText, GridBagConstraints c) {
-            // Configure Layout
-            c.fill = GridBagConstraints.NONE;
-            c.gridx = 0;
+    /**
+     * Returns added password field
+     * @param labelText
+     * @param c
+     * @return JPasswordField passwordField
+     */
+    private JPasswordField addPasswordField(String labelText, GridBagConstraints c) {
+        // Configure Layout
+        c.fill = GridBagConstraints.NONE;
+        c.gridx = 0;
             
-            // Add Label
-            add(new JLabel(labelText), c);
+        // Add Label
+        add(new JLabel(labelText), c);
     
-            // Add TextField
-            c.gridx++;
-            c.fill = GridBagConstraints.HORIZONTAL;
-            JPasswordField passwordField = new JPasswordField(18);
-            add(passwordField, c);
+        // Add TextField
+        c.gridx++;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        JPasswordField passwordField = new JPasswordField(18);
+        add(passwordField, c);
     
-            // Increment y for next item
-            c.gridy++;
-            return passwordField;
-        }
+        // Increment y for next item
+        c.gridy++;
+        return passwordField;
+    }
 
+
+    /**
+     * returns added comboBox
+     * @param labelText
+     * @param options
+     * @param c
+     * @return JComboBox<String> comboBox
+     */
     private JComboBox<String> addComboBox(String labelText, String[] options, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -113,6 +139,10 @@ public class CreateUserTab extends JPanel {
         return comboBox;
     }
 
+
+    /**
+     *Action listener for create user button
+     */
     private ActionListener buttonAction = new ActionListener() {
         public void actionPerformed(ActionEvent ae){
             MainFrame frame = (MainFrame) getTopLevelAncestor();

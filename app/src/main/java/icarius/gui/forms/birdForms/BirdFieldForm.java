@@ -25,6 +25,11 @@ public abstract class BirdFieldForm extends JPanel{
     public BirdFieldForm(){
     }
 
+
+    /**
+     * Configures gridBagConstraints
+     * @return GridBagConstraints c
+     */
     protected GridBagConstraints configure() {
         // Configure layout
         setLayout(new GridBagLayout());

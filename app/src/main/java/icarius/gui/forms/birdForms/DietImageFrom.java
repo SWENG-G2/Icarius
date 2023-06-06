@@ -18,6 +18,10 @@ import static icarius.services.FileUploadService.*;
 
 
 public class DietImageFrom extends BirdFieldForm{
+    /**
+     * diet image form for editing exisiting bird
+     * @param bird
+     */
     public DietImageFrom(Bird bird){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -27,6 +31,9 @@ public class DietImageFrom extends BirdFieldForm{
         UploadButton = addFileUploadField("Diet Image:", bird.getDietImageURL(), c, uploadDietImage());
     }
 
+    /**
+     * diet image form for creating new bird
+     */
     public DietImageFrom(){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -36,6 +43,11 @@ public class DietImageFrom extends BirdFieldForm{
         UploadButton = addFileUploadField("Diet Image:", "", c, uploadDietImage());
     }
 
+
+    /**
+     * action listener to get selected picture from local files
+     * @return new ActionListener
+     */
     public ActionListener uploadDietImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

@@ -7,6 +7,10 @@ import javax.swing.JScrollPane;
 import icarius.entities.Bird;
 
 public class LocationForm extends BirdFieldForm{
+    /**
+     * location form for editing bird
+     * @param bird
+     */
     public LocationForm(Bird bird){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -17,6 +21,9 @@ public class LocationForm extends BirdFieldForm{
         add(scrollpane);
     }
 
+    /**
+     * loction form for creating new bird
+     */
     public LocationForm(){
         // Configure Layout
         GridBagConstraints c = configure();

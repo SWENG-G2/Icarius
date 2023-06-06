@@ -10,6 +10,10 @@ import icarius.entities.Bird;
 import static icarius.services.FileUploadService.*;
 
 public class SoundForm extends BirdFieldForm{
+    /**
+     * sound form for editing bird
+     * @param bird
+     */
     public SoundForm(Bird bird){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -19,6 +23,9 @@ public class SoundForm extends BirdFieldForm{
         UploadButton = addFileUploadField("Sound:", bird.getSoundURL(), c, uploadAudio());
     }
 
+    /**
+     * location form for creating new bird
+     */
     public SoundForm(){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -28,6 +35,10 @@ public class SoundForm extends BirdFieldForm{
         UploadButton = addFileUploadField("Sound:", "", c, uploadAudio());
     }
 
+    /**
+     * action listener to get selected audio file from local files
+     * @return new ActionListener
+     */
     public ActionListener uploadAudio() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

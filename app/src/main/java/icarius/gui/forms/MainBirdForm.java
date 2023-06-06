@@ -26,16 +26,30 @@ public class MainBirdForm extends JPanel{
     public DietForm dietForm;
     public DietImageFrom dietImageFrom;
 
+
+    /**
+     * Form for editing a bird
+     * @param bird
+     * @param selectedForm
+     */
     public MainBirdForm(Bird bird, String selectedForm){
         initializeFields(bird);
         this.setForm(selectedForm);
     }
 
+    /**
+     * Form for creating a bird
+     * @param selectedForm
+     */
     public MainBirdForm(String selectedForm){
         initializeFields();
         this.setForm(selectedForm);
     }
 
+    /**
+     * selects the displayed form depending on what is selected in the combo box
+     * @param selectedForm
+     */
     public void setForm(String selectedForm) {
         removeAll();
 
@@ -76,6 +90,10 @@ public class MainBirdForm extends JPanel{
         repaint();
     }
 
+    /**
+     * Initializes fields for the selected bird
+     * @param bird
+     */
     private void initializeFields(Bird bird){
         listImageForm = new ListImageForm(bird);
         heroImageForm = new HeroImageForm(bird);
@@ -88,6 +106,9 @@ public class MainBirdForm extends JPanel{
         dietImageFrom = new DietImageFrom(bird);
     }
 
+    /**
+     * Initializes fields for creating a bird
+     */
     private void initializeFields(){
         listImageForm = new ListImageForm();
         heroImageForm = new HeroImageForm();

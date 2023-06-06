@@ -15,6 +15,12 @@ public class MainTab extends JPanel {
     private TreePanel dbTreePanel;
     private @Getter FormPanel formPanel;
 
+    /**
+     * Tab accessable by all users of the GUI.
+     * Birds and campuses are displayed in a JTree on the left of the tab.
+     * Right of tab contains add, edit, and detail fields for selected bird or campus.
+     * 
+     */
     public MainTab() {
         // Configure Tab
         setLayout(new BorderLayout());
@@ -27,6 +33,11 @@ public class MainTab extends JPanel {
         add(formPanel, BorderLayout.CENTER);
     }
 
+
+    /**
+     * creates tree panel using data from database, sets preferred size of it, and returns it.
+     * @return TreePanel dbTreePanel
+     */
     public TreePanel getTreePanel() {
         // Fetch Database
         App.db = new Database(App.userClient);
@@ -38,6 +49,11 @@ public class MainTab extends JPanel {
         return dbTreePanel;
     }
     
+
+    /**
+     * refreshes JTree and updates details form
+     * @param campusOrBird
+     */
     public void refreshDatabaseTree(Object campusOrBird) {
         // Save current status
         JTree oldTree = dbTreePanel.getTree();
@@ -64,6 +80,11 @@ public class MainTab extends JPanel {
         repaint();
     }
 
+    /**
+     * expands new tree to its previous state
+     * @param oldTree
+     * @param newTree
+     */
     private void expandTree(JTree oldTree, JTree newTree) {
         // Get Tree Roots
         Object oldTreeRoot = oldTree.getModel().getRoot();

@@ -32,7 +32,10 @@ public class AddForm extends JPanel {
 
     private MainBirdForm birdForm;
 
-    // Add Campus Form
+    
+    /**
+     * Form for adding a campus entity
+     */
     public AddForm() {
         // Configure Layout
         GridBagConstraints c = configure();
@@ -44,7 +47,10 @@ public class AddForm extends JPanel {
         addCreateCampusButton(c);
     }
 
-    // Add Bird Form
+    /**
+     * form for adding a bird entity
+     * @param campus
+     */
     public AddForm(Campus campus) {
         // Configure Layout
         GridBagConstraints c = configure();
@@ -56,6 +62,10 @@ public class AddForm extends JPanel {
         addCreateBirdButton(c);
     }
 
+    /**
+     * Configures gridBagConstraints
+     * @return GridBagConstraints c
+     */
     private GridBagConstraints configure() {
         // Configure layout
         setLayout(new GridBagLayout());
@@ -67,7 +77,13 @@ public class AddForm extends JPanel {
         return c;
     }
 
-    // Returns added textfield
+
+    /**
+     * Returns added text field
+     * @param labelText
+     * @param c
+     * @return JTextField textField
+     */
     private JTextField addTextField(String labelText, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -87,6 +103,13 @@ public class AddForm extends JPanel {
         return textField;
     }
 
+
+    /**
+     * Returns form for adding information for new bird
+     * Returns added 
+     * @param campus
+     * @param c
+     */
     public void addBirdFields(Campus campus, GridBagConstraints c){
         // Add Inputs
         nameField = addTextField("Bird Name:", c);
@@ -94,6 +117,13 @@ public class AddForm extends JPanel {
         birdForm = addBirdForm(birdFields[0], c);
     }
 
+
+    /**
+     * creates and adds combobox that controls which form of the create bird form is on screen
+     * @param labelText
+     * @param options
+     * @param c
+     */
     private void addComboBox(String labelText, String[] options, GridBagConstraints c) {
 
         // Configure Layout
@@ -123,6 +153,12 @@ public class AddForm extends JPanel {
         };
     }
 
+    /**
+     * ActionListener for comboBox that controls which form of the add bird form is on screen
+     * @param bird
+     * @param comboBox
+     * @return new ActionListener
+     */
     private MainBirdForm addBirdForm(String firstForm, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -143,6 +179,11 @@ public class AddForm extends JPanel {
         return birdForm;
     }
 
+    
+    /**
+     * Adds button to create campus in server with given details
+     * @param c
+     */
     public void addCreateCampusButton(GridBagConstraints c) {
         c.gridx = 1;
         JButton createButton = new JButton("Create Campus");
@@ -187,6 +228,10 @@ public class AddForm extends JPanel {
         add(createButton, c);
     }
 
+    /**
+     * Adds button to create bird in server with given details
+     * @param c
+     */
     public void addCreateBirdButton(GridBagConstraints c) {
         c.gridx = 1;
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -253,7 +298,6 @@ public class AddForm extends JPanel {
 
                 try {
                     if ( newBird.create(App.userClient, null) ) {
-                        //TODO - Connall - make sure I've added all of this to the right place
                         // Success
 
                         frame.setNotification(newBird.getName() + " added to " + campus.getName(), null);

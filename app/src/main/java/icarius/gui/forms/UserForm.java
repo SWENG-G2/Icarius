@@ -22,6 +22,10 @@ public class UserForm extends JPanel {
     private User user;
     private GridBagConstraints c;
 
+    /**
+     * Form that displays user information in UsersTab
+     * @param user
+     */
     public UserForm(User user) {
         this.user = user;
         // Configure Layout
@@ -38,6 +42,10 @@ public class UserForm extends JPanel {
         }
     }
 
+    /**
+     * Configures gridBagConstraints
+     * @return GridBagConstraints c
+     */
     private GridBagConstraints configure() {
         // Configure layout
         setLayout(new GridBagLayout());
@@ -48,6 +56,13 @@ public class UserForm extends JPanel {
         return c;
     }
 
+
+    /**
+     * Adds label and information field
+     * @param labelText
+     * @param information
+     * @param c
+     */
     private void addInfoField(String labelText, String information, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -75,6 +90,13 @@ public class UserForm extends JPanel {
         c.gridy++;
     }
 
+
+    /**
+     * Displays a list of campuses the user has access to, not to be used with admins
+     * @param labelText
+     * @param campuses
+     * @param c
+     */
     private void accessableCampuses(String labelText, List<Campus> campuses, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -104,6 +126,10 @@ public class UserForm extends JPanel {
         }
     }
 
+    /**
+     * Creates and adds combo box to add campuses to the user
+     * @param c
+     */
     private void addAddCampus(GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -144,6 +170,10 @@ public class UserForm extends JPanel {
         c.gridy++;
     }
 
+    /**
+     * Creates and adds combo box to remove campuses to the user
+     * @param c
+     */
     private void addRemoveCampus(GridBagConstraints c) {
         c.gridx = 0;
         c.fill = GridBagConstraints.NONE;
@@ -183,6 +213,10 @@ public class UserForm extends JPanel {
         c.gridy++;
     }
 
+    /**
+     * Returns a list of campuses the selected user does not have access to
+     * @return List<Campus> unaccessibleCampuses
+     */
     private List<Campus> getUnaccesibleCampuses() {
         List<Campus> unaccessibleCampuses = new ArrayList<>();
 
@@ -196,6 +230,10 @@ public class UserForm extends JPanel {
         return unaccessibleCampuses;
     }
 
+    
+    /**
+     * refreshes the form when campus is added or removed from users accessable campus list.
+     */
     private void refresh() {
         UserInfoPanel parent = (UserInfoPanel) getParent();
         parent.setUserInfoPage(user);

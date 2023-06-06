@@ -7,6 +7,11 @@ import javax.swing.JScrollPane;
 import icarius.entities.Bird;
 
 public class AboutForm extends BirdFieldForm{
+
+    /**
+     * about form for editing exisiting bird
+     * @param bird
+     */
     public AboutForm(Bird bird){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -17,6 +22,9 @@ public class AboutForm extends BirdFieldForm{
         add(scrollpane);
     }
 
+    /**
+     * about form for creating new bird
+     */
     public AboutForm(){
         // Configure Layout
         GridBagConstraints c = configure();

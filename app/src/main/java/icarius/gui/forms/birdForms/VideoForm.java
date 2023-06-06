@@ -10,6 +10,11 @@ import icarius.entities.Bird;
 import static icarius.services.FileUploadService.*;
 
 public class VideoForm extends BirdFieldForm{
+
+    /**
+     * video form for editing bird
+     * @param bird
+     */
     public VideoForm(Bird bird){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -19,6 +24,9 @@ public class VideoForm extends BirdFieldForm{
         UploadButton = addFileUploadField("Video:", bird.getAboutMeVideoURL(), c, uploadVideo());
     }
 
+    /**
+     * location form for creating new bird
+     */
     public VideoForm(){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -28,6 +36,11 @@ public class VideoForm extends BirdFieldForm{
         UploadButton = addFileUploadField("Video:", "", c, uploadVideo());
     }
 
+
+    /**
+     * action listener to get selected video from local files
+     * @return new ActionListener
+     */
     public ActionListener uploadVideo() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

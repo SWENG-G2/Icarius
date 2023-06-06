@@ -14,7 +14,11 @@ import icarius.entities.Campus;
 import icarius.gui.panels.FormPanel;
 
 public class DetailsForm extends JPanel {
-    // Campus Details Page
+
+    /**
+     * Details page for selected campus or bird entity
+     * @param o
+     */
     public DetailsForm(Object o) {
         // Configure Layout
         GridBagConstraints c = configure();
@@ -27,6 +31,11 @@ public class DetailsForm extends JPanel {
         addEditButton(o, c);
     }
 
+
+    /**
+     * Configures gridBagConstraints
+     * @return GridBagConstraints c
+     */
     private GridBagConstraints configure() {
         // Configure layout
         setLayout(new GridBagLayout());
@@ -35,10 +44,20 @@ public class DetailsForm extends JPanel {
         return c;
     }
 
+    /**
+     * Adds details for selected campus
+     * @param campus
+     * @param c
+     */
     private void addCampusDetails(Campus campus, GridBagConstraints c) {
         addInfoField("Campus Name:", campus.getName(), c);
     }
 
+    /**
+     * Adds details for selected bird
+     * @param bird
+     * @param c
+     */
     private void addBirdDetails(Bird bird, GridBagConstraints c) {
         addInfoField("Bird Name:", bird.getName(), c);
         addInfoField("List Image:", bird.getListImageURL(), c);
@@ -52,6 +71,13 @@ public class DetailsForm extends JPanel {
         addInfoField("Diet Image:", bird.getDietImageURL(), c);
     }
 
+
+    /**
+     * adds label and information text for individual information field
+     * @param labelText
+     * @param information
+     * @param c
+     */
     private void addInfoField(String labelText, String information, GridBagConstraints c) {
         // Configure Layout
         c.fill = GridBagConstraints.NONE;
@@ -78,6 +104,12 @@ public class DetailsForm extends JPanel {
         c.gridy++;
     }
 
+
+    /**
+     * creates and adds button to edit selected entity
+     * @param o
+     * @param c
+     */
     private void addEditButton(Object o, GridBagConstraints c) {
         c.gridx = 1;
         JButton editButton = new JButton("Edit");

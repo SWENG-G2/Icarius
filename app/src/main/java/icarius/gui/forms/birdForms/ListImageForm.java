@@ -19,6 +19,10 @@ import static icarius.services.FileUploadService.*;
 
 public class ListImageForm extends BirdFieldForm{
     
+    /**
+     * list image form for editing exisiting bird
+     * @param bird
+     */
     public ListImageForm(Bird bird){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -29,6 +33,9 @@ public class ListImageForm extends BirdFieldForm{
         UploadButton = addFileUploadField("List Image:", bird.getListImageURL(), c, uploadListImage());               
     }
 
+    /**
+     * list image form for creating new bird
+     */
     public ListImageForm(){
         // Configure Layout
         GridBagConstraints c = configure();
@@ -39,6 +46,11 @@ public class ListImageForm extends BirdFieldForm{
         UploadButton = addFileUploadField("List Image:", "", c, uploadListImage());               
     }
 
+
+    /**
+     * action listener to get selected picture from local files
+     * @return new ActionListener
+     */
     public ActionListener uploadListImage() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent ae) {

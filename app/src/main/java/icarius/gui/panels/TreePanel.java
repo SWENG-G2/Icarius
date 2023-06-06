@@ -20,6 +20,9 @@ public class TreePanel extends JScrollPane {
     public static final String ADD_BIRD_TEXT = "+[Add Bird]";
     public static final String ADD_CAMPUS_TEXT = "+[Add Campus]";
     
+    /**
+     * Panel containing the campus/bird tree - used in mainTab
+     */
     public TreePanel() {
         // Configure JSrollPane
         setLayout(new ScrollPaneLayout.UIResource());
@@ -39,6 +42,10 @@ public class TreePanel extends JScrollPane {
         tree.addTreeSelectionListener(treeSelectionListener);
     }
 
+    /**
+     * Creates tree model, returns its root
+     * @return root
+     */
     public DefaultMutableTreeNode createTreeModel() {
         // Create the Tree using Database
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("FaunaFinder");
@@ -61,6 +68,11 @@ public class TreePanel extends JScrollPane {
         return root;
     }
 
+    /**
+     * Creates tree node for campus, adds its birds as child nodes
+     * @param campus
+     * @return campusNode
+     */
     private DefaultMutableTreeNode constructCampusNode(Campus campus) {
         // Create campus node
         DefaultMutableTreeNode campusNode = new DefaultMutableTreeNode(campus.getName());
@@ -79,6 +91,9 @@ public class TreePanel extends JScrollPane {
     }
 
     // Actions
+    /**
+     *Actions for both bird and campus tree nodes
+     */
     private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
         public void valueChanged(TreeSelectionEvent e) {
             // Get path to selected object
